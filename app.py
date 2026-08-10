@@ -67,6 +67,8 @@ ALLOWED_IMG   = {".jpg", ".jpeg", ".png", ".webp"}
 # "seed" copies are what a fresh checkout starts from — see the first-run seeding below.
 CARS_SEED     = os.path.join(DATA_DIR, "cars.seed.json")
 PARTNERS_SEED = os.path.join(DATA_DIR, "partners.seed.json")
+REVIEWS_FILE  = os.path.join(DATA_DIR, "reviews.json")
+REVIEWS_SEED  = os.path.join(DATA_DIR, "reviews.seed.json")
 
 
 def _resolve_secret_key():
@@ -110,7 +112,7 @@ for _folder in (DATA_DIR, CARS_IMG_DIR, TEAM_IMG_DIR):
 # ONLY when the live file is missing — this never touches an existing (live) file, so a
 # redeploy can never wipe real inventory.
 import shutil  # noqa: E402  (used only here, for the one-time seed copy)
-for _live, _seed in ((CARS_FILE, CARS_SEED), (PARTNERS_FILE, PARTNERS_SEED)):
+for _live, _seed in ((CARS_FILE, CARS_SEED), (PARTNERS_FILE, PARTNERS_SEED), (REVIEWS_FILE, REVIEWS_SEED)):
     if not os.path.exists(_live) and os.path.exists(_seed):
         try:
             shutil.copyfile(_seed, _live)
@@ -196,6 +198,27 @@ def next_partner_id(partners):
 def next_partner_order(partners):
     """The order to give a brand-new partner: one past the current highest."""
     return (max([p.get("order", 0) for p in partners]) + 1) if partners else 1
+
+
+def load_reviews():
+    return read_json(REVIEWS_FILE, [])
+
+
+def save_reviews(reviews):
+    write_json(REVIEWS_FILE, reviews)
+
+
+def next_review_id(reviews):
+    return (max([r.get("id", 0) for r in reviews]) + 1) if reviews else 1
+
+
+def public_reviews():
+    """Only APPROVED reviews are shown on the site (newest first). Customer-submitted
+    reviews stay hidden until the owner approves them in the admin — this stops spam
+    or abuse from ever appearing publicly."""
+    revs = [r for r in load_reviews() if r.get("approved")]
+    revs.sort(key=lambda r: r.get("id", 0), reverse=True)
+    return revs
 
 
 # ── Email ────────────────────────────────────────────────────────────────────
@@ -332,8 +355,9 @@ def admin_required(view):
 
 @app.route("/")
 def home():
-    """The public home page. We pass the car + partner lists into the template."""
-    return render_template("index.html", cars=load_cars(), partners=load_partners())
+    """The public home page. We pass the car + partner + approved-review lists in."""
+    return render_template("index.html", cars=load_cars(), partners=load_partners(),
+                           reviews=public_reviews())
 
 
 @app.route("/cars")
@@ -364,6 +388,38 @@ def inquiry():
     write_json(INQUIRY_FILE, inquiries)
 
     send_inquiry_email(data)          # silently no-ops if email isn't configured
+    return jsonify(ok=True)
+
+
+@app.route("/review", methods=["POST"])
+def review():
+    """
+    A customer submits a review from the site. We save it as PENDING (approved=False)
+    so nothing appears publicly until the owner approves it in the admin. Fields are
+    clipped because this is a public endpoint. The JS expects a small JSON reply.
+    """
+    name = request.form.get("name", "").strip()[:80]
+    text = request.form.get("text", "").strip()[:1000]
+    location = request.form.get("location", "").strip()[:60]
+    try:
+        rating = int(request.form.get("rating", "5"))
+    except ValueError:
+        rating = 5
+    rating = max(1, min(5, rating))
+    if not name or not text:
+        return jsonify(ok=False, error="Name and review are required."), 400
+
+    reviews = load_reviews()
+    reviews.append({
+        "id":       next_review_id(reviews),
+        "name":     name,
+        "rating":   rating,
+        "text":     text,
+        "location": location,
+        "time":     datetime.now().strftime("%Y-%m-%d"),
+        "approved": False,     # held for admin approval before it shows on the site
+    })
+    save_reviews(reviews)
     return jsonify(ok=True)
 
 
@@ -428,8 +484,11 @@ def admin():
         q["wa"] = wa_number(q.get("phone", ""))
     inquiries = list(reversed(list(enumerate(items))))   # newest first, keep original index for delete
     mail_on = bool(config.MAIL_USERNAME and config.MAIL_PASSWORD)
+    # Reviews: pending (awaiting approval) first, then approved — newest within each group.
+    reviews = sorted(load_reviews(), key=lambda r: (r.get("approved", False), -r.get("id", 0)))
     return render_template("admin.html", logged_in=True, cars=load_cars(),
-                           partners=load_partners(), inquiries=inquiries, mail_on=mail_on)
+                           partners=load_partners(), inquiries=inquiries, mail_on=mail_on,
+                           reviews=reviews)
 
 
 @app.route(f"/{config.ADMIN_PATH}/inquiry/delete", methods=["POST"])
@@ -441,6 +500,29 @@ def admin_inquiry_delete():
         items.pop(idx)
         write_json(INQUIRY_FILE, items)
         flash("Inquiry removed.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/review/approve", methods=["POST"])
+@admin_required
+def admin_review_approve():
+    rid = int(request.form.get("id", 0))
+    reviews = load_reviews()
+    for r in reviews:
+        if r.get("id") == rid:
+            r["approved"] = True
+            break
+    save_reviews(reviews)
+    flash("Review approved — it's now live on the site.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/review/delete", methods=["POST"])
+@admin_required
+def admin_review_delete():
+    rid = int(request.form.get("id", 0))
+    save_reviews([r for r in load_reviews() if r.get("id") != rid])
+    flash("Review removed.")
     return redirect(url_for("admin"))
 
 

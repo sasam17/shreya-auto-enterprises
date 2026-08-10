@@ -93,6 +93,41 @@
       <div class="hint">No inquiries yet. When a customer submits the contact form on the site, it shows up here.</div>
       {% endif %}
 
+      <!-- ───── REVIEWS (pending first — approve to publish) ───── -->
+      <h2>Reviews ({{ reviews|length }})
+        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0">
+          · customer-submitted reviews stay hidden until you <b>Approve</b> them
+        </span>
+      </h2>
+      {% if reviews %}
+      <table>
+        <tr><th>When</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>
+        {% for r in reviews %}
+        <tr>
+          <td style="white-space:nowrap">{{ r.time }}</td>
+          <td><strong>{{ r.name }}</strong>{% if r.location %}<br><span class="hint">{{ r.location }}</span>{% endif %}</td>
+          <td style="white-space:nowrap; color:#f5b301; letter-spacing:1px">{{ "★" * r.rating }}<span style="color:#ccd">{{ "★" * (5 - r.rating) }}</span></td>
+          <td>{{ r.text }}</td>
+          <td style="white-space:nowrap">{% if r.approved %}<span style="color:#1ba94c; font-weight:600">● Live</span>{% else %}<span style="color:#e0902a; font-weight:600">● Pending</span>{% endif %}</td>
+          <td style="white-space:nowrap">
+            {% if not r.approved %}
+            <form method="POST" action="{{ url_for('admin_review_approve') }}" style="display:inline">
+              <input type="hidden" name="id" value="{{ r.id }}" />
+              <button class="btn" type="submit">Approve</button>
+            </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('admin_review_delete') }}" style="display:inline" onsubmit="return confirm('Remove this review?')">
+              <input type="hidden" name="id" value="{{ r.id }}" />
+              <button class="btn btn--danger" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <div class="hint">No reviews yet. Approved reviews show as cards on the home page.</div>
+      {% endif %}
+
       <!-- ───── ADD A CAR ───── -->
       <h2>Add a car</h2>
       <form class="card" method="POST" action="{{ url_for('admin_add') }}" enctype="multipart/form-data">

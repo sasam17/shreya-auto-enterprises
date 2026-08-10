@@ -75,7 +75,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=34" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=36" />
 </head>
 <body>
   <a class="skip-link" href="#cars">Skip to content</a>
@@ -295,7 +295,7 @@
               <span data-en="Watch our film" data-np="हाम्रो भिडियो हेर्नुहोस्">Watch our film</span>
             </button>
             <a class="link-underline" href="https://www.facebook.com/profile.php?id=100057713250606" target="_blank" rel="noopener" data-en="See more on Facebook" data-np="फेसबुकमा थप हेर्नुहोस्">See more on Facebook</a>
-            <a class="link-underline" href="https://www.google.com/maps/search/?api=1&query=Shreya+Auto+Enterprises+Bishalnagar+Kathmandu" target="_blank" rel="noopener" data-en="Read our Google reviews" data-np="गुगल रिभ्यु पढ्नुहोस्">Read our Google reviews</a>
+            <a class="link-underline" href="#reviews" data-en="Read customer reviews" data-np="ग्राहक समीक्षा पढ्नुहोस्">Read customer reviews</a>
           </div>
         </div>
 
@@ -319,12 +319,67 @@
       </div>
     </section>
 
+    <!-- ============================== REVIEWS ============================== -->
+    <section class="section reviews" id="reviews">
+      <div class="container">
+        <header class="head">
+          <div class="head__left">
+            <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="Reviews" data-np="समीक्षा">Reviews</span></p>
+            <h2 class="display reveal-up" data-delay="1" data-en="What our customers say" data-np="हाम्रा ग्राहक के भन्छन्">What our customers say</h2>
+          </div>
+          <div class="reviews__summary reveal-up" data-delay="2">
+            <div class="reviews__avg"><strong id="revAvg">—</strong><span class="reviews__avg-stars" id="revAvgStars" aria-hidden="true"></span></div>
+            <p class="reviews__count"><b id="revCount">0</b> <span data-en="customer reviews" data-np="ग्राहक समीक्षा">customer reviews</span></p>
+            <button class="btn btn--accent btn--sm" type="button" id="openReviewForm" data-en="Write a review" data-np="समीक्षा लेख्नुहोस्">Write a review</button>
+          </div>
+        </header>
+
+        <div class="reviews__grid" id="reviewsGrid"><!-- review cards injected by JS from approved reviews --></div>
+        <p class="note reviews__empty" id="reviewsEmpty" hidden data-en="No reviews yet — be the first to share your experience." data-np="अहिलेसम्म समीक्षा छैन — पहिलो हुनुहोस्।">No reviews yet — be the first to share your experience.</p>
+
+        <!-- add-review panel (revealed by the "Write a review" button) -->
+        <div class="reviews__add reveal-up" id="reviewPanel" hidden>
+          <h3 data-en="Share your experience" data-np="आफ्नो अनुभव बाँड्नुहोस्">Share your experience</h3>
+          <form id="reviewForm" action="/review" method="POST" novalidate>
+            <div class="rv-row">
+              <div class="field">
+                <input id="rv-name" name="name" type="text" autocomplete="name" required placeholder=" " />
+                <label for="rv-name" data-en="Your name" data-np="तपाईंको नाम">Your name</label>
+              </div>
+              <div class="field">
+                <input id="rv-location" name="location" type="text" placeholder=" " />
+                <label for="rv-location" data-en="City (optional)" data-np="सहर (वैकल्पिक)">City (optional)</label>
+              </div>
+            </div>
+            <div class="rv-rate">
+              <span class="rv-rate__label" data-en="Your rating" data-np="तपाईंको मूल्यांकन">Your rating</span>
+              <div class="rv-stars" id="rvStars" role="radiogroup" aria-label="Your rating">
+                <button type="button" class="rv-star is-on" data-val="1" aria-label="1 star">★</button>
+                <button type="button" class="rv-star is-on" data-val="2" aria-label="2 stars">★</button>
+                <button type="button" class="rv-star is-on" data-val="3" aria-label="3 stars">★</button>
+                <button type="button" class="rv-star is-on" data-val="4" aria-label="4 stars">★</button>
+                <button type="button" class="rv-star is-on" data-val="5" aria-label="5 stars">★</button>
+              </div>
+              <input type="hidden" name="rating" id="rv-rating" value="5" />
+            </div>
+            <div class="field">
+              <textarea id="rv-text" name="text" rows="3" required placeholder=" "></textarea>
+              <label for="rv-text" data-en="Your review" data-np="तपाईंको समीक्षा">Your review</label>
+            </div>
+            <button class="btn btn--accent btn--block" type="submit"><span data-en="Submit review" data-np="समीक्षा पेश गर्नुहोस्">Submit review</span></button>
+            <p class="reviews__disc" data-en="Reviews are checked before they appear on the site." data-np="समीक्षा साइटमा देखिनुअघि जाँच गरिन्छ।">Reviews are checked before they appear on the site.</p>
+            <p class="form__status" id="reviewStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <!-- ============================== THE PARTNERS ============================== -->
     <section class="section team" id="team">
       <div class="container">
         <header class="head">
           <div class="head__left">
-            <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="The partners" data-np="साझेदारहरू">The partners</span></p>
+            <p class="eyebrow reveal-up"><span class="head__idx">(06)</span> <span data-en="The partners" data-np="साझेदारहरू">The partners</span></p>
             <h2 class="display reveal-up" data-delay="1" data-en="Five partners, one promise" data-np="पाँच साझेदार, एउटै वाचा">Five partners, one promise</h2>
           </div>
           <p class="head__note reveal-up" data-delay="2" data-en="Every partner has 15+ years in the car trade. Walk into the showroom and you deal with an owner — not a salesman." data-np="हरेक साझेदारसँग गाडी व्यापारमा १५+ वर्षको अनुभव छ। शोरूममा आउनुहोस् — तपाईंको कुरा सिधै मालिकसँग हुन्छ।">Every partner has 15+ years in the car trade. Walk into the showroom and you deal with an owner — not a salesman.</p>
@@ -366,7 +421,7 @@
     <section class="section contact" id="contact">
       <div class="container contact__grid">
         <div class="contact__left">
-          <p class="eyebrow reveal-up"><span class="head__idx">(06)</span> <span data-en="Get in touch" data-np="सम्पर्क गर्नुहोस्">Get in touch</span></p>
+          <p class="eyebrow reveal-up"><span class="head__idx">(07)</span> <span data-en="Get in touch" data-np="सम्पर्क गर्नुहोस्">Get in touch</span></p>
           <h2 class="display reveal-up" data-delay="1" data-en="Contact us today" data-np="आजै सम्पर्क गर्नुहोस्">Contact us today</h2>
           <p class="contact__lead reveal-up" data-delay="2" data-en="Visit the showroom, call, or send a quick inquiry — we'll get right back to you." data-np="शोरूममा आउनुहोस्, फोन गर्नुहोस्, वा छोटो सन्देश पठाउनुहोस् — हामी छिट्टै जवाफ दिन्छौं।">Visit the showroom, call, or send a quick enquiry — we'll get right back to you.</p>
 
@@ -518,14 +573,15 @@
   <!-- The server injects the live car + partner lists (from data/*.json) into the JSON
        data island below; the small script then reads it onto window.SHREYA_*. Keeping the
        Jinja out of an executable <script> stops editors mis-linting it as broken JS. -->
-  <div id="shreya-data" hidden data-payload='{{ {"cars": cars, "partners": partners} | tojson }}'></div>
+  <div id="shreya-data" hidden data-payload='{{ {"cars": cars, "partners": partners, "reviews": reviews} | tojson }}'></div>
   <script>
     try {
       var _shreya = JSON.parse(document.getElementById("shreya-data").dataset.payload);
       window.SHREYA_CARS = _shreya.cars;
       window.SHREYA_PARTNERS = _shreya.partners;
+      window.SHREYA_REVIEWS = _shreya.reviews;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=34" defer></script>
+  <script src="assets/js/main.js?v=36" defer></script>
 </body>
 </html>

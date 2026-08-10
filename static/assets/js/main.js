@@ -573,6 +573,110 @@
     observeReveals();
   }
 
+  /* ------------------------- 11c) REVIEWS  —  approved reviews come from the admin
+        (data/reviews.json) as window.SHREYA_REVIEWS. The list below is only a fallback
+        for opening the file directly without the server. ------------------------- */
+  var REVIEWS = (window.SHREYA_REVIEWS && window.SHREYA_REVIEWS.length) ? window.SHREYA_REVIEWS : [
+    { name: "Ramesh Shrestha", rating: 5, location: "Kathmandu", time: "2026-06-18", text: "Bought a used SUV here and the whole process was honest and easy. Fair price, no pressure, and they explained everything about the car." },
+    { name: "Anita Gurung", rating: 5, location: "Bishalnagar", time: "2026-05-30", text: "Exchanged my old car for a newer one. Transparent valuation and they helped with the paperwork and financing. Trustworthy service." },
+    { name: "Bibek Thapa", rating: 4, location: "Kathmandu", time: "2026-04-22", text: "Good selection of well-maintained cars and genuine people to deal with. Sold my car through them and got a fair deal." }
+  ];
+
+  function starRow(n) {
+    n = Math.max(0, Math.min(5, Math.round(n || 0)));
+    return '<span class="stars" aria-hidden="true"><span class="stars__on">' + "★".repeat(n) + '</span>' + "☆".repeat(5 - n) + "</span>";
+  }
+  function reviewCard(r) {
+    var el = document.createElement("article");
+    el.className = "review-card reveal-pop";
+    var initial = esc((String(r.name || "?").trim().charAt(0) || "?").toUpperCase());
+    var meta = [r.location, r.time].filter(Boolean).map(esc).join(" · ");
+    el.innerHTML =
+      '<div class="review-card__top">' +
+        '<span class="review-card__avatar" aria-hidden="true">' + initial + "</span>" +
+        '<span class="review-card__id"><span class="review-card__name">' + esc(r.name) + "</span>" +
+          (meta ? '<span class="review-card__meta">' + meta + "</span>" : "") + "</span>" +
+        '<span class="review-card__quote" aria-hidden="true">&ldquo;</span>' +
+      "</div>" +
+      '<div class="review-card__stars" aria-label="' + (r.rating || 0) + ' out of 5">' + starRow(r.rating) + "</div>" +
+      '<p class="review-card__text">' + esc(r.text) + "</p>";
+    return el;
+  }
+  function renderReviews() {
+    var wrap = document.getElementById("reviewsGrid");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    REVIEWS.forEach(function (r) { wrap.appendChild(reviewCard(r)); });
+    var empty = document.getElementById("reviewsEmpty");
+    if (empty) empty.hidden = REVIEWS.length > 0;
+    var cnt = REVIEWS.length;
+    var cntEl = document.getElementById("revCount"), avgEl = document.getElementById("revAvg"), avgStars = document.getElementById("revAvgStars");
+    if (cntEl) cntEl.textContent = cnt;
+    if (cnt) {
+      var avg = REVIEWS.reduce(function (s, r) { return s + (+r.rating || 0); }, 0) / cnt;
+      if (avgEl) avgEl.textContent = avg.toFixed(1);
+      if (avgStars) avgStars.innerHTML = starRow(avg);
+    } else {
+      if (avgEl) avgEl.textContent = "—";
+      if (avgStars) avgStars.innerHTML = "";
+    }
+    applyLang(currentLang);
+    observeReveals();
+  }
+
+  // "Write a review" toggle + star picker + submit
+  (function initReviewForm() {
+    var openBtn = document.getElementById("openReviewForm");
+    var panel = document.getElementById("reviewPanel");
+    if (openBtn && panel) {
+      openBtn.addEventListener("click", function () {
+        panel.hidden = !panel.hidden;
+        if (!panel.hidden) {
+          observeReveals();
+          var first = panel.querySelector("input, textarea"); if (first) first.focus();
+          panel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+        }
+      });
+    }
+    var starsWrap = document.getElementById("rvStars");
+    var ratingInput = document.getElementById("rv-rating");
+    function paint(v) {
+      if (!starsWrap) return;
+      starsWrap.querySelectorAll(".rv-star").forEach(function (s) {
+        s.classList.toggle("is-on", (+s.getAttribute("data-val")) <= v);
+      });
+    }
+    if (starsWrap) {
+      starsWrap.addEventListener("click", function (e) {
+        var b = e.target.closest(".rv-star"); if (!b) return;
+        var v = +b.getAttribute("data-val"); if (ratingInput) ratingInput.value = v; paint(v);
+      });
+      starsWrap.addEventListener("mouseover", function (e) { var b = e.target.closest(".rv-star"); if (b) paint(+b.getAttribute("data-val")); });
+      starsWrap.addEventListener("mouseleave", function () { paint(ratingInput ? +ratingInput.value : 5); });
+    }
+    var rform = document.getElementById("reviewForm");
+    var rstatus = document.getElementById("reviewStatus");
+    function rSet(msg, ok) { if (!rstatus) return; rstatus.textContent = msg; rstatus.className = "form__status " + (ok ? "is-ok" : "is-err"); }
+    if (rform) rform.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nm = (document.getElementById("rv-name") || {}).value || "";
+      var tx = (document.getElementById("rv-text") || {}).value || "";
+      if (!nm.trim() || !tx.trim()) { rSet(currentLang === "np" ? "कृपया नाम र समीक्षा लेख्नुहोस्।" : "Please add your name and a review.", false); return; }
+      var action = rform.getAttribute("action") || "";
+      if (action.indexOf("REPLACE_WITH") !== -1) {   // static demo (no server): acknowledge locally
+        rSet(currentLang === "np" ? "धन्यवाद! तपाईंको समीक्षा प्राप्त भयो।" : "Thank you! Your review has been received.", true);
+        rform.reset(); if (ratingInput) ratingInput.value = 5; paint(5); return;
+      }
+      rSet(currentLang === "np" ? "पठाउँदै…" : "Sending…", true);
+      fetch(action, { method: "POST", body: new FormData(rform), headers: { Accept: "application/json" } })
+        .then(function (r) {
+          if (r.ok) { rform.reset(); if (ratingInput) ratingInput.value = 5; paint(5); rSet(currentLang === "np" ? "धन्यवाद! जाँचपछि तपाईंको समीक्षा देखिनेछ।" : "Thank you! Your review will appear once it's approved.", true); }
+          else rSet(currentLang === "np" ? "केही गडबड भयो — फेरि प्रयास गर्नुहोस्।" : "Something went wrong — please try again.", false);
+        })
+        .catch(function () { rSet(currentLang === "np" ? "नेटवर्क त्रुटि — फेरि प्रयास गर्नुहोस्।" : "Network error — please try again.", false); });
+    });
+  })();
+
   /* ------------------------- 12) INIT ------------------------- */
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -580,6 +684,7 @@
   buildFilters();             // brand chips from the real cars
   renderCars("all");          // builds cards + applyLang (which splits words) + observeReveals + initTilt
   renderPartners();           // builds the lead-on-top partner layout (sorted by order) with staggered spring reveal
+  renderReviews();            // builds the customer review cards + rating summary
   applyLang(currentLang);
   observeReveals();
   initMagnetic();

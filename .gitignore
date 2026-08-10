@@ -14,6 +14,7 @@ venv/
 # on a fresh checkout (see app.py). The seed files ARE committed; the live ones aren't.
 data/cars.json
 data/partners.json
+data/reviews.json
 # customer phone numbers — keep private
 data/inquiries.json
 

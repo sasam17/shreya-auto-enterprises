@@ -365,6 +365,49 @@ body.lang-np .hero__title{line-height:1.16; letter-spacing:-.01em; font-size:cla
 .form__status.is-ok{color:#54e08a}
 .form__status.is-err{color:#ff8a8a}
 
+/* ============================== REVIEWS ============================== */
+.reviews{background:var(--off)}
+.reviews__summary{display:flex; flex-direction:column; align-items:flex-end; gap:8px; text-align:right}
+.reviews__avg{display:flex; align-items:center; gap:12px}
+.reviews__avg strong{font-family:var(--font-display); font-size:clamp(34px,4vw,46px); font-weight:700; color:var(--ink); line-height:1; letter-spacing:-.02em}
+.reviews__count{color:var(--ink-muted); font-size:14px}
+.reviews__count b{color:var(--ink); font-family:var(--font-display)}
+.reviews__summary .btn{margin-top:6px}
+/* gold star rows (display) */
+.stars{font-size:18px; letter-spacing:2px; color:#e3c7a0; line-height:1}
+.stars__on{color:#f5b301}
+.reviews__avg-stars .stars{font-size:20px}
+
+.reviews__grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); gap:20px}
+.review-card{position:relative; display:flex; flex-direction:column; gap:14px; background:var(--white); border-radius:var(--radius-lg); padding:24px 24px 26px; box-shadow:inset 0 0 0 1px var(--mist); transition:transform .4s var(--ease), box-shadow .4s var(--ease)}
+.review-card:hover{transform:translateY(-6px); box-shadow:inset 0 0 0 1.5px var(--cyan), 0 22px 48px rgba(21,119,214,.18)}
+.review-card__top{display:flex; align-items:center; gap:13px}
+.review-card__avatar{flex:0 0 auto; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:19px; color:#fff; background:var(--grad-accent)}
+.review-card__id{display:flex; flex-direction:column; min-width:0}
+.review-card__name{font-family:var(--font-display); font-weight:600; font-size:16px; color:var(--ink); line-height:1.2}
+.review-card__meta{font-size:12.5px; color:var(--ink-muted); margin-top:2px}
+.review-card__quote{margin-left:auto; font-family:var(--font-display); font-size:52px; line-height:.6; color:var(--mist); align-self:flex-start}
+.review-card__stars{margin-top:-2px}
+.review-card__text{color:var(--ink-muted); font-size:15px; line-height:1.6}
+
+/* add-review panel */
+.reviews__add{margin-top:clamp(26px,4vw,40px); max-width:640px; margin-inline:auto; background:var(--white); border-radius:var(--radius-lg); padding:clamp(24px,3vw,36px); box-shadow:var(--shadow-md)}
+.reviews__add h3{font-family:var(--font-display); font-size:22px; color:var(--ink); margin-bottom:18px; text-align:center}
+.reviews__add .field input,.reviews__add .field textarea{color:var(--ink); border:1.5px solid var(--mist); background:var(--off)}
+.reviews__add .field label{color:var(--ink-muted)}
+.reviews__add .field input:focus,.reviews__add .field textarea:focus{border-color:var(--cyan); background:var(--white); box-shadow:0 0 0 4px rgba(55,178,234,.14)}
+.reviews__add .field input:focus + label,.reviews__add .field input:not(:placeholder-shown) + label,
+.reviews__add .field textarea:focus + label,.reviews__add .field textarea:not(:placeholder-shown) + label{color:var(--blue)}
+.rv-row{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.rv-rate{display:flex; align-items:center; gap:14px; margin:6px 0 14px; flex-wrap:wrap}
+.rv-rate__label{font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted)}
+.rv-stars{display:inline-flex; gap:4px}
+.rv-star{font-size:30px; line-height:1; color:#d9e2ec; transition:transform .15s var(--ease), color .15s}
+.rv-star.is-on{color:#f5b301}
+.rv-star:hover{transform:scale(1.15)}
+.reviews__disc{margin-top:12px; text-align:center; font-size:12.5px; color:var(--ink-muted)}
+.reviews__add .form__status{color:var(--ink)}
+
 /* ============================== FOOTER ============================== */
 .footer{padding:clamp(60px,8vw,110px) 0 30px}
 .footer__cta{display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; padding-bottom:clamp(40px,5vw,64px); border-bottom:1px solid rgba(255,255,255,.14)}
@@ -440,6 +483,42 @@ body.loaded .preloader{transform:translateY(-100%); opacity:0; pointer-events:no
 .js .split-words .word > span{transform:translateY(115%); transition:transform .85s var(--ease)}
 .split-words.is-in .word > span{transform:none}
 .split-words .word.is-accent > span{color:var(--cyan)}
+
+/* ======================================================================
+   NEPALI / DEVANAGARI POLISH
+   Devanagari has top matras (vowel marks) and no letter-case, so the
+   Latin-oriented letter-spacing + UPPERCASE tracking spreads it into
+   awkward gaps, and the per-word overflow mask clips the top marks. In
+   Nepali we reset the tracking and let the headline render whole.
+   ====================================================================== */
+body.lang-np{letter-spacing:normal}
+/* small tracked / uppercased labels → natural spacing, no faux-caps */
+body.lang-np .eyebrow,
+body.lang-np .hero__spec-tag,
+body.lang-np .contact__label,
+body.lang-np .car-card__brand,
+body.lang-np .car-card__badge,
+body.lang-np .spec,
+body.lang-np .chip,
+body.lang-np .rail__hint,
+body.lang-np .humane__hint,
+body.lang-np .marquee__track span,
+body.lang-np .member figcaption span,
+body.lang-np .svc-row__title b:not(.np),
+body.lang-np .cred__txt em,
+body.lang-np .hero__caption,
+body.lang-np .back-link{letter-spacing:normal; text-transform:none}
+/* headings + statement: drop the Latin negative tracking that pinches matras */
+body.lang-np h1, body.lang-np h2, body.lang-np h3,
+body.lang-np .display, body.lang-np .hero__title,
+body.lang-np .statement__text{letter-spacing:normal}
+/* headline: reveal the WHOLE glyph — the mask was clipping the top matras —
+   and don't slide the words; just render the Nepali cleanly and in place */
+body.lang-np .split-words .word{overflow:visible; padding-bottom:0}
+body.lang-np .split-words .word > span{transform:none !important; transition:none}
+/* a little more leading so stacked matras never touch the line above/below */
+body.lang-np .hero__title{line-height:1.3}
+body.lang-np .display{line-height:1.24}
 
 /* — scroll text-reveal statement — */
 .statement{padding:clamp(82px,13vw,168px) 0}
@@ -559,6 +638,7 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
   .member figcaption strong{font-size:15px}
   .strip{grid-template-columns:repeat(2,1fr)}
   .head{flex-direction:column; align-items:flex-start; gap:14px}
+  .reviews__summary{align-items:flex-start; text-align:left}
   .fab{display:none}
   .mobilebar{display:flex}
   body{padding-bottom:78px} /* room for mobile bar */
@@ -570,6 +650,7 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
   .hero__spec{display:none}
   .hero__cta .btn{flex:1}
   .car-card{flex-basis:80vw}
+  .rv-row{grid-template-columns:1fr}
   .footer__grid{grid-template-columns:1fr; gap:26px}
   .footer__cta{flex-direction:column; align-items:flex-start}
   /* tighter vertical rhythm on phones (kills the dead space between sections) */

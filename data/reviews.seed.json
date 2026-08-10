@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "Ramesh Shrestha",
+    "rating": 5,
+    "text": "Bought a used SUV here and the whole process was honest and easy. Fair price, no pressure, and they explained everything about the car's history. Highly recommend Shreya Auto.",
+    "location": "Kathmandu",
+    "time": "2026-06-18",
+    "approved": true
+  },
+  {
+    "id": 2,
+    "name": "Anita Gurung",
+    "rating": 5,
+    "text": "Exchanged my old car for a newer one. The team was transparent about the valuation and helped with the paperwork and financing. Smooth, trustworthy service.",
+    "location": "Bishalnagar",
+    "time": "2026-05-30",
+    "approved": true
+  },
+  {
+    "id": 3,
+    "name": "Bibek Thapa",
+    "rating": 4,
+    "text": "Good selection of well-maintained cars and genuine people to deal with. I sold my car through them and got a fair deal without any hassle.",
+    "location": "Kathmandu",
+    "time": "2026-04-22",
+    "approved": true
+  }
+]
