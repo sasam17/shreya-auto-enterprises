@@ -13,6 +13,30 @@ variable, when present, overrides the value written here. See DEPLOY.md.
 import os
 
 
+def _load_dotenv():
+    """Load KEY=VALUE lines from a local, gitignored `.env` file into the environment.
+
+    This lets you keep SECRETS (like the Gmail App Password) in a `.env` file that is
+    NEVER committed — instead of typing them into this file, which IS committed to the
+    public repo. On a real host you set real environment variables, so `.env` is unused.
+    Copy `.env.example` to `.env` and fill it in. Existing real env vars always win.
+    """
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, val = line.split("=", 1)
+                os.environ.setdefault(key.strip(), val.strip().strip('"').strip("'"))
+    except OSError:
+        pass
+
+
+_load_dotenv()
+
+
 def _env(name, default):
     """Read an environment variable, falling back to the value written here."""
     value = os.environ.get(name)

@@ -122,16 +122,24 @@ Every contact-form submission is **already saved** and shown in the admin under
 
 1. On the owner's Gmail, create an **App Password**: Google Account → Security →
    2-Step Verification (turn on) → **App passwords** → generate one (16 characters).
-2. Set these on your host (environment variables — or, locally, edit `config.py`):
+2. Set these three values. **⚠ Never put the password in `config.py`** — that file is in the
+   public GitHub repo. Use one of:
+   - **Locally (to test on your PC):** copy `.env.example` to **`.env`** and fill it in. The
+     `.env` file is gitignored, so it's never committed. Restart the app.
+   - **On a web host (production):** set them as **environment variables** in the WSGI config
+     (same place as `SHREYA_ADMIN_PASSWORD`).
    ```
    SHREYA_MAIL_USERNAME = shreyaauto.enterprises@gmail.com
-   SHREYA_MAIL_PASSWORD = the-16-char-app-password
+   SHREYA_MAIL_PASSWORD = the-16-char-app-password        # the App Password, NOT the normal one
    SHREYA_MAIL_TO       = shreyaauto.enterprises@gmail.com   (where mail is delivered)
    ```
-3. Reload the app. Done — new inquiries now land in that inbox (and still save in the admin).
+3. Restart/reload the app, open the admin, and click **✉ Send test email** at the top of the
+   Inquiries section. If it arrives (check spam too), you're done — new inquiries now land in
+   that inbox and still save in the admin.
 
-The code is ready; it sends over Gmail's secure SMTP and **never breaks the site if email
-fails**. Leave the mail settings blank to keep email off (inquiries still save + show in admin).
+The code is ready; it sends over Gmail's secure SMTP **in the background** and **never breaks the
+site if email fails**. Leave the mail settings blank to keep email off (inquiries still save + show
+in admin).
 
 ## 6. Back up your data (recommended monthly)
 

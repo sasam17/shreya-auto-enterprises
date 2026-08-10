@@ -68,6 +68,12 @@
           {% if mail_on %}· also emailed to you{% else %}· saved here (email is off — see DEPLOY.md to turn on){% endif %}
         </span>
       </h2>
+      <form method="POST" action="{{ url_for('admin_test_email') }}" style="margin:-6px 0 16px">
+        <button class="btn" type="submit">✉ Send test email</button>
+        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0; margin-left:8px">
+          {% if mail_on %}Inquiry emails are delivered to <b>{{ mail_to }}</b>{% else %}Email is OFF — set it up (DEPLOY.md §5b), then click to test{% endif %}
+        </span>
+      </form>
       {% if inquiries %}
       <table>
         <tr><th>When</th><th>Name</th><th>Phone</th><th>Car</th><th>Message</th><th></th></tr>

@@ -243,7 +243,7 @@ def send_inquiry_email(data):
             f"Message: {data.get('message','')}\n"
             f"Time:    {data.get('time','')}\n"
         )
-        with smtplib.SMTP(config.MAIL_SERVER, config.MAIL_PORT) as server:
+        with smtplib.SMTP(config.MAIL_SERVER, config.MAIL_PORT, timeout=20) as server:
             server.starttls()
             server.login(config.MAIL_USERNAME, config.MAIL_PASSWORD)
             server.send_message(msg)
@@ -387,7 +387,9 @@ def inquiry():
     inquiries.append(data)
     write_json(INQUIRY_FILE, inquiries)
 
-    send_inquiry_email(data)          # silently no-ops if email isn't configured
+    # Send the email in the background so the customer gets an instant reply even if
+    # Gmail is slow. The inquiry is already safely saved above, so nothing is lost.
+    threading.Thread(target=send_inquiry_email, args=(data,), daemon=True).start()
     return jsonify(ok=True)
 
 
@@ -488,7 +490,30 @@ def admin():
     reviews = sorted(load_reviews(), key=lambda r: (r.get("approved", False), -r.get("id", 0)))
     return render_template("admin.html", logged_in=True, cars=load_cars(),
                            partners=load_partners(), inquiries=inquiries, mail_on=mail_on,
-                           reviews=reviews)
+                           mail_to=config.MAIL_TO, reviews=reviews)
+
+
+@app.route(f"/{config.ADMIN_PATH}/test-email", methods=["POST"])
+@admin_required
+def admin_test_email():
+    """Send a test email so the owner can confirm inquiry delivery works after
+    setting the Gmail App Password — without submitting a fake inquiry."""
+    if not (config.MAIL_USERNAME and config.MAIL_PASSWORD):
+        flash("Email isn't set up yet — add SHREYA_MAIL_USERNAME + SHREYA_MAIL_PASSWORD "
+              "(a Gmail App Password) in your .env or host settings. See DEPLOY.md §5b.")
+        return redirect(url_for("admin"))
+    ok = send_inquiry_email({
+        "name": "Test — Shreya Auto admin panel",
+        "phone": "—", "car": "—",
+        "message": "This is a test email confirming that website inquiries will be delivered here.",
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    })
+    if ok:
+        flash(f"✅ Test email sent to {config.MAIL_TO}. Check the inbox (and the spam folder).")
+    else:
+        flash("❌ Test email failed. Double-check the Gmail address and the 16-character "
+              "App Password (not your normal password). See DEPLOY.md §5b.")
+    return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/inquiry/delete", methods=["POST"])
