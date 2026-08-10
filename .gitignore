@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Secrets — never commit these
+.secret_key
+.env
+
+# ── LIVE (server-owned) data — never commit or overwrite on redeploy ──────────
+# The owner edits inventory through the admin on the LIVE server; those writes must
+# survive every code redeploy. The app seeds these from the *.seed.json files below
+# on a fresh checkout (see app.py). The seed files ARE committed; the live ones aren't.
+data/cars.json
+data/partners.json
+# customer phone numbers — keep private
+data/inquiries.json
+
+# Admin-uploaded car photos (named upload-<id>.webp). Runtime data, not shipped assets.
+static/assets/img/cars/upload-*
+
+# Personal/reference videos — not part of the app, keep them out of the deploy (47 MB)
+video awareness/
+
+# Editor / OS cruft
+.vscode/
+.DS_Store
+Thumbs.db

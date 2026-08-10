@@ -1,0 +1,6 @@
+Flask>=3.0
+Pillow>=10.0
+
+# Cross-platform production WSGI server (used by `python wsgi.py`).
+# PythonAnywhere doesn't need it; Linux hosts may use gunicorn instead. Harmless to keep.
+waitress>=3.0

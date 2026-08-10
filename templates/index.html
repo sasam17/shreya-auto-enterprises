@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.className = "js";
+      try {
+        var t = localStorage.getItem("sa-theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        d.setAttribute("data-theme", t);
+      } catch (e) { d.setAttribute("data-theme", "light"); }
+    })();
+  </script>
+  <title>Shreya Auto Enterprises — Buy, Sell & Exchange Cars in Kathmandu</title>
+  <meta name="description" content="Shreya Auto Enterprises, Bishalnagar, Kathmandu. Trusted used cars at fair prices. Buy, sell or exchange your car — quick, honest and hassle-free." />
+  <meta name="theme-color" content="#06182e" />
+  <link rel="icon" href="assets/img/logo.jpg" />
+  <meta property="og:title" content="Shreya Auto Enterprises — Find your next car here" />
+  <meta property="og:description" content="Trusted used cars in Kathmandu. Buy · Sell · Exchange." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/img/cars/car4.webp" />
+
+  <!-- Hero image gets priority so the first paint is the car, not a blank box -->
+  <link rel="preload" as="image" type="image/webp" href="assets/img/cars/car4.webp" fetchpriority="high" />
+
+  <!-- Fonts: Space Grotesk (display) + Poppins (body, as in the promo video) + Noto Sans Devanagari (Nepali).
+       Loaded non-render-blocking so the page paints instantly on slow connections. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
+
+  <!-- Structured data: lets Google show Shreya Auto as a business with cars for sale -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutoDealer",
+    "name": "Shreya Auto Enterprises",
+    "description": "Trusted used cars in Kathmandu. Buy, sell or exchange — fair, honest prices.",
+    "address": { "@type": "PostalAddress", "addressLocality": "Bishalnagar, Kathmandu", "addressCountry": "NP" },
+    "telephone": "+977-9851042665",
+    "email": "shreyaauto.enterprises@gmail.com",
+    "hasMap": "https://www.google.com/maps/search/?api=1&query=Shreya+Auto+Enterprises+Bishalnagar+Kathmandu",
+    "openingHours": "Mo-Su 10:00-18:00",
+    "founder": [
+      { "@type": "Person", "name": "Shambhu Shahi" },
+      { "@type": "Person", "name": "Pradeep Rana" },
+      { "@type": "Person", "name": "Sachit Kuinkel" },
+      { "@type": "Person", "name": "Somraj Dangi" },
+      { "@type": "Person", "name": "Dhruba Pandey" }
+    ],
+    "sameAs": [
+      "https://www.facebook.com/profile.php?id=100057713250606",
+      "https://www.tiktok.com/@ShreyaAutoSachin"
+    ],
+    "makesOffer": [
+      {
+        "@type": "Offer", "priceCurrency": "NPR", "price": "3750000", "availability": "https://schema.org/InStock",
+        "itemOffered": {
+          "@type": "Vehicle", "name": "Maruti Suzuki Brezza 2021", "fuelType": "Petrol",
+          "mileageFromOdometer": { "@type": "QuantitativeValue", "value": 53000, "unitCode": "KMT" }
+        }
+      },
+      {
+        "@type": "Offer", "priceCurrency": "NPR", "price": "5000000", "availability": "https://schema.org/InStock",
+        "itemOffered": {
+          "@type": "Vehicle", "name": "Kia Sportage 2019", "fuelType": "Petrol", "vehicleTransmission": "Automatic",
+          "mileageFromOdometer": { "@type": "QuantitativeValue", "value": 34325, "unitCode": "KMT" }
+        }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="stylesheet" href="assets/css/styles.css?v=34" />
+</head>
+<body>
+  <a class="skip-link" href="#cars">Skip to content</a>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- choreographed intro -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <svg class="preloader__mark" viewBox="0 0 64 34">
+      <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2 15h13M0 20h9M5 26h7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ============================ HEADER / NAV ============================ -->
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a class="brand" href="#top" aria-label="Shreya Auto Enterprises — home">
+        <svg class="brand__mark" viewBox="0 0 64 34" aria-hidden="true">
+          <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 15h13M0 20h9M5 26h7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <span class="brand__text"><b>Shreya<i>Auto</i></b><em>Enterprises</em></span>
+      </a>
+
+      <nav class="nav__links" id="navLinks" aria-label="Primary">
+        <a href="#cars" data-en="Cars" data-np="गाडीहरू">Cars</a>
+        <a href="#services" data-en="Services" data-np="सेवा">Services</a>
+        <a href="#why" data-en="Why us" data-np="किन हामी">Why us</a>
+        <a href="#contact" data-en="Contact" data-np="सम्पर्क">Contact</a>
+      </nav>
+
+      <div class="nav__actions">
+        <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">
+          <span class="lang-toggle__opt is-active" data-lang="en">EN</span>
+          <span class="lang-toggle__sep"></span>
+          <span class="lang-toggle__opt" data-lang="np">ने</span>
+        </button>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between light and dark mode">
+          <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.6" fill="currentColor"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5 5l1.8 1.8M17.2 17.2 19 19M19 5l-1.8 1.8M6.8 17.2 5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.6 14.2A8.6 8.6 0 0 1 9.8 3.4 8.9 8.9 0 1 0 20.6 14.2Z"/></svg>
+        </button>
+        <a class="btn btn--accent btn--sm nav__cta" href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20interested%20in%20a%20car." target="_blank" rel="noopener">
+          <span data-en="Inquire" data-np="सम्पर्क">Inquire</span>
+        </a>
+        <button class="nav__burger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ================================ HERO ================================ -->
+    <section class="hero" id="hero">
+      <div class="hero__aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="hero__spotlight" aria-hidden="true"></div>
+
+      <div class="container hero__inner">
+        <div class="hero__copy">
+        <p class="eyebrow reveal-up">
+          <span class="eyebrow__line"></span>
+          <span data-en="Bishalnagar · Kathmandu" data-np="विशालनगर · काठमाडौँ">Bishalnagar · Kathmandu</span>
+        </p>
+
+        <h1 class="hero__title split-words" data-en="Find your next car here" data-np="तपाईंको अर्को गाडी यहीँ" data-accent-en="car" data-accent-np="गाडी">Find your next car here</h1>
+
+        <p class="hero__sub reveal-up" data-delay="2" data-en="Trusted used cars at fair, honest prices — buy, sell or exchange, right here in Kathmandu." data-np="भरपर्दो सेकेन्डह्यान्ड गाडी, उचित मूल्यमा — काठमाडौँमै किन्नुहोस्, बेच्नुहोस् वा साट्नुहोस्।">
+          Trusted used cars at fair, honest prices — buy, sell or exchange, right here in Kathmandu.
+        </p>
+
+        <div class="hero__cta reveal-up" data-delay="3">
+          <a class="btn btn--accent btn--lg" href="#cars"><span data-en="Browse cars" data-np="गाडीहरू हेर्नुहोस्">Browse cars</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg></a>
+          <a class="btn btn--glass btn--lg" href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20interested%20in%20a%20car." target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg><span data-en="WhatsApp" data-np="व्हाट्सएप">WhatsApp</span></a>
+        </div>
+
+        <!-- floating spec card — echoes the designed spec-cards from the video -->
+        <aside class="hero__spec beam reveal-up" data-delay="4" aria-label="Now in stock">
+          <span class="hero__spec-tag" data-en="In stock now" data-np="अहिले उपलब्ध">In stock now</span>
+          <strong>Kia Sportage</strong>
+          <span class="hero__spec-meta">2019 · Automatic · 34,325 km</span>
+          <span class="hero__spec-price">Rs. 50,00,000</span>
+        </aside>
+        </div>
+
+        <!-- framed showroom shot — sized below the photo's native resolution so it stays crisp -->
+        <figure class="hero__visual reveal-fade" data-delay="2">
+          <div class="hero__frame" id="heroFrame">
+            <img id="heroImg" src="assets/img/cars/car4.webp" width="1242" height="1080" fetchpriority="high" onerror="this.onerror=null;this.src=this.src.replace('.webp','.jpg')" alt="Red Kia Seltos for sale at Shreya Auto Enterprises, Kathmandu" />
+            <figcaption class="hero__caption"><span data-en="On our lot — Kia Seltos" data-np="हाम्रो लटमा — Kia Seltos">On our lot — Kia Seltos</span></figcaption>
+          </div>
+        </figure>
+      </div>
+
+      <div class="hero__marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <span>Buy<i>·</i>Sell<i>·</i>Exchange<i>·</i>1800+ cars sold<i>·</i>Hyundai Nepal exchange partner<i>·</i>Bishalnagar, Kathmandu<i>·</i></span>
+          <span>Buy<i>·</i>Sell<i>·</i>Exchange<i>·</i>1800+ cars sold<i>·</i>Hyundai Nepal exchange partner<i>·</i>Bishalnagar, Kathmandu<i>·</i></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== FEATURED CARS ============================== -->
+    <section class="section cars" id="cars">
+      <div class="container">
+        <header class="head">
+          <div class="head__left">
+            <p class="eyebrow reveal-up"><span class="head__idx">(01)</span> <span data-en="Our stock" data-np="हाम्रो स्टक">Our stock</span></p>
+            <h2 class="display reveal-up" data-delay="1" data-en="Featured cars" data-np="चुनिएका गाडीहरू">Featured cars</h2>
+          </div>
+          <p class="head__note reveal-up" data-delay="2" data-en="A look at what's on the lot right now. Message us for the latest arrivals and full details." data-np="अहिले लटमा भएका केही गाडी। पछिल्ला गाडी र पूर्ण विवरणका लागि सम्पर्क गर्नुहोस्।">A look at what's on the lot right now. Message us for the latest arrivals and full details.</p>
+        </header>
+
+        <div class="cars__bar">
+          <div class="filters reveal-up" id="filters" role="tablist" aria-label="Filter cars by brand">
+            <button class="chip is-active" data-filter="all" data-en="All" data-np="सबै">All</button>
+            <button class="chip" data-filter="Kia">Kia</button>
+            <button class="chip" data-filter="Maruti Suzuki">Maruti Suzuki</button>
+          </div>
+          <div class="rail__hint" aria-hidden="true"><span data-en="Drag" data-np="ड्र्याग">Drag</span><svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg></div>
+        </div>
+      </div>
+
+      <!-- full-bleed horizontal rail; the home shows a few — "View all" opens the full inventory -->
+      <div class="rail" id="carsGrid" data-limit="6"><!-- cards injected by JS --></div>
+      <noscript><p class="note container">Please enable JavaScript to view our listings, or message us on WhatsApp at +977-9841594067.</p></noscript>
+
+      <div class="container">
+        <div class="cars-cta reveal-up">
+          <a id="viewAllCars" class="btn btn--accent btn--lg" href="/cars" style="display:none">
+            <span data-en="View all" data-np="सबै हेर्नुहोस्">View all</span>&nbsp;<span data-count>0</span>&nbsp;<span data-en="cars" data-np="गाडी">cars</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg>
+          </a>
+        </div>
+        <p class="cars__more reveal-up">
+          <span data-en="Looking for something specific?" data-np="केही खास खोज्दै हुनुहुन्छ?">Looking for something specific?</span>
+          <a href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20looking%20for%20a%20specific%20car." target="_blank" rel="noopener" class="link-underline" data-en="Tell us what you need" data-np="हामीलाई भन्नुहोस्">Tell us what you need</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== SERVICES ============================== -->
+    <section class="section services dark reveal-wipe" id="services">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="container">
+        <header class="head head--center">
+          <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(02)</span> <span data-en="What we do" data-np="हाम्रा सेवा">What we do</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="Three ways we help" data-np="तीन तरिकाले सहयोग">Three ways we help</h2>
+        </header>
+
+        <ol class="svc-rows">
+          <li class="svc-row reveal-up">
+            <span class="svc-row__num">01</span>
+            <div class="svc-row__title"><b class="np" data-np-only>किन्नुहोस्</b><b data-en="Buy" data-np="Buy">Buy</b></div>
+            <p class="svc-row__desc" data-en="Browse quality used cars, inspected and ready to drive home." data-np="निरीक्षण गरिएका गुणस्तरीय गाडी छान्नुहोस् र घर लैजानुहोस्।">Browse quality used cars, inspected and ready to drive home.</p>
+            <svg class="svc-row__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg>
+          </li>
+          <li class="svc-row reveal-up">
+            <span class="svc-row__num">02</span>
+            <div class="svc-row__title"><b class="np" data-np-only>बेच्नुहोस्</b><b data-en="Sell" data-np="Sell">Sell</b></div>
+            <p class="svc-row__desc" data-en="Get the best, fair value for your car with a quick, easy process." data-np="छिटो र सजिलो प्रक्रियामा तपाईंको गाडीको उचित मूल्य पाउनुहोस्।">Get the best, fair value for your car with a quick, easy process.</p>
+            <svg class="svc-row__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg>
+          </li>
+          <li class="svc-row reveal-up">
+            <span class="svc-row__num">03</span>
+            <div class="svc-row__title"><b class="np" data-np-only>साट्नुहोस्</b><b data-en="Exchange" data-np="Exchange">Exchange</b></div>
+            <p class="svc-row__desc" data-en="Trade in your current car and upgrade to a better one. We handle the rest." data-np="आफ्नो पुरानो गाडी दिनुहोस् र राम्रोमा अपग्रेड गर्नुहोस्। बाँकी हामी हेर्छौं।">Trade in your current car and upgrade to a better one. We handle the rest.</p>
+            <svg class="svc-row__arrow" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================== WHY US ============================== -->
+    <section class="section why" id="why">
+      <div class="container why__grid">
+        <div class="why__text">
+          <p class="eyebrow reveal-up"><span class="head__idx">(03)</span> <span data-en="Why choose us" data-np="किन हामीलाई रोज्ने">Why choose us</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="Buying a car, made honest" data-np="गाडी किन्ने काम, इमानदारीका साथ">Buying a car, made honest</h2>
+          <p class="why__lead reveal-up" data-delay="2" data-en="No pressure, no games. At Shreya Auto Enterprises we keep it simple — so you drive away with confidence." data-np="कुनै दबाब छैन। श्रेया अटोमा हामी सरल राख्छौं — ताकि तपाईं विश्वासका साथ गाडी लैजानुहोस्।">No pressure, no games. At Shreya Auto Enterprises we keep it simple — so you drive away with confidence.</p>
+
+          <ul class="why__list">
+            <li class="reveal-up"><span class="why__n">01</span><div><strong data-en="Trusted used cars" data-np="भरपर्दो सेकेन्डह्यान्ड गाडी">Trusted used cars</strong><span data-en="Inspected vehicles you can rely on." data-np="भरोसा गर्न सकिने निरीक्षण गरिएका गाडी।">Inspected vehicles you can rely on.</span></div></li>
+            <li class="reveal-up"><span class="why__n">02</span><div><strong data-en="Fair, honest prices" data-np="उचित मूल्य">Fair, honest prices</strong><span data-en="Clear pricing, every single time." data-np="स्पष्ट मूल्य, हरेक पटक।">Clear pricing, every single time.</span></div></li>
+            <li class="reveal-up"><span class="why__n">03</span><div><strong data-en="Easy &amp; hassle-free" data-np="सजिलो प्रक्रिया">Easy &amp; hassle-free</strong><span data-en="A friendly team that handles the paperwork." data-np="कागजी काम सम्हाल्ने मिलनसार टोली।">A friendly team that handles the paperwork.</span></div></li>
+          </ul>
+
+          <div class="creds reveal-up">
+            <div class="cred">
+              <span class="cred__logo"><img src="assets/img/brands/hyundai.svg" width="48" height="24" loading="lazy" alt="Hyundai logo" /></span>
+              <span class="cred__txt"><em data-en="Official exchange partner" data-np="आधिकारिक एक्सचेन्ज पार्टनर">Official exchange partner</em><strong>Hyundai Nepal</strong></span>
+            </div>
+            <div class="cred">
+              <span class="cred__logo"><img src="assets/img/brands/hulas-fav.png" width="34" height="34" loading="lazy" alt="Hulas Finserv logo" /></span>
+              <span class="cred__txt"><em data-en="Easy financing via" data-np="सजिलो फाइनान्सिङ">Easy financing via</em><strong>Hulas Finserv</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <figure class="why__photo reveal-img">
+          <img src="assets/img/cars/car5-md.webp" width="720" height="960" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.replace('-md.webp','.webp')" alt="A car outside the Shreya Auto Enterprises showroom in Bishalnagar, Kathmandu" />
+          <figcaption data-en="Our showroom — Bishalnagar, Kathmandu." data-np="हाम्रो शोरूम — विशालनगर, काठमाडौँ।">Our showroom — Bishalnagar, Kathmandu.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================== REAL STORIES (humane) ============================== -->
+    <section class="section humane" id="stories">
+      <div class="container humane__grid">
+        <div class="humane__text">
+          <p class="eyebrow reveal-up"><span class="head__idx">(04)</span> <span data-en="Real stories" data-np="वास्तविक कथा">Real stories</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="Real people, real deliveries" data-np="वास्तविक मानिस, वास्तविक डेलिभरी">Real people, real deliveries</h2>
+          <p class="humane__lead reveal-up" data-delay="2" data-en="Behind every key we hand over is a neighbour, a family, a first-time buyer. Come by the showroom in Bishalnagar — sit with us, take a test drive, no pressure. We'd love to help you find yours." data-np="हामीले दिने हरेक चाबीपछि एउटा परिवार, एउटा सपना हुन्छ। विशालनगरको शोरूममा आउनुहोस् — सँगै बसौं, टेस्ट ड्राइभ गरौं, कुनै दबाब छैन। तपाईंको गाडी खोज्न हामी रमाउँछौं।">Behind every key we hand over is a neighbour, a family, a first-time buyer. Come by the showroom in Bishalnagar — sit with us, take a test drive, no pressure. We'd love to help you find yours.</p>
+          <div class="humane__links reveal-up" data-delay="3">
+            <button class="watch-btn" type="button" data-video="assets/video/shreya-promo.mp4" aria-label="Watch our promo film">
+              <span class="watch-btn__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l11-6.5z"/></svg></span>
+              <span data-en="Watch our film" data-np="हाम्रो भिडियो हेर्नुहोस्">Watch our film</span>
+            </button>
+            <a class="link-underline" href="https://www.facebook.com/profile.php?id=100057713250606" target="_blank" rel="noopener" data-en="See more on Facebook" data-np="फेसबुकमा थप हेर्नुहोस्">See more on Facebook</a>
+            <a class="link-underline" href="https://www.google.com/maps/search/?api=1&query=Shreya+Auto+Enterprises+Bishalnagar+Kathmandu" target="_blank" rel="noopener" data-en="Read our Google reviews" data-np="गुगल रिभ्यु पढ्नुहोस्">Read our Google reviews</a>
+          </div>
+        </div>
+
+        <div class="humane__stack reveal-fade">
+          <div class="stack" id="stack" tabindex="0" role="button" aria-label="Photos from our showroom — hover or tap to fan out">
+            <figure class="stack__card">
+              <img src="assets/img/cars/car1-md.webp" width="600" height="556" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.replace('-md.webp','.webp')" alt="A happy customer taking delivery of a car at Shreya Auto" />
+              <figcaption data-en="Driven home — a happy delivery" data-np="खुसीसाथ घर लगियो">Driven home — a happy delivery</figcaption>
+            </figure>
+            <figure class="stack__card">
+              <img src="assets/img/cars/car2-md.webp" width="810" height="1080" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.replace('-md.webp','.webp')" alt="Kia Sonet on the Shreya Auto lot" />
+              <figcaption data-en="On our lot — Kia Sonet" data-np="हाम्रो लटमा — Kia Sonet">On our lot — Kia Sonet</figcaption>
+            </figure>
+            <figure class="stack__card">
+              <img src="assets/img/cars/car4-md.webp" width="1240" height="1040" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.replace('-md.webp','.webp')" alt="Red Kia Seltos ready to drive at Shreya Auto" />
+              <figcaption data-en="Ready to drive — Kia Seltos" data-np="तयार — Kia Seltos">Ready to drive — Kia Seltos</figcaption>
+            </figure>
+          </div>
+          <p class="humane__hint reveal-up" data-en="Hover or tap to fan out" data-np="फैलाउन होभर वा ट्याप गर्नुहोस्">Hover or tap to fan out</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== THE PARTNERS ============================== -->
+    <section class="section team" id="team">
+      <div class="container">
+        <header class="head">
+          <div class="head__left">
+            <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="The partners" data-np="साझेदारहरू">The partners</span></p>
+            <h2 class="display reveal-up" data-delay="1" data-en="Five partners, one promise" data-np="पाँच साझेदार, एउटै वाचा">Five partners, one promise</h2>
+          </div>
+          <p class="head__note reveal-up" data-delay="2" data-en="Every partner has 15+ years in the car trade. Walk into the showroom and you deal with an owner — not a salesman." data-np="हरेक साझेदारसँग गाडी व्यापारमा १५+ वर्षको अनुभव छ। शोरूममा आउनुहोस् — तपाईंको कुरा सिधै मालिकसँग हुन्छ।">Every partner has 15+ years in the car trade. Walk into the showroom and you deal with an owner — not a salesman.</p>
+        </header>
+
+        <div class="team__grid" id="teamGrid"><!-- partners injected by JS from the admin panel (data/partners.json) --></div>
+      </div>
+    </section>
+
+    <!-- ============================== STATEMENT (scroll text-reveal) ============================== -->
+    <section class="statement dark reveal-wipe" aria-label="Our promise">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="container">
+        <p class="statement__text split-reveal" data-en="Buy. Sell. Exchange. The honest way to your next car in Kathmandu." data-np="किन्नुहोस्। बेच्नुहोस्। साट्नुहोस्। काठमाडौँमा तपाईंको अर्को गाडीको इमानदार बाटो।" data-accent-en="honest" data-accent-np="इमानदार">Buy. Sell. Exchange. The honest way to your next car in Kathmandu.</p>
+
+        <!-- stats — static by design (no animation) -->
+        <div class="stats" id="stats">
+          <div class="stat">
+            <span class="odo">1800+</span>
+            <span class="stat__label" data-en="Cars sold — 1800+ happy families" data-np="बेचिएका गाडी — १८००+ खुसी परिवार">Cars sold — 1800+ happy families</span>
+          </div>
+          <div class="stat">
+            <span class="odo">15+</span>
+            <span class="stat__label" data-en="Years of experience, every partner" data-np="हरेक साझेदारको अनुभव (वर्ष)">Years of experience, every partner</span>
+          </div>
+          <div class="stat">
+            <span class="odo">7</span>
+            <span class="stat__label" data-en="Days a week — 10 AM to 6 PM" data-np="हप्ताका दिन — बिहान १० देखि साँझ ६">Days a week — 10 AM to 6 PM</span>
+          </div>
+          <div class="stat">
+            <span class="odo">100%</span>
+            <span class="stat__label" data-en="Honest pricing — our promise" data-np="इमानदार मूल्य — हाम्रो वाचा">Honest pricing — our promise</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== CONTACT ============================== -->
+    <section class="section contact" id="contact">
+      <div class="container contact__grid">
+        <div class="contact__left">
+          <p class="eyebrow reveal-up"><span class="head__idx">(06)</span> <span data-en="Get in touch" data-np="सम्पर्क गर्नुहोस्">Get in touch</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="Contact us today" data-np="आजै सम्पर्क गर्नुहोस्">Contact us today</h2>
+          <p class="contact__lead reveal-up" data-delay="2" data-en="Visit the showroom, call, or send a quick inquiry — we'll get right back to you." data-np="शोरूममा आउनुहोस्, फोन गर्नुहोस्, वा छोटो सन्देश पठाउनुहोस् — हामी छिट्टै जवाफ दिन्छौं।">Visit the showroom, call, or send a quick enquiry — we'll get right back to you.</p>
+
+          <ul class="contact__list reveal-up" data-delay="3">
+            <li>
+              <span class="contact__label" data-en="Visit" data-np="भेट्नुहोस्">Visit</span>
+              <a class="contact__big" href="https://www.google.com/maps/search/?api=1&query=Shreya+Auto+Enterprises+Bishalnagar+Kathmandu" target="_blank" rel="noopener" data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</a>
+            </li>
+            <li>
+              <span class="contact__label" data-en="Call / WhatsApp" data-np="कल / व्हाट्सएप">Call / WhatsApp</span>
+              <span class="contact__people">
+                <span class="contact__person">
+                  <a class="contact__num" href="tel:+9779851042665"><b>Shambhu Shahi</b>+977-9851042665</a>
+                  <a class="contact__act contact__act--call" href="tel:+9779851042665" aria-label="Call Shambhu Shahi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg></a>
+                  <a class="contact__act contact__act--wa" href="https://wa.me/9779851042665" target="_blank" rel="noopener" aria-label="WhatsApp Shambhu Shahi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+                </span>
+                <span class="contact__person">
+                  <a class="contact__num" href="tel:+9779841594067"><b>Sachit Kuinkel</b>+977-9841594067</a>
+                  <a class="contact__act contact__act--call" href="tel:+9779841594067" aria-label="Call Sachit Kuinkel"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg></a>
+                  <a class="contact__act contact__act--wa" href="https://wa.me/9779841594067" target="_blank" rel="noopener" aria-label="WhatsApp Sachit Kuinkel"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+                </span>
+                <span class="contact__person">
+                  <a class="contact__num" href="tel:+9779841709239"><b>Pradeep Rana</b>+977-9841709239</a>
+                  <a class="contact__act contact__act--call" href="tel:+9779841709239" aria-label="Call Pradeep Rana"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg></a>
+                  <a class="contact__act contact__act--wa" href="https://wa.me/9779841709239" target="_blank" rel="noopener" aria-label="WhatsApp Pradeep Rana"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+                </span>
+                <span class="contact__person">
+                  <a class="contact__num" href="tel:+9779841017354"><b>Somraj Dangi</b>+977-9841017354</a>
+                  <a class="contact__act contact__act--call" href="tel:+9779841017354" aria-label="Call Somraj Dangi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg></a>
+                  <a class="contact__act contact__act--wa" href="https://wa.me/9779841017354" target="_blank" rel="noopener" aria-label="WhatsApp Somraj Dangi"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+                </span>
+                <span class="contact__person">
+                  <a class="contact__num" href="tel:+9779851004638"><b>Dhruba Pandey</b>+977-9851004638</a>
+                  <a class="contact__act contact__act--call" href="tel:+9779851004638" aria-label="Call Dhruba Pandey"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg></a>
+                  <a class="contact__act contact__act--wa" href="https://wa.me/9779851004638" target="_blank" rel="noopener" aria-label="WhatsApp Dhruba Pandey"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+                </span>
+              </span>
+            </li>
+            <li>
+              <span class="contact__label" data-en="Landline &amp; email" data-np="ल्यान्डलाइन र इमेल">Landline &amp; email</span>
+              <a href="tel:+97714541713">01-4541713</a> ·
+              <a href="mailto:shreyaauto.enterprises@gmail.com">shreyaauto.enterprises@gmail.com</a>
+            </li>
+            <li>
+              <span class="contact__label" data-en="Opening hours" data-np="खुल्ने समय">Opening hours</span>
+              <span class="contact__big" data-en="10 AM – 6 PM · 7 days a week" data-np="बिहान १० – साँझ ६ · हप्ताका ७ दिन">10 AM – 6 PM · 7 days a week</span>
+            </li>
+          </ul>
+
+          <div class="contact__socials reveal-up">
+            <a class="social" href="https://www.facebook.com/profile.php?id=100057713250606" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6c-.8-.1-1.6-.15-2.4-.15-2.4 0-4.05 1.47-4.05 4.16V9.9H7.8V13h2.45v8z"/></svg></a>
+            <a class="social" href="https://www.tiktok.com/@ShreyaAutoSachin" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.5 3c.3 2.1 1.5 3.4 3.5 3.6v2.5c-1.2.1-2.3-.2-3.5-.8v5.6c0 3.4-2.5 5.5-5.4 5.5-2.7 0-4.8-2-4.8-4.7 0-2.9 2.3-4.8 5.2-4.6v2.6c-.4-.1-.8-.2-1.2-.1-1.1.1-1.8.9-1.7 2 .1 1 .9 1.7 1.9 1.6 1.1-.1 1.7-.9 1.7-2.1V3z"/></svg></a>
+            <a class="social" href="https://wa.me/9779841594067" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></a>
+          </div>
+
+          <div class="contact__map reveal-up" id="mapHolder" data-map="https://www.google.com/maps?q=Shreya+Auto+Enterprises,+Bishalnagar,+Kathmandu&output=embed">
+            <button class="map-load" type="button" id="mapLoad" aria-label="Load location map">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
+              <span data-en="Bishalnagar, Kathmandu — tap to view map" data-np="विशालनगर, काठमाडौँ — नक्सा हेर्न थिच्नुहोस्">Bishalnagar, Kathmandu — tap to view map</span>
+            </button>
+          </div>
+        </div>
+
+        <form class="contact__form reveal-up" data-delay="2" id="enquiryForm" action="/inquiry" method="POST" novalidate>
+          <h3 data-en="Send an inquiry" data-np="सोधपुछ पठाउनुहोस्">Send an inquiry</h3>
+          <div class="field">
+            <input id="f-name" name="name" type="text" autocomplete="name" required placeholder=" " />
+            <label for="f-name" data-en="Your name" data-np="तपाईंको नाम">Your name</label>
+          </div>
+          <div class="field">
+            <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder=" " />
+            <label for="f-phone" data-en="Phone number" data-np="फोन नम्बर">Phone number</label>
+          </div>
+          <div class="field">
+            <input id="f-car" name="car" type="text" placeholder=" " />
+            <label for="f-car" data-en="Car you're interested in" data-np="कुन गाडीमा रुचि">Car you're interested in</label>
+          </div>
+          <div class="field">
+            <textarea id="f-msg" name="message" rows="3" placeholder=" "></textarea>
+            <label for="f-msg" data-en="Message" data-np="सन्देश">Message</label>
+          </div>
+          <button class="btn btn--accent btn--block" type="submit"><span data-en="Send inquiry" data-np="पठाउनुहोस्">Send inquiry</span></button>
+          <button class="btn btn--whatsapp btn--block" type="button" id="formWhatsapp">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+            <span data-en="Or send on WhatsApp" data-np="वा व्हाट्सएपमा">Or send on WhatsApp</span>
+          </button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="footer dark">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="container">
+      <div class="footer__cta">
+        <h2 class="display footer__big split-words" data-accent-en="car" data-accent-np="गाडी" data-en="Find your next car." data-np="तपाईंको अर्को गाडी।">Find your next car.</h2>
+        <a class="btn btn--accent btn--lg reveal-up" data-delay="3" href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20interested%20in%20a%20car." target="_blank" rel="noopener"><span data-en="Message us" data-np="सन्देश पठाउनुहोस्">Message us</span></a>
+      </div>
+
+      <div class="footer__grid">
+        <div class="footer__brand reveal-up">
+          <div class="footer__logo">
+            <svg class="brand__mark" viewBox="0 0 64 34" aria-hidden="true">
+              <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 15h13M0 20h9M5 26h7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg>
+            <span class="footer__name">Shreya Auto <em>Enterprises</em></span>
+          </div>
+          <p data-en="Trusted used cars in Kathmandu. Buy · Sell · Exchange." data-np="काठमाडौँमा भरपर्दो सेकेन्डह्यान्ड गाडी।">Trusted used cars in Kathmandu. Buy · Sell · Exchange.</p>
+        </div>
+        <nav class="footer__links reveal-up" data-delay="1" aria-label="Footer">
+          <a href="#cars" data-en="Cars" data-np="गाडीहरू">Cars</a>
+          <a href="#services" data-en="Services" data-np="सेवा">Services</a>
+          <a href="#why" data-en="Why us" data-np="किन हामी">Why us</a>
+          <a href="#contact" data-en="Contact" data-np="सम्पर्क">Contact</a>
+        </nav>
+        <div class="footer__contact reveal-up" data-delay="2">
+          <a href="tel:+9779851042665">+977-9851042665</a>
+          <a href="tel:+9779841594067">+977-9841594067</a>
+          <a href="mailto:shreyaauto.enterprises@gmail.com">shreyaauto.enterprises@gmail.com</a>
+          <span data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</span>
+          <span data-en="Open 10 AM – 6 PM · 7 days" data-np="बिहान १०–साँझ ६ · हप्ताका ७ दिन">Open 10 AM – 6 PM · 7 days</span>
+        </div>
+      </div>
+      <div class="footer__bar reveal-up"><span>© <span id="year">2026</span> Shreya Auto Enterprises. <span data-en="All rights reserved." data-np="सर्वाधिकार सुरक्षित।">All rights reserved.</span></span></div>
+    </div>
+  </footer>
+
+  <!-- desktop floating WhatsApp -->
+  <a class="fab" href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20interested%20in%20a%20car." target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02ZM12.04 20.15a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+  </a>
+
+  <!-- mobile sticky action bar (thumb zone) -->
+  <div class="mobilebar" aria-label="Quick actions">
+    <a class="mobilebar__btn" href="tel:+9779851042665"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.25 1Z"/></svg><span data-en="Call" data-np="कल">Call</span></a>
+    <a class="mobilebar__btn mobilebar__btn--wa" href="https://wa.me/9779841594067?text=Hello%20Shreya%20Auto%2C%20I%27m%20interested%20in%20a%20car." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg><span data-en="WhatsApp" data-np="व्हाट्सएप">WhatsApp</span></a>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox__close" id="lightboxClose" type="button" aria-label="Close">&times;</button>
+    <img id="lightboxImg" src="" alt="" />
+    <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
+  </div>
+
+  <!-- The server injects the live car + partner lists (from data/*.json) into the JSON
+       data island below; the small script then reads it onto window.SHREYA_*. Keeping the
+       Jinja out of an executable <script> stops editors mis-linting it as broken JS. -->
+  <div id="shreya-data" hidden data-payload='{{ {"cars": cars, "partners": partners} | tojson }}'></div>
+  <script>
+    try {
+      var _shreya = JSON.parse(document.getElementById("shreya-data").dataset.payload);
+      window.SHREYA_CARS = _shreya.cars;
+      window.SHREYA_PARTNERS = _shreya.partners;
+    } catch (e) { console.error("Could not read injected showroom data:", e); }
+  </script>
+  <script src="assets/js/main.js?v=34" defer></script>
+</body>
+</html>

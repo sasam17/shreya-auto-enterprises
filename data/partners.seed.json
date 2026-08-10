@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Shambhu Shahi",
+    "role": "Partner",
+    "img": "assets/img/team/team-1.webp",
+    "order": 1
+  },
+  {
+    "id": 2,
+    "name": "Pradeep Rana",
+    "role": "Partner",
+    "img": "assets/img/team/team-2.webp",
+    "order": 2
+  },
+  {
+    "id": 3,
+    "name": "Sachit Kuinkel",
+    "role": "Partner",
+    "img": "assets/img/team/team-3.webp",
+    "order": 3
+  },
+  {
+    "id": 4,
+    "name": "Somraj Dangi",
+    "role": "Partner",
+    "img": "assets/img/team/team-4.webp",
+    "order": 4
+  },
+  {
+    "id": 5,
+    "name": "Dhruba Pandey",
+    "role": "Partner",
+    "img": "assets/img/team/partner-5.webp",
+    "order": 5
+  }
+]

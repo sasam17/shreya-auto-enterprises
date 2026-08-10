@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin — Shreya Auto Enterprises</title>
+  <link rel="icon" href="assets/img/logo.jpg" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{ --navy:#0b3a77; --dark:#06182e; --cyan:#37b2ea; --mist:#dceaf7; --ink:#0a2540; }
+    *{ box-sizing:border-box; margin:0; }
+    body{ font-family:"Poppins",system-ui,sans-serif; background:#eef5fc; color:var(--ink); line-height:1.5; }
+    .bar{ background:var(--dark); color:#fff; padding:16px 22px; display:flex; align-items:center; justify-content:space-between; }
+    .bar h1{ font-family:"Space Grotesk",sans-serif; font-size:18px; }
+    .bar h1 b{ color:var(--cyan); }
+    .bar a{ color:var(--cyan); text-decoration:none; font-size:14px; font-weight:600; }
+    .wrap{ max-width:1000px; margin:0 auto; padding:26px 22px 60px; }
+    .flash{ background:#d9f0e2; color:#176c43; border:1px solid #9fd9bb; padding:10px 14px; border-radius:10px; margin-bottom:18px; font-weight:600; }
+    h2{ font-family:"Space Grotesk",sans-serif; margin:26px 0 14px; }
+    .card{ background:#fff; border:1px solid var(--mist); border-radius:16px; padding:24px; box-shadow:0 14px 34px rgba(11,58,119,.08); }
+    label{ display:block; font-size:13px; font-weight:600; color:var(--navy); margin:14px 0 5px; }
+    input, select{ width:100%; padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:#f6fafe; }
+    input:focus, select:focus{ outline:none; border-color:var(--cyan); background:#fff; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
+    .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
+    .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
+    .hint{ font-size:12.5px; color:rgba(10,37,64,.6); margin-top:4px; }
+    table{ width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 14px 34px rgba(11,58,119,.08); }
+    th,td{ text-align:left; padding:13px 16px; border-bottom:1px solid var(--mist); font-size:14px; vertical-align:middle; }
+    th{ background:#f3f8fd; font-family:"Space Grotesk",sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); }
+    td img{ width:64px; height:48px; object-fit:cover; border-radius:8px; }
+    .btn--save{ background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; padding:9px 18px; font-size:13px; margin:0; }
+    .prow{ display:grid; grid-template-columns:64px 1.6fr 1.3fr .7fr auto; gap:10px 14px; align-items:end; background:#fff; border:1px solid var(--mist); border-radius:14px; padding:14px 16px; margin-bottom:12px; box-shadow:0 10px 26px rgba(11,58,119,.06); }
+    .prow img{ width:60px; height:60px; object-fit:cover; border-radius:10px; align-self:center; }
+    .prow .f{ min-width:0; }
+    .prow label{ margin:0 0 4px; font-size:11.5px; }
+    .prow input, .prow select{ padding:9px 11px; }
+    .prow .btns{ display:flex; gap:8px; align-items:end; }
+    @media(max-width:760px){ .prow{ grid-template-columns:60px 1fr 1fr; } .prow .btns{ grid-column:1/-1; } }
+    .login{ max-width:380px; margin:14vh auto 0; }
+    .login .btn{ width:100%; justify-content:center; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <h1>Shreya<b>Auto</b> — Admin</h1>
+    {% if logged_in %}<a href="{{ url_for('admin_logout') }}">Log out</a>
+    {% else %}<a href="{{ url_for('home') }}">View site →</a>{% endif %}
+  </div>
+
+  <div class="wrap">
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endwith %}
+
+    {% if not logged_in %}
+      <!-- ───── LOGIN ───── -->
+      <form class="card login" method="POST" action="{{ url_for('admin_login') }}">
+        <h2 style="margin-top:0">Admin login</h2>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autofocus required />
+        <button class="btn" type="submit">Log in</button>
+      </form>
+    {% else %}
+      <!-- ───── INQUIRIES (newest first) ───── -->
+      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }})
+        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0">
+          {% if mail_on %}· also emailed to you{% else %}· saved here (email is off — see DEPLOY.md to turn on){% endif %}
+        </span>
+      </h2>
+      {% if inquiries %}
+      <table>
+        <tr><th>When</th><th>Name</th><th>Phone</th><th>Car</th><th>Message</th><th></th></tr>
+        {% for i, q in inquiries %}
+        <tr>
+          <td style="white-space:nowrap">{{ q.time }}</td>
+          <td><strong>{{ q.name }}</strong></td>
+          <td style="white-space:nowrap">
+            <a href="tel:{{ q.phone }}">{{ q.phone }}</a>{% if q.wa %} · <a href="https://wa.me/{{ q.wa }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
+          </td>
+          <td>{{ q.car }}</td>
+          <td>{{ q.message }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_inquiry_delete') }}" onsubmit="return confirm('Remove this inquiry?')">
+              <input type="hidden" name="index" value="{{ i }}" />
+              <button class="btn btn--danger" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <div class="hint">No inquiries yet. When a customer submits the contact form on the site, it shows up here.</div>
+      {% endif %}
+
+      <!-- ───── ADD A CAR ───── -->
+      <h2>Add a car</h2>
+      <form class="card" method="POST" action="{{ url_for('admin_add') }}" enctype="multipart/form-data">
+        <div class="grid2">
+          <div><label>Brand</label><input name="brand" placeholder="Kia" required /></div>
+          <div><label>Model</label><input name="name" placeholder="Sonet" required /></div>
+          <div><label>Year</label><input name="year" placeholder="2021" /></div>
+          <div><label>Price</label><input name="price" placeholder="Rs. 35,00,000  (leave blank = Price on request)" /></div>
+        </div>
+        <label>Specs (separate with commas)</label>
+        <input name="specs" placeholder="45,000 km, Petrol, 1500 cc, Automatic" />
+        <div class="grid2">
+          <div><label>Badge</label><input name="badge" placeholder="In stock" /></div>
+          <div><label>Image style</label>
+            <select name="fit">
+              <option value="cover">Photo (fills the card)</option>
+              <option value="contain">Poster / spec-card (shown whole)</option>
+            </select>
+          </div>
+        </div>
+        <label>Photo</label>
+        <input name="photo" type="file" accept="image/*" />
+        <div class="hint">Uploads are shrunk &amp; converted to fast WebP automatically.</div>
+        <button class="btn" type="submit">Add car</button>
+      </form>
+
+      <!-- ───── CURRENT CARS ───── -->
+      <h2>Current cars ({{ cars|length }})</h2>
+      <table>
+        <tr><th>Photo</th><th>Car</th><th>Price</th><th>Badge</th><th></th></tr>
+        {% for car in cars %}
+        <tr>
+          <td><img src="{{ car.img }}" alt="" onerror="this.style.opacity=.2" /></td>
+          <td><strong>{{ car.brand }} {{ car.name }}</strong> {{ car.year }}</td>
+          <td>{{ car.price or "On request" }}</td>
+          <td>{{ car.badge }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_delete') }}" onsubmit="return confirm('Remove this car?')">
+              <input type="hidden" name="id" value="{{ car.id }}" />
+              <button class="btn btn--danger" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <!-- ───── ADD A PARTNER ───── -->
+      <h2>Add a partner</h2>
+      <form class="card" method="POST" action="{{ url_for('admin_partner_add') }}" enctype="multipart/form-data">
+        <div class="grid2">
+          <div><label>Name</label><input name="name" placeholder="Dhruba Pandey" required /></div>
+          <div><label>Role</label><input name="role" placeholder="Partner" value="Partner" /></div>
+          <div><label>Order (lower shows first)</label><input name="order" type="number" min="1" placeholder="leave blank = add to the end" /></div>
+        </div>
+        <label>Photo</label>
+        <input name="photo" type="file" accept="image/*" />
+        <div class="hint">A portrait photo works best — it's auto-converted to a fast WebP. <b>Order</b> sets the position — the partner with the lowest order is the lead, shown larger on top.</div>
+        <button class="btn" type="submit">Add partner</button>
+      </form>
+
+      <!-- ───── CURRENT PARTNERS ───── -->
+      <h2>Current partners ({{ partners|length }})</h2>
+      <div class="hint" style="margin-bottom:12px">Change a row's <b>order</b>, then click <b>Save</b> on that row. The partner with the lowest order is the lead, shown larger on top.</div>
+      {% for p in partners %}
+      <form class="prow" method="POST" action="{{ url_for('admin_partner_update') }}">
+        <input type="hidden" name="id" value="{{ p.id }}" />
+        <img src="{{ p.img }}" alt="" onerror="this.style.opacity=.2" />
+        <div class="f"><label>Name</label><input name="name" value="{{ p.name }}" required /></div>
+        <div class="f"><label>Role</label><input name="role" value="{{ p.role }}" /></div>
+        <div class="f"><label>Order</label><input name="order" type="number" min="1" value="{{ p.order if p.order is not none else loop.index }}" /></div>
+        <div class="btns">
+          <button class="btn btn--save" type="submit">Save</button>
+          <button class="btn btn--danger" type="submit" formaction="{{ url_for('admin_partner_delete') }}" formnovalidate onclick="return confirm('Remove this partner?')">Remove</button>
+        </div>
+      </form>
+      {% endfor %}
+    {% endif %}
+  </div>
+</body>
+</html>
