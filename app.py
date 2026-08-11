@@ -585,6 +585,33 @@ def admin_add():
     return redirect(url_for("admin"))
 
 
+@app.route(f"/{config.ADMIN_PATH}/edit", methods=["POST"])
+@admin_required
+def admin_edit():
+    """Update an existing car in place (all fields; photo optional). Keeps the same
+    id and, if no new photo is uploaded, keeps the current photo."""
+    car_id = int(request.form.get("id", 0))
+    cars = load_cars()
+    for c in cars:
+        if c.get("id") == car_id:
+            c["brand"] = request.form.get("brand", "").strip() or c.get("brand", "")
+            c["name"]  = request.form.get("name", "").strip() or c.get("name", "")
+            c["year"]  = request.form.get("year", "").strip()
+            c["price"] = request.form.get("price", "").strip()
+            c["badge"] = request.form.get("badge", "").strip() or "In stock"
+            c["fit"]   = "contain" if request.form.get("fit") == "contain" else "cover"
+            c["specs"] = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
+            photo = request.files.get("photo")
+            if photo and photo.filename:
+                card_path, full_path = process_upload(photo, f"upload-{car_id}")
+                if card_path:
+                    c["img"], c["full"] = card_path, full_path
+            break
+    save_cars(cars)
+    flash("Car updated.")
+    return redirect(url_for("admin"))
+
+
 @app.route(f"/{config.ADMIN_PATH}/delete", methods=["POST"])
 @admin_required
 def admin_delete():

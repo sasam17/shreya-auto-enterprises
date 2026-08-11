@@ -39,6 +39,18 @@
     @media(max-width:760px){ .prow{ grid-template-columns:60px 1fr 1fr; } .prow .btns{ grid-column:1/-1; } }
     .login{ max-width:380px; margin:14vh auto 0; }
     .login .btn{ width:100%; justify-content:center; }
+    /* editable car rows */
+    .carrow{ display:flex; align-items:center; gap:14px; background:#fff; border:1px solid var(--mist); border-radius:14px; padding:12px 16px; margin-bottom:12px; box-shadow:0 10px 26px rgba(11,58,119,.06); flex-wrap:wrap; }
+    .carrow__img{ width:70px; height:52px; object-fit:cover; border-radius:9px; flex:0 0 auto; }
+    .carrow__info{ flex:1; min-width:180px; }
+    .carrow__actions{ display:flex; align-items:flex-start; gap:8px; }
+    .btn--edit{ margin:0; padding:9px 20px; font-size:13px; cursor:pointer; list-style:none; }
+    .btn--edit::-webkit-details-marker{ display:none; }
+    .editbox{ position:relative; }
+    .editbox[open] > .btn--edit{ background:var(--dark); color:#fff; }
+    .editcard{ position:absolute; z-index:5; right:0; top:calc(100% + 8px); width:min(560px,86vw); }
+    .editcard .btn{ margin-top:16px; }
+    @media(max-width:760px){ .carrow__actions{ width:100%; } .editcard{ position:static; width:100%; margin-top:10px; } }
   </style>
 </head>
 <body>
@@ -160,25 +172,50 @@
         <button class="btn" type="submit">Add car</button>
       </form>
 
-      <!-- ───── CURRENT CARS ───── -->
+      <!-- ───── CURRENT CARS (edit or remove) ───── -->
       <h2>Current cars ({{ cars|length }})</h2>
-      <table>
-        <tr><th>Photo</th><th>Car</th><th>Price</th><th>Badge</th><th></th></tr>
-        {% for car in cars %}
-        <tr>
-          <td><img src="{{ car.img }}" alt="" onerror="this.style.opacity=.2" /></td>
-          <td><strong>{{ car.brand }} {{ car.name }}</strong> {{ car.year }}</td>
-          <td>{{ car.price or "On request" }}</td>
-          <td>{{ car.badge }}</td>
-          <td>
-            <form method="POST" action="{{ url_for('admin_delete') }}" onsubmit="return confirm('Remove this car?')">
+      <div class="hint" style="margin-bottom:12px">Click <b>Edit</b> on any car to change its details or replace the photo — changes go live instantly. Set the badge to <b>Sold</b> (or Remove it) when a car sells.</div>
+      {% for car in cars %}
+      <div class="carrow">
+        <img class="carrow__img" src="{{ car.img }}" alt="" onerror="this.style.opacity=.2" />
+        <div class="carrow__info">
+          <strong>{{ car.brand }} {{ car.name }}</strong> <span class="hint" style="display:inline">{{ car.year }}</span>
+          <div class="hint">{{ car.price or "Price on request" }} · {{ car.badge }}{% if car.specs %} · {{ car.specs|join(", ") }}{% endif %}</div>
+        </div>
+        <div class="carrow__actions">
+          <details class="editbox">
+            <summary class="btn btn--edit">Edit</summary>
+            <form class="card editcard" method="POST" action="{{ url_for('admin_edit') }}" enctype="multipart/form-data">
               <input type="hidden" name="id" value="{{ car.id }}" />
-              <button class="btn btn--danger" type="submit">Remove</button>
+              <div class="grid2">
+                <div><label>Brand</label><input name="brand" value="{{ car.brand }}" /></div>
+                <div><label>Model</label><input name="name" value="{{ car.name }}" /></div>
+                <div><label>Year</label><input name="year" value="{{ car.year }}" /></div>
+                <div><label>Price</label><input name="price" value="{{ car.price }}" placeholder="blank = Price on request" /></div>
+              </div>
+              <label>Specs (separate with commas)</label>
+              <input name="specs" value="{{ car.specs|join(', ') }}" />
+              <div class="grid2">
+                <div><label>Badge</label><input name="badge" value="{{ car.badge }}" placeholder="In stock / Sold / Featured" /></div>
+                <div><label>Image style</label>
+                  <select name="fit">
+                    <option value="cover"{% if car.fit != 'contain' %} selected{% endif %}>Photo (fills the card)</option>
+                    <option value="contain"{% if car.fit == 'contain' %} selected{% endif %}>Poster / spec-card (shown whole)</option>
+                  </select>
+                </div>
+              </div>
+              <label>Replace photo (optional — leave empty to keep the current one)</label>
+              <input name="photo" type="file" accept="image/*" />
+              <button class="btn" type="submit">Save changes</button>
             </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
+          </details>
+          <form method="POST" action="{{ url_for('admin_delete') }}" onsubmit="return confirm('Remove this car?')">
+            <input type="hidden" name="id" value="{{ car.id }}" />
+            <button class="btn btn--danger" type="submit">Remove</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
 
       <!-- ───── ADD A PARTNER ───── -->
       <h2>Add a partner</h2>
