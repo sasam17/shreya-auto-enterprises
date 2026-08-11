@@ -1,98 +1,301 @@
 [
   {
     "id": 1,
-    "brand": "Maruti Suzuki",
-    "name": "Brezza",
-    "year": "2021",
-    "img": "assets/img/cars/car7-md.webp",
-    "full": "assets/img/cars/car7.webp",
-    "fit": "contain",
-    "price": "Rs. 37,50,000",
-    "badge": "Featured",
-    "specs": ["53,000 km", "Petrol", "1500 cc"]
+    "brand": "Nissan",
+    "name": "Sunny",
+    "year": "2014",
+    "img": "assets/img/cars/veh-1-md.webp",
+    "full": "assets/img/cars/veh-1.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Light Grey"
+    ]
   },
   {
     "id": 2,
-    "brand": "Kia",
-    "name": "Sportage",
+    "brand": "Mahindra",
+    "name": "e2o",
     "year": "2019",
-    "img": "assets/img/cars/car8-md.webp",
-    "full": "assets/img/cars/car8.webp",
-    "fit": "contain",
-    "price": "Rs. 50,00,000",
-    "badge": "Automatic",
-    "specs": ["34,325 km", "Petrol", "2000 cc", "Automatic"]
+    "img": "assets/img/cars/veh-2-md.webp",
+    "full": "assets/img/cars/veh-2.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Solid White",
+      "Electric"
+    ]
   },
   {
     "id": 3,
-    "brand": "Kia",
-    "name": "Sonet",
-    "year": "2021",
-    "img": "assets/img/cars/car2-md.webp",
-    "full": "assets/img/cars/car2.webp",
+    "brand": "Ford",
+    "name": "Figo",
+    "year": "2013",
+    "img": "assets/img/cars/veh-3-md.webp",
+    "full": "assets/img/cars/veh-3.webp",
     "fit": "cover",
-    "price": "Rs. 38,00,000",
+    "price": "",
     "badge": "In stock",
-    "specs": ["28,000 km", "Petrol", "1200 cc", "Sunroof"]
+    "specs": [
+      "Dark Silver"
+    ]
   },
   {
     "id": 4,
-    "brand": "Kia",
-    "name": "Seltos",
-    "year": "2020",
-    "img": "assets/img/cars/car4-md.webp",
-    "full": "assets/img/cars/car4.webp",
+    "brand": "Maruti Suzuki",
+    "name": "Swift ZXi",
+    "year": "2008",
+    "img": "assets/img/cars/veh-4-md.webp",
+    "full": "assets/img/cars/veh-4.webp",
     "fit": "cover",
-    "price": "Rs. 46,50,000",
+    "price": "",
     "badge": "In stock",
-    "specs": ["41,000 km", "Petrol", "1500 cc", "Automatic"]
+    "specs": [
+      "Dark Grey"
+    ]
   },
   {
     "id": 5,
     "brand": "Kia",
-    "name": "Sonet",
-    "year": "2020",
-    "img": "assets/img/cars/car3-md.webp",
-    "full": "assets/img/cars/car3.webp",
+    "name": "Sportage",
+    "year": "2008",
+    "img": "assets/img/cars/veh-5-md.webp",
+    "full": "assets/img/cars/veh-5.webp",
     "fit": "cover",
-    "price": "Rs. 34,00,000",
+    "price": "",
     "badge": "In stock",
-    "specs": ["52,000 km", "Petrol", "1000 cc", "Turbo"]
+    "specs": [
+      "Champagne Gold",
+      "Automatic"
+    ]
   },
   {
     "id": 6,
-    "brand": "Kia",
-    "name": "Seltos",
-    "year": "2019",
-    "img": "assets/img/cars/car5-md.webp",
-    "full": "assets/img/cars/car5.webp",
+    "brand": "Tata",
+    "name": "Nexon Diesel XM",
+    "year": "2018",
+    "img": "assets/img/cars/veh-6-md.webp",
+    "full": "assets/img/cars/veh-6.webp",
     "fit": "cover",
-    "price": "Rs. 42,00,000",
+    "price": "",
     "badge": "In stock",
-    "specs": ["60,000 km", "Petrol", "1500 cc"]
+    "specs": [
+      "Vermont Red",
+      "Diesel"
+    ]
   },
   {
     "id": 7,
-    "brand": "Kia",
-    "name": "Sonet",
-    "year": "2022",
-    "img": "assets/img/cars/car1-md.webp",
-    "full": "assets/img/cars/car1.webp",
+    "brand": "Volkswagen",
+    "name": "Polo 1.6",
+    "year": "2015",
+    "img": "assets/img/cars/veh-7-md.webp",
+    "full": "assets/img/cars/veh-7.webp",
     "fit": "cover",
-    "price": "Rs. 41,00,000",
-    "badge": "Featured",
-    "specs": ["18,000 km", "Petrol", "1200 cc", "Single owner"]
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Reflex Silver"
+    ]
   },
   {
     "id": 8,
+    "brand": "Renault",
+    "name": "Duster",
+    "year": "2016",
+    "img": "assets/img/cars/veh-8-md.webp",
+    "full": "assets/img/cars/veh-8.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Bronze",
+      "Petrol"
+    ]
+  },
+  {
+    "id": 9,
     "brand": "Kia",
     "name": "Seltos",
-    "year": "2021",
-    "img": "assets/img/cars/car6-md.webp",
-    "full": "assets/img/cars/car6.webp",
+    "year": "2019",
+    "img": "assets/img/cars/veh-9-md.webp",
+    "full": "assets/img/cars/veh-9.webp",
     "fit": "cover",
-    "price": "Rs. 48,00,000",
+    "price": "",
     "badge": "In stock",
-    "specs": ["33,000 km", "Petrol", "1500 cc", "Automatic"]
+    "specs": [
+      "Intense Red"
+    ]
+  },
+  {
+    "id": 10,
+    "brand": "Hyundai",
+    "name": "Santro",
+    "year": "2008",
+    "img": "assets/img/cars/veh-10-md.webp",
+    "full": "assets/img/cars/veh-10.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Silver"
+    ]
+  },
+  {
+    "id": 11,
+    "brand": "Hyundai",
+    "name": "Getz",
+    "year": "2008",
+    "img": "assets/img/cars/veh-11-md.webp",
+    "full": "assets/img/cars/veh-11.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Midnight Grey"
+    ]
+  },
+  {
+    "id": 12,
+    "brand": "Hyundai",
+    "name": "Grand i10 Nios",
+    "year": "2020",
+    "img": "assets/img/cars/veh-12-md.webp",
+    "full": "assets/img/cars/veh-12.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Typhoon Silver"
+    ]
+  },
+  {
+    "id": 13,
+    "brand": "Hyundai",
+    "name": "Grand i10 Sportz",
+    "year": "2019",
+    "img": "assets/img/cars/veh-13-md.webp",
+    "full": "assets/img/cars/veh-13.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Fiery Red"
+    ]
+  },
+  {
+    "id": 14,
+    "brand": "Volkswagen",
+    "name": "Polo Trendline",
+    "year": "2019",
+    "img": "assets/img/cars/veh-14-md.webp",
+    "full": "assets/img/cars/veh-14.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Reflex Silver"
+    ]
+  },
+  {
+    "id": 15,
+    "brand": "Kia",
+    "name": "Picanto",
+    "year": "2011",
+    "img": "assets/img/cars/veh-15-md.webp",
+    "full": "assets/img/cars/veh-15.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Light Silver"
+    ]
+  },
+  {
+    "id": 16,
+    "brand": "Hyundai",
+    "name": "i10 Magna",
+    "year": "2012",
+    "img": "assets/img/cars/veh-16-md.webp",
+    "full": "assets/img/cars/veh-16.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Silky Silver"
+    ]
+  },
+  {
+    "id": 17,
+    "brand": "Datsun",
+    "name": "Redi-GO",
+    "year": "2017",
+    "img": "assets/img/cars/veh-17-md.webp",
+    "full": "assets/img/cars/veh-17.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Lime Green"
+    ]
+  },
+  {
+    "id": 18,
+    "brand": "Hyundai",
+    "name": "i20 Sportz",
+    "year": "2013",
+    "img": "assets/img/cars/veh-18-md.webp",
+    "full": "assets/img/cars/veh-18.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Ember Grey"
+    ]
+  },
+  {
+    "id": 19,
+    "brand": "Hyundai",
+    "name": "Santro Sportz",
+    "year": "2019",
+    "img": "assets/img/cars/veh-19-md.webp",
+    "full": "assets/img/cars/veh-19.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Imperial Beige"
+    ]
+  },
+  {
+    "id": 20,
+    "brand": "Hyundai",
+    "name": "i10 Magna",
+    "year": "2008",
+    "img": "assets/img/cars/veh-20-md.webp",
+    "full": "assets/img/cars/veh-20.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Golden"
+    ]
+  },
+  {
+    "id": 21,
+    "brand": "Kia",
+    "name": "Niro EV",
+    "year": "2019",
+    "img": "assets/img/cars/veh-21-md.webp",
+    "full": "assets/img/cars/veh-21.webp",
+    "fit": "cover",
+    "price": "",
+    "badge": "In stock",
+    "specs": [
+      "Snow White",
+      "Electric"
+    ]
   }
 ]

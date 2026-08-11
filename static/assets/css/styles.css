@@ -351,6 +351,10 @@ body.lang-np .hero__title{line-height:1.16; letter-spacing:-.01em; font-size:cla
 .map-load{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; width:100%; height:180px; text-align:center; padding:20px; color:var(--navy); font-weight:600; background:radial-gradient(70% 90% at 50% 0%,rgba(55,178,234,.16),transparent 70%), var(--off); transition:background .2s}
 .map-load:hover{background:var(--mist)}
 .map-load svg{width:30px; height:30px; color:var(--blue)}
+/* full-width location map under the contact grid — fills the space the map otherwise left empty */
+.contact__map--wide{grid-column:1 / -1; margin-top:clamp(22px,3vw,34px)}
+.contact__map--wide iframe{height:clamp(340px,40vw,470px)}
+.contact__map--wide .map-load{height:clamp(300px,38vw,440px)}
 
 .contact__form{background:var(--dark); border-radius:var(--radius-lg); padding:clamp(26px,3vw,40px); box-shadow:var(--shadow-md)}
 .contact__form h3{font-family:var(--font-display); color:#fff; font-size:24px; margin-bottom:22px}
