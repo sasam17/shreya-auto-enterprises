@@ -38,9 +38,12 @@
     });
   }
 
+  function carPage(id) { return "/car/" + id; }   // this car's own page (Flask route)
+
   function carCard(car) {
     var el = document.createElement("article");
-    el.className = "car-card reveal-fade beam";
+    var sold = (car.status === "sold");
+    el.className = "car-card reveal-fade beam" + (sold ? " car-card--sold" : "");
     el.setAttribute("data-brand", car.brand || "");
     var titleYear = car.year ? ' <span>· ' + esc(car.year) + "</span>" : "";
     var specs = (car.specs || []).map(function (s) { return '<span class="spec">' + esc(s) + "</span>"; }).join("");
@@ -49,21 +52,29 @@
       : '<div class="car-card__price is-request" data-en="Price on request" data-np="मूल्यका लागि सम्पर्क">Price on request</div>';
     var plainLabel = (car.brand || "") + " " + (car.name || "") + (car.year ? " " + car.year : "");
     var label = esc(plainLabel);
-    var waText = encodeURIComponent("Hello Shreya Auto, I'm interested in the " + plainLabel + ". Is it still available?");
     var fit = car.fit === "contain" ? "contain" : "cover";   // whitelist, never raw
+    var url = carPage(car.id);
+    var badge = sold
+      ? '<span class="car-card__sold" data-en="Sold" data-np="बिक्री भयो">Sold</span>'
+      : '<span class="car-card__badge">' + esc(car.badge) + "</span>";
+    var mediaInner = badge +
+      '<span class="car-card__brand">' + esc(car.brand) + "</span>" +
+      '<img class="is-' + fit + '" src="' + esc(car.img) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.indexOf(\'-md.webp\')>-1?this.src.replace(\'-md.webp\',\'.webp\'):this.src.replace(\'.webp\',\'.jpg\')" alt="' + label + ' for sale at Shreya Auto" />';
+    // Only AVAILABLE cars open their page; sold cars are shown but not clickable.
+    var media = sold
+      ? '<div class="car-card__media">' + mediaInner + "</div>"
+      : '<a class="car-card__media" href="' + url + '" aria-label="View ' + label + '">' + mediaInner + "</a>";
+    var foot = sold
+      ? '<div class="car-card__foot">' + price + '<span class="car-card__enq is-sold" data-en="Sold out" data-np="बिक्री भयो">Sold out</span></div>'
+      : '<div class="car-card__foot">' + price +
+          '<a class="car-card__enq" href="' + url + '"><span data-en="View details" data-np="विवरण हेर्नुहोस्">View details</span><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg></a>' +
+        "</div>";
 
-    el.innerHTML =
-      '<a class="car-card__media" href="https://wa.me/' + WHATSAPP_PRIMARY + "?text=" + waText + '" target="_blank" rel="noopener" aria-label="Inquire about ' + label + ' on WhatsApp">' +
-        '<span class="car-card__badge">' + esc(car.badge) + "</span>" +
-        '<span class="car-card__brand">' + esc(car.brand) + "</span>" +
-        '<img class="is-' + fit + '" src="' + esc(car.img) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src.indexOf(\'-md.webp\')>-1?this.src.replace(\'-md.webp\',\'.webp\'):this.src.replace(\'.webp\',\'.jpg\')" alt="' + label + ' for sale at Shreya Auto" />' +
-      "</a>" +
+    el.innerHTML = media +
       '<div class="car-card__body">' +
         '<div class="car-card__title">' + esc(car.name) + titleYear + "</div>" +
         '<div class="car-card__specs">' + specs + "</div>" +
-        '<div class="car-card__foot">' + price +
-          '<a class="car-card__enq" href="https://wa.me/' + WHATSAPP_PRIMARY + "?text=" + waText + '" target="_blank" rel="noopener"><span data-en="Inquire" data-np="सोध्नुहोस्">Inquire</span><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg></a>' +
-        "</div>" +
+        foot +
       "</div>";
     return el;
   }
@@ -71,6 +82,8 @@
   function renderCars(filter) {
     if (!grid) return;
     var list = CARS.filter(function (c) { return !filter || filter === "all" || c.brand === filter; });
+    // available cars first, sold ones last (stable — keeps the given order within each group)
+    list = list.slice().sort(function (a, b) { return (a.status === "sold" ? 1 : 0) - (b.status === "sold" ? 1 : 0); });
     var shown = carsLimit > 0 ? list.slice(0, carsLimit) : list;
     grid.innerHTML = "";
     shown.forEach(function (c) { grid.appendChild(carCard(c)); });

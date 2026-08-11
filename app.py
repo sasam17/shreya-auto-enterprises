@@ -366,6 +366,16 @@ def all_cars():
     return render_template("cars.html", cars=load_cars(), partners=load_partners())
 
 
+@app.route("/car/<int:car_id>")
+def car_detail(car_id):
+    """A car's own page. Only AVAILABLE cars are openable — a sold or unknown car
+    sends the visitor back to the full inventory."""
+    car = next((c for c in load_cars() if c.get("id") == car_id), None)
+    if not car or car.get("status") == "sold":
+        return redirect(url_for("all_cars"))
+    return render_template("car.html", car=car, partners=load_partners())
+
+
 @app.route("/inquiry", methods=["POST"])
 def inquiry():
     """
@@ -569,16 +579,18 @@ def admin_add():
     specs = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
 
     cars.append({
-        "id":    new_id,
-        "brand": request.form.get("brand", "").strip(),
-        "name":  request.form.get("name", "").strip(),
-        "year":  request.form.get("year", "").strip(),
-        "img":   card_path,
-        "full":  full_path,
-        "fit":   request.form.get("fit", "cover"),
-        "price": request.form.get("price", "").strip(),
-        "badge": request.form.get("badge", "In stock").strip() or "In stock",
-        "specs": specs,
+        "id":     new_id,
+        "brand":  request.form.get("brand", "").strip(),
+        "name":   request.form.get("name", "").strip(),
+        "year":   request.form.get("year", "").strip(),
+        "img":    card_path,
+        "full":   full_path,
+        "fit":    request.form.get("fit", "cover"),
+        "price":  request.form.get("price", "").strip(),
+        "badge":  request.form.get("badge", "In stock").strip() or "In stock",
+        "specs":  specs,
+        "status": "sold" if request.form.get("status") == "sold" else "available",
+        "desc":   request.form.get("desc", "").strip(),
     })
     save_cars(cars)
     flash("Car added.")
@@ -601,6 +613,8 @@ def admin_edit():
             c["badge"] = request.form.get("badge", "").strip() or "In stock"
             c["fit"]   = "contain" if request.form.get("fit") == "contain" else "cover"
             c["specs"] = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
+            c["status"] = "sold" if request.form.get("status") == "sold" else "available"
+            c["desc"]  = request.form.get("desc", "").strip()
             photo = request.files.get("photo")
             if photo and photo.filename:
                 card_path, full_path = process_upload(photo, f"upload-{car_id}")

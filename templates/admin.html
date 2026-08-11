@@ -19,8 +19,12 @@
     h2{ font-family:"Space Grotesk",sans-serif; margin:26px 0 14px; }
     .card{ background:#fff; border:1px solid var(--mist); border-radius:16px; padding:24px; box-shadow:0 14px 34px rgba(11,58,119,.08); }
     label{ display:block; font-size:13px; font-weight:600; color:var(--navy); margin:14px 0 5px; }
-    input, select{ width:100%; padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:#f6fafe; }
-    input:focus, select:focus{ outline:none; border-color:var(--cyan); background:#fff; }
+    input, select, textarea{ width:100%; padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:#f6fafe; }
+    textarea{ resize:vertical; min-height:70px; }
+    input:focus, select:focus, textarea:focus{ outline:none; border-color:var(--cyan); background:#fff; }
+    .status-tag{ display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:999px; }
+    .status-tag--available{ background:#e2f6ea; color:#1ba94c; }
+    .status-tag--sold{ background:#fde8e8; color:#c0392b; }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
     .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
     .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
@@ -75,16 +79,9 @@
       </form>
     {% else %}
       <!-- ───── INQUIRIES (newest first) ───── -->
-      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }})
-        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0">
-          {% if mail_on %}· also emailed to you{% else %}· saved here (email is off — see DEPLOY.md to turn on){% endif %}
-        </span>
-      </h2>
+      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }})</h2>
       <form method="POST" action="{{ url_for('admin_test_email') }}" style="margin:-6px 0 16px">
         <button class="btn" type="submit">✉ Send test email</button>
-        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0; margin-left:8px">
-          {% if mail_on %}Inquiry emails are delivered to <b>{{ mail_to }}</b>{% else %}Email is OFF — set it up (DEPLOY.md §5b), then click to test{% endif %}
-        </span>
       </form>
       {% if inquiries %}
       <table>
@@ -108,15 +105,11 @@
         {% endfor %}
       </table>
       {% else %}
-      <div class="hint">No inquiries yet. When a customer submits the contact form on the site, it shows up here.</div>
+      <div class="hint">No inquiries yet.</div>
       {% endif %}
 
       <!-- ───── REVIEWS (pending first — approve to publish) ───── -->
-      <h2>Reviews ({{ reviews|length }})
-        <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0">
-          · customer-submitted reviews stay hidden until you <b>Approve</b> them
-        </span>
-      </h2>
+      <h2>Reviews ({{ reviews|length }})</h2>
       {% if reviews %}
       <table>
         <tr><th>When</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>
@@ -143,7 +136,7 @@
         {% endfor %}
       </table>
       {% else %}
-      <div class="hint">No reviews yet. Approved reviews show as cards on the home page.</div>
+      <div class="hint">No reviews yet.</div>
       {% endif %}
 
       <!-- ───── ADD A CAR ───── -->
@@ -159,6 +152,12 @@
         <input name="specs" placeholder="45,000 km, Petrol, 1500 cc, Automatic" />
         <div class="grid2">
           <div><label>Badge</label><input name="badge" placeholder="In stock" /></div>
+          <div><label>Status</label>
+            <select name="status">
+              <option value="available">Available</option>
+              <option value="sold">Sold out</option>
+            </select>
+          </div>
           <div><label>Image style</label>
             <select name="fit">
               <option value="cover">Photo (fills the card)</option>
@@ -166,20 +165,21 @@
             </select>
           </div>
         </div>
+        <label>Description (optional — shown on the car's own page)</label>
+        <textarea name="desc" rows="3" placeholder="A few lines about this car"></textarea>
         <label>Photo</label>
         <input name="photo" type="file" accept="image/*" />
-        <div class="hint">Uploads are shrunk &amp; converted to fast WebP automatically.</div>
         <button class="btn" type="submit">Add car</button>
       </form>
 
       <!-- ───── CURRENT CARS (edit or remove) ───── -->
       <h2>Current cars ({{ cars|length }})</h2>
-      <div class="hint" style="margin-bottom:12px">Click <b>Edit</b> on any car to change its details or replace the photo — changes go live instantly. Set the badge to <b>Sold</b> (or Remove it) when a car sells.</div>
       {% for car in cars %}
       <div class="carrow">
         <img class="carrow__img" src="{{ car.img }}" alt="" onerror="this.style.opacity=.2" />
         <div class="carrow__info">
           <strong>{{ car.brand }} {{ car.name }}</strong> <span class="hint" style="display:inline">{{ car.year }}</span>
+          <span class="status-tag status-tag--{{ 'sold' if car.status == 'sold' else 'available' }}">{{ 'Sold out' if car.status == 'sold' else 'Available' }}</span>
           <div class="hint">{{ car.price or "Price on request" }} · {{ car.badge }}{% if car.specs %} · {{ car.specs|join(", ") }}{% endif %}</div>
         </div>
         <div class="carrow__actions">
@@ -196,7 +196,13 @@
               <label>Specs (separate with commas)</label>
               <input name="specs" value="{{ car.specs|join(', ') }}" />
               <div class="grid2">
-                <div><label>Badge</label><input name="badge" value="{{ car.badge }}" placeholder="In stock / Sold / Featured" /></div>
+                <div><label>Badge</label><input name="badge" value="{{ car.badge }}" placeholder="In stock / Featured" /></div>
+                <div><label>Status</label>
+                  <select name="status">
+                    <option value="available"{% if car.status != 'sold' %} selected{% endif %}>Available</option>
+                    <option value="sold"{% if car.status == 'sold' %} selected{% endif %}>Sold out</option>
+                  </select>
+                </div>
                 <div><label>Image style</label>
                   <select name="fit">
                     <option value="cover"{% if car.fit != 'contain' %} selected{% endif %}>Photo (fills the card)</option>
@@ -204,6 +210,8 @@
                   </select>
                 </div>
               </div>
+              <label>Description (optional — shown on the car's own page)</label>
+              <textarea name="desc" rows="3" placeholder="A few lines about this car">{{ car.desc }}</textarea>
               <label>Replace photo (optional — leave empty to keep the current one)</label>
               <input name="photo" type="file" accept="image/*" />
               <button class="btn" type="submit">Save changes</button>
@@ -227,13 +235,11 @@
         </div>
         <label>Photo</label>
         <input name="photo" type="file" accept="image/*" />
-        <div class="hint">A portrait photo works best — it's auto-converted to a fast WebP. <b>Order</b> sets the position — the partner with the lowest order is the lead, shown larger on top.</div>
         <button class="btn" type="submit">Add partner</button>
       </form>
 
       <!-- ───── CURRENT PARTNERS ───── -->
       <h2>Current partners ({{ partners|length }})</h2>
-      <div class="hint" style="margin-bottom:12px">Change a row's <b>order</b>, then click <b>Save</b> on that row. The partner with the lowest order is the lead, shown larger on top.</div>
       {% for p in partners %}
       <form class="prow" method="POST" action="{{ url_for('admin_partner_update') }}">
         <input type="hidden" name="id" value="{{ p.id }}" />

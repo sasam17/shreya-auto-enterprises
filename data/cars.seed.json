@@ -11,7 +11,9 @@
     "badge": "In stock",
     "specs": [
       "Light Grey"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 2,
@@ -26,7 +28,9 @@
     "specs": [
       "Solid White",
       "Electric"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 3,
@@ -40,7 +44,9 @@
     "badge": "In stock",
     "specs": [
       "Dark Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 4,
@@ -54,7 +60,9 @@
     "badge": "In stock",
     "specs": [
       "Dark Grey"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 5,
@@ -69,7 +77,9 @@
     "specs": [
       "Champagne Gold",
       "Automatic"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 6,
@@ -84,7 +94,9 @@
     "specs": [
       "Vermont Red",
       "Diesel"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 7,
@@ -98,7 +110,9 @@
     "badge": "In stock",
     "specs": [
       "Reflex Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 8,
@@ -113,7 +127,9 @@
     "specs": [
       "Bronze",
       "Petrol"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 9,
@@ -127,7 +143,9 @@
     "badge": "In stock",
     "specs": [
       "Intense Red"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 10,
@@ -141,7 +159,9 @@
     "badge": "In stock",
     "specs": [
       "Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 11,
@@ -155,7 +175,9 @@
     "badge": "In stock",
     "specs": [
       "Midnight Grey"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 12,
@@ -169,7 +191,9 @@
     "badge": "In stock",
     "specs": [
       "Typhoon Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 13,
@@ -183,7 +207,9 @@
     "badge": "In stock",
     "specs": [
       "Fiery Red"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 14,
@@ -197,7 +223,9 @@
     "badge": "In stock",
     "specs": [
       "Reflex Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 15,
@@ -211,7 +239,9 @@
     "badge": "In stock",
     "specs": [
       "Light Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 16,
@@ -225,7 +255,9 @@
     "badge": "In stock",
     "specs": [
       "Silky Silver"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 17,
@@ -239,7 +271,9 @@
     "badge": "In stock",
     "specs": [
       "Lime Green"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 18,
@@ -253,7 +287,9 @@
     "badge": "In stock",
     "specs": [
       "Ember Grey"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 19,
@@ -267,7 +303,9 @@
     "badge": "In stock",
     "specs": [
       "Imperial Beige"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 20,
@@ -281,7 +319,9 @@
     "badge": "In stock",
     "specs": [
       "Golden"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   },
   {
     "id": 21,
@@ -296,6 +336,8 @@
     "specs": [
       "Snow White",
       "Electric"
-    ]
+    ],
+    "status": "available",
+    "desc": ""
   }
 ]
