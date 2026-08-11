@@ -17,12 +17,12 @@
   <title>{{ car.brand }} {{ car.name }}{% if car.year %} {{ car.year }}{% endif %} — Shreya Auto Enterprises</title>
   <meta name="description" content="{{ car.brand }} {{ car.name }}{% if car.year %} ({{ car.year }}){% endif %} for sale at Shreya Auto Enterprises, Bishalnagar, Kathmandu. Inquire on WhatsApp." />
   <meta name="theme-color" content="#06182e" />
-  <link rel="icon" href="assets/img/logo.jpg" />
+  <link rel="icon" href="/assets/img/logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="assets/css/styles.css?v=38" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=39" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
@@ -78,9 +78,9 @@
       </div>
 
       <div class="cardetail__grid">
-        <figure class="cardetail__media reveal-img" data-full="{{ car.full }}" aria-label="{{ label }}">
+        <figure class="cardetail__media reveal-img" data-full="/{{ car.full }}" aria-label="{{ label }}">
           <span class="car-card__badge">{{ car.badge }}</span>
-          <img class="is-{{ 'contain' if car.fit == 'contain' else 'cover' }}" src="{{ car.full }}" width="800" height="1000" onerror="this.onerror=null;this.src='{{ car.img }}'" alt="{{ label }} for sale at Shreya Auto Enterprises" />
+          <img class="is-{{ 'contain' if car.fit == 'contain' else 'cover' }}" src="/{{ car.full }}" width="800" height="1000" onerror="this.onerror=null;this.src='/{{ car.img }}'" alt="{{ label }} for sale at Shreya Auto Enterprises" />
           <span class="cardetail__zoom" data-en="Tap to zoom" data-np="जुम गर्न ट्याप गर्नुहोस्">Tap to zoom</span>
         </figure>
 
@@ -117,6 +117,12 @@
             </a>
           </div>
           <p class="cardetail__reply reveal-up" data-delay="5" data-en="You'll reach Sachit Kuinkel directly on WhatsApp." data-np="तपाईं सचित कुइँकेललाई सिधै व्हाट्सएपमा सम्पर्क गर्नुहुनेछ।">You'll reach Sachit Kuinkel directly on WhatsApp.</p>
+
+          <ul class="cardetail__trust reveal-up" data-delay="6">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2 7 3v6c0 4.4-3 8.4-7 9-4-.6-7-4.6-7-9V5l7-3Zm-1 13 5-5-1.4-1.4L11 12.2 9.4 10.6 8 12l3 3Z"/></svg><span data-en="Hyundai Nepal official exchange partner" data-np="Hyundai Nepal आधिकारिक एक्सचेन्ज साझेदार">Hyundai Nepal official exchange partner</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm1 3v6h16V9H4Zm2 2h6v2H6v-2Z"/></svg><span data-en="Easy financing via Hulas Finserv" data-np="Hulas Finserv मार्फत सजिलो फाइनान्सिङ">Easy financing via Hulas Finserv</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 3 6v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V6l-9-4Z" opacity=".18"/><path fill="currentColor" d="M12 6.5 13.6 10l3.9.3-3 2.5.9 3.8L12 14.7 8.6 16.6l.9-3.8-3-2.5 3.9-.3L12 6.5Z"/></svg><span data-en="1800+ cars sold · trusted since 2017" data-np="१८००+ गाडी बिक्री · २०१७ देखि भरपर्दो">1800+ cars sold · trusted since 2017</span></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -165,6 +171,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="assets/js/main.js?v=38" defer></script>
+  <script src="/assets/js/main.js?v=39" defer></script>
 </body>
 </html>
