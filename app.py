@@ -99,7 +99,7 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,           # JavaScript can't read the login cookie
     SESSION_COOKIE_SAMESITE="Lax",          # blocks the common cross-site request forgery
     SESSION_COOKIE_SECURE=not config.DEBUG, # production: only send the cookie over HTTPS
-    MAX_CONTENT_LENGTH=12 * 1024 * 1024,    # reject uploads bigger than 12 MB
+    MAX_CONTENT_LENGTH=40 * 1024 * 1024,    # allow multi-photo gallery uploads (per request)
 )
 
 # Make sure the data + photo-upload folders exist on EVERY startup — including when a
@@ -589,8 +589,14 @@ def admin_add():
         "price":  request.form.get("price", "").strip(),
         "badge":  request.form.get("badge", "In stock").strip() or "In stock",
         "specs":  specs,
+        "km":     specs[0] if len(specs) > 0 else "",
+        "engine": specs[1] if len(specs) > 1 else "",
+        "colour": specs[2] if len(specs) > 2 else "",
         "status": "sold" if request.form.get("status") == "sold" else "available",
         "desc":   request.form.get("desc", "").strip(),
+        "video":  request.form.get("video", "").strip(),
+        "accent": "#37b2ea",
+        "gallery": [],
     })
     save_cars(cars)
     flash("Car added.")
@@ -613,16 +619,46 @@ def admin_edit():
             c["badge"] = request.form.get("badge", "").strip() or "In stock"
             c["fit"]   = "contain" if request.form.get("fit") == "contain" else "cover"
             c["specs"] = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
+            # keep the labelled detail fields (Kilometres / Engine / Colour) in sync with specs
+            c["km"]     = c["specs"][0] if len(c["specs"]) > 0 else ""
+            c["engine"] = c["specs"][1] if len(c["specs"]) > 1 else ""
+            c["colour"] = c["specs"][2] if len(c["specs"]) > 2 else ""
             c["status"] = "sold" if request.form.get("status") == "sold" else "available"
             c["desc"]  = request.form.get("desc", "").strip()
+            c["video"] = request.form.get("video", "").strip()
             photo = request.files.get("photo")
             if photo and photo.filename:
                 card_path, full_path = process_upload(photo, f"upload-{car_id}")
                 if card_path:
                     c["img"], c["full"] = card_path, full_path
+            # gallery: append any newly-uploaded photos, tagged by section
+            c.setdefault("gallery", [])
+            for cat, field in (("exterior", "photos_exterior"), ("interior", "photos_interior"), ("angle", "photos_angle")):
+                for f in request.files.getlist(field):
+                    if f and f.filename:
+                        _card, _full = process_upload(f, f"upload-{car_id}-{secrets.token_hex(4)}")
+                        if _full:
+                            n = sum(1 for g in c["gallery"] if g.get("cat") == cat) + 1
+                            c["gallery"].append({"src": _full, "cat": cat, "label": cat.capitalize() + " " + str(n)})
             break
     save_cars(cars)
     flash("Car updated.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/gallery/delete", methods=["POST"])
+@admin_required
+def admin_gallery_delete():
+    """Remove a single photo from a car's gallery (leaves shipped files on disk)."""
+    car_id = int(request.form.get("id", 0))
+    src = request.form.get("src", "")
+    cars = load_cars()
+    for c in cars:
+        if c.get("id") == car_id:
+            c["gallery"] = [g for g in c.get("gallery", []) if g.get("src") != src]
+            break
+    save_cars(cars)
+    flash("Photo removed.")
     return redirect(url_for("admin"))
 
 

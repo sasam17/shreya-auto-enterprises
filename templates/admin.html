@@ -25,6 +25,14 @@
     .status-tag{ display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:999px; }
     .status-tag--available{ background:#e2f6ea; color:#1ba94c; }
     .status-tag--sold{ background:#fde8e8; color:#c0392b; }
+    .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px; }
+    @media(max-width:640px){ .grid3{ grid-template-columns:1fr; } }
+    .gmanage{ margin-top:4px; }
+    .gthumbs{ display:flex; flex-wrap:wrap; gap:12px; }
+    .gthumb{ position:relative; width:100px; margin:0; }
+    .gthumb img{ width:100px; height:66px; object-fit:cover; border-radius:8px; display:block; border:1px solid var(--mist); }
+    .gthumb__cat{ display:block; font-size:10.5px; color:var(--navy); text-transform:capitalize; margin-top:3px; }
+    .gthumb__x{ position:absolute; top:-7px; right:-7px; width:22px; height:22px; border-radius:50%; background:#b42323; color:#fff; border:none; cursor:pointer; font-size:15px; line-height:1; margin:0; padding:0; box-shadow:0 2px 6px rgba(0,0,0,.28); }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
     .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
     .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
@@ -167,8 +175,11 @@
         </div>
         <label>Description (optional — shown on the car's own page)</label>
         <textarea name="desc" rows="3" placeholder="A few lines about this car"></textarea>
-        <label>Photo</label>
+        <label>Video link (YouTube or .mp4 URL — optional)</label>
+        <input name="video" placeholder="https://youtu.be/…" />
+        <label>Main photo</label>
         <input name="photo" type="file" accept="image/*" />
+        <div class="hint" style="margin-top:8px">Add gallery photos (exterior / interior / angles) after saving — click <b>Edit</b> on the car.</div>
         <button class="btn" type="submit">Add car</button>
       </form>
 
@@ -212,10 +223,33 @@
               </div>
               <label>Description (optional — shown on the car's own page)</label>
               <textarea name="desc" rows="3" placeholder="A few lines about this car">{{ car.desc }}</textarea>
-              <label>Replace photo (optional — leave empty to keep the current one)</label>
+              <label>Video link (YouTube or a direct .mp4 URL — optional)</label>
+              <input name="video" value="{{ car.video }}" placeholder="https://youtu.be/… or https://…/clip.mp4" />
+              <label>Replace main photo (optional)</label>
               <input name="photo" type="file" accept="image/*" />
+              <div class="grid3">
+                <div><label>Add exterior photos</label><input name="photos_exterior" type="file" accept="image/*" multiple /></div>
+                <div><label>Add interior photos</label><input name="photos_interior" type="file" accept="image/*" multiple /></div>
+                <div><label>Add angle / detail photos</label><input name="photos_angle" type="file" accept="image/*" multiple /></div>
+              </div>
               <button class="btn" type="submit">Save changes</button>
             </form>
+            {% if car.gallery %}
+            <div class="gmanage">
+              <div class="hint" style="margin:14px 0 8px">Gallery photos ({{ car.gallery|length }}) — click × to remove:</div>
+              <div class="gthumbs">
+                {% for g in car.gallery %}
+                <form method="POST" action="{{ url_for('admin_gallery_delete') }}" class="gthumb" onsubmit="return confirm('Remove this photo?')">
+                  <input type="hidden" name="id" value="{{ car.id }}" />
+                  <input type="hidden" name="src" value="{{ g.src }}" />
+                  <img src="{{ g.src }}" alt="" onerror="this.style.opacity=.2" />
+                  <span class="gthumb__cat">{{ g.cat }}</span>
+                  <button type="submit" class="gthumb__x" aria-label="Remove photo">×</button>
+                </form>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
           </details>
           <form method="POST" action="{{ url_for('admin_delete') }}" onsubmit="return confirm('Remove this car?')">
             <input type="hidden" name="id" value="{{ car.id }}" />
