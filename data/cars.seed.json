@@ -13,7 +13,8 @@
       "Light Grey"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#c9ced3"
   },
   {
     "id": 2,
@@ -30,7 +31,8 @@
       "Electric"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#eef0f2"
   },
   {
     "id": 3,
@@ -46,7 +48,8 @@
       "Dark Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#9aa0a6"
   },
   {
     "id": 4,
@@ -62,7 +65,8 @@
       "Dark Grey"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#565b61"
   },
   {
     "id": 5,
@@ -79,7 +83,41 @@
       "Automatic"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "A commanding, well-kept Kia Sportage in Champagne Gold. Smooth automatic drive, a spacious and comfortable cabin, and a clean service record. Inspected and ready to drive home from our Bishalnagar showroom — come take it for a test drive.",
+    "gallery": [
+      {
+        "src": "assets/img/cars/veh-5.webp",
+        "cat": "exterior",
+        "label": "Side profile"
+      },
+      {
+        "src": "assets/img/cars/gal-5-ext-front.webp",
+        "cat": "exterior",
+        "label": "Front 3/4"
+      },
+      {
+        "src": "assets/img/cars/gal-5-ext-rear.webp",
+        "cat": "exterior",
+        "label": "Rear"
+      },
+      {
+        "src": "assets/img/cars/gal-5-int-dash.webp",
+        "cat": "interior",
+        "label": "Dashboard"
+      },
+      {
+        "src": "assets/img/cars/gal-5-int-seats.webp",
+        "cat": "interior",
+        "label": "Seats & cabin"
+      },
+      {
+        "src": "assets/img/cars/gal-5-wheel.webp",
+        "cat": "angle",
+        "label": "Wheels & details"
+      }
+    ],
+    "video": "assets/video/shreya-promo.mp4",
+    "accent": "#cbb88f"
   },
   {
     "id": 6,
@@ -96,7 +134,8 @@
       "Diesel"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#7e2230"
   },
   {
     "id": 7,
@@ -112,7 +151,8 @@
       "Reflex Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#b6bcc3"
   },
   {
     "id": 8,
@@ -129,7 +169,8 @@
       "Petrol"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#8a6a43"
   },
   {
     "id": 9,
@@ -145,7 +186,8 @@
       "Intense Red"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#b71c1c"
   },
   {
     "id": 10,
@@ -161,7 +203,8 @@
       "Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#c2c7cc"
   },
   {
     "id": 11,
@@ -177,7 +220,8 @@
       "Midnight Grey"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#3c4249"
   },
   {
     "id": 12,
@@ -193,7 +237,8 @@
       "Typhoon Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#9ea5ac"
   },
   {
     "id": 13,
@@ -209,7 +254,8 @@
       "Fiery Red"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#c62828"
   },
   {
     "id": 14,
@@ -225,7 +271,8 @@
       "Reflex Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#b6bcc3"
   },
   {
     "id": 15,
@@ -241,7 +288,8 @@
       "Light Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#cdd2d7"
   },
   {
     "id": 16,
@@ -257,7 +305,8 @@
       "Silky Silver"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#c6cacf"
   },
   {
     "id": 17,
@@ -273,7 +322,8 @@
       "Lime Green"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#86c440"
   },
   {
     "id": 18,
@@ -289,7 +339,8 @@
       "Ember Grey"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#565a5f"
   },
   {
     "id": 19,
@@ -305,7 +356,8 @@
       "Imperial Beige"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#d7c7a4"
   },
   {
     "id": 20,
@@ -321,7 +373,8 @@
       "Golden"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#d4af37"
   },
   {
     "id": 21,
@@ -338,6 +391,7 @@
       "Electric"
     ],
     "status": "available",
-    "desc": ""
+    "desc": "",
+    "accent": "#f7f8fa"
   }
 ]

@@ -15,19 +15,54 @@
     })();
   </script>
   <title>{{ car.brand }} {{ car.name }}{% if car.year %} {{ car.year }}{% endif %} — Shreya Auto Enterprises</title>
-  <meta name="description" content="{{ car.brand }} {{ car.name }}{% if car.year %} ({{ car.year }}){% endif %} for sale at Shreya Auto Enterprises, Bishalnagar, Kathmandu. Inquire on WhatsApp." />
+  <meta name="description" content="{{ car.brand }} {{ car.name }}{% if car.year %} ({{ car.year }}){% endif %} for sale at Shreya Auto Enterprises, Bishalnagar, Kathmandu. Photos, video, full details and instant WhatsApp inquiry." />
   <meta name="theme-color" content="#06182e" />
   <link rel="icon" href="/assets/img/logo.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="/assets/css/styles.css?v=39" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=45" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
-<body>
-  <a class="skip-link" href="#cartop">Skip to content</a>
+{% set gallery = car.gallery or [] %}
+{% set exterior = gallery | selectattr('cat', 'equalto', 'exterior') | list %}
+{% set interior = gallery | selectattr('cat', 'equalto', 'interior') | list %}
+{% set angles   = gallery | selectattr('cat', 'equalto', 'angle') | list %}
+
+{% macro slider(items, idx, en, np) %}
+  <section class="section cd-sec" id="cd-{{ idx }}">
+    <div class="container">
+      <header class="head cd-sec__head">
+        <div class="head__left">
+          <p class="eyebrow reveal-up"><span class="head__idx">({{ idx }})</span> <span data-en="{{ en }}" data-np="{{ np }}">{{ en }}</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="{{ en }}" data-np="{{ np }}">{{ en }}</h2>
+        </div>
+        {% if items|length > 1 %}
+        <div class="cd-slider__nav reveal-up" data-delay="2">
+          <span class="cd-slider__count"><b class="cd-cur">1</b> / {{ items|length }}</span>
+          <button class="cd-slider__btn" type="button" data-dir="-1" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 6 8 12l6 6 1.4-1.4L10.8 12l4.6-4.6z"/></svg></button>
+          <button class="cd-slider__btn" type="button" data-dir="1" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m10 6-1.4 1.4L13.2 12l-4.6 4.6L10 18l6-6z"/></svg></button>
+        </div>
+        {% endif %}
+      </header>
+      <div class="cd-slider reveal-fade">
+        <div class="cd-slider__track">
+          {% for it in items %}
+          <figure class="cd-slide" data-full="/{{ it.src }}" aria-label="{{ it.label }}">
+            <img src="/{{ it.src }}" loading="lazy" decoding="async" alt="{{ label }} — {{ it.label }}" />
+            <figcaption>{{ it.label }}</figcaption>
+          </figure>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endmacro %}
+
+<body class="cd-body" style="--car: {{ car.accent | default('#37b2ea') }}">
+  <a class="skip-link" href="#cd-specs">Skip to details</a>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
   <!-- ============================ HEADER / NAV ============================ -->
@@ -63,79 +98,117 @@
     </div>
   </header>
 
-  <!-- ============================== CAR DETAIL ============================== -->
-  <main class="cardetail" id="cartop">
-    <div class="container">
-      <div class="cardetail__nav reveal-up">
-        <a class="back-link" href="/cars">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.8 5.2 12.2 6.6 7.8 11H20v2H7.8l4.4 4.4-1.4 1.4L4 12z"/></svg>
-          <span data-en="Back to all cars" data-np="सबै गाडीमा फर्कनुहोस्">Back to all cars</span>
-        </a>
-        <a class="back-link" href="/">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3 3 10.5V21h6v-6h6v6h6V10.5z"/></svg>
-          <span data-en="Home" data-np="गृहपृष्ठ">Home</span>
-        </a>
-      </div>
-
-      <div class="cardetail__grid">
-        <figure class="cardetail__media reveal-img" data-full="/{{ car.full }}" aria-label="{{ label }}">
-          <span class="car-card__badge">{{ car.badge }}</span>
-          <img class="is-{{ 'contain' if car.fit == 'contain' else 'cover' }}" src="/{{ car.full }}" width="800" height="1000" onerror="this.onerror=null;this.src='/{{ car.img }}'" alt="{{ label }} for sale at Shreya Auto Enterprises" />
-          <span class="cardetail__zoom" data-en="Tap to zoom" data-np="जुम गर्न ट्याप गर्नुहोस्">Tap to zoom</span>
-        </figure>
-
-        <div class="cardetail__info">
-          <p class="eyebrow reveal-up">{{ car.brand }}</p>
-          <h1 class="cardetail__title reveal-up" data-delay="1">{{ car.name }}{% if car.year %} <span>{{ car.year }}</span>{% endif %}</h1>
-
-          <div class="cardetail__meta reveal-up" data-delay="2">
-            {% if car.price %}<span class="cardetail__price">{{ car.price }}</span>
-            {% else %}<span class="cardetail__price is-request" data-en="Price on request" data-np="मूल्यका लागि सम्पर्क">Price on request</span>{% endif %}
-            <span class="cardetail__status" data-en="Available" data-np="उपलब्ध">Available</span>
+  <main>
+    <!-- ============================== HERO ============================== -->
+    <section class="cd-hero dark">
+      <div class="cd-hero__wash" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="container cd-hero__inner">
+        <div class="cd-hero__top">
+          <a class="back-link back-link--light" href="/cars">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10.8 5.2 12.2 6.6 7.8 11H20v2H7.8l4.4 4.4-1.4 1.4L4 12z"/></svg>
+            <span data-en="All cars" data-np="सबै गाडी">All cars</span>
+          </a>
+          <a class="back-link back-link--light" href="/">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3 3 10.5V21h6v-6h6v6h6V10.5z"/></svg>
+            <span data-en="Home" data-np="गृहपृष्ठ">Home</span>
+          </a>
+        </div>
+        <div class="cd-hero__grid">
+          <div class="cd-hero__copy">
+            <p class="eyebrow eyebrow--light reveal-up">{{ car.brand }}</p>
+            <h1 class="cd-hero__title reveal-up" data-delay="1">{{ car.name }}{% if car.year %} <span>{{ car.year }}</span>{% endif %}</h1>
+            <p class="cd-hero__sub reveal-up" data-delay="2">
+              {% if car.specs %}{{ car.specs[0] }} · {% endif %}{% if car.price %}{{ car.price }}{% else %}<span data-en="Price on request" data-np="मूल्यका लागि सम्पर्क">Price on request</span>{% endif %}
+              <span class="cd-hero__status" data-en="Available" data-np="उपलब्ध">Available</span>
+            </p>
+            <div class="cd-hero__cta reveal-up" data-delay="3">
+              <a class="btn btn--whatsapp btn--lg" href="https://wa.me/9779841594067?text={{ inquiry | urlencode }}" target="_blank" rel="noopener">
+                <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+                <span data-en="Inquire on WhatsApp" data-np="व्हाट्सएपमा सोध्नुहोस्">Inquire on WhatsApp</span>
+              </a>
+              <a class="cd-scroll" href="#cd-specs"><span data-en="Explore this car" data-np="यो गाडी हेर्नुहोस्">Explore this car</span><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4v12l5-5 1.4 1.4L12 18.8 5.6 12.4 7 11l5 5z"/></svg></a>
+            </div>
           </div>
-
-          {% if car.specs %}
-          <ul class="cardetail__specs reveal-up" data-delay="3">
-            {% for s in car.specs %}<li class="spec">{{ s }}</li>{% endfor %}
-          </ul>
-          {% endif %}
-
-          {% if car.desc %}
-          <p class="cardetail__desc reveal-up" data-delay="3">{{ car.desc }}</p>
-          {% else %}
-          <p class="cardetail__desc reveal-up" data-delay="3" data-en="Well-maintained and inspected. Message us on WhatsApp for more photos, a test drive, or to check availability — we're happy to help." data-np="राम्रोसँग मर्मत गरिएको। थप फोटो, टेस्ट ड्राइभ वा उपलब्धताका लागि व्हाट्सएपमा सन्देश पठाउनुहोस्।">Well-maintained and inspected. Message us on WhatsApp for more photos, a test drive, or to check availability — we're happy to help.</p>
-          {% endif %}
-
-          <div class="cardetail__cta reveal-up" data-delay="4">
-            <a class="btn btn--whatsapp btn--lg" href="https://wa.me/9779841594067?text={{ inquiry | urlencode }}" target="_blank" rel="noopener">
-              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
-              <span data-en="Inquire on WhatsApp" data-np="व्हाट्सएपमा सोध्नुहोस्">Inquire on WhatsApp</span>
-            </a>
-            <a class="btn btn--lg cardetail__email" href="mailto:shreyaauto.enterprises@gmail.com?subject={{ ('Inquiry: ' ~ label) | urlencode }}&body={{ inquiry | urlencode }}">
-              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7 8-5H4l8 5Zm0 2.3L4 9.2V17h16V9.2l-8 5.1Z"/></svg>
-              <span data-en="Email us" data-np="इमेल पठाउनुहोस्">Email us</span>
-            </a>
-          </div>
-          <p class="cardetail__reply reveal-up" data-delay="5" data-en="You'll reach Sachit Kuinkel directly on WhatsApp." data-np="तपाईं सचित कुइँकेललाई सिधै व्हाट्सएपमा सम्पर्क गर्नुहुनेछ।">You'll reach Sachit Kuinkel directly on WhatsApp.</p>
-
-          <ul class="cardetail__trust reveal-up" data-delay="6">
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2 7 3v6c0 4.4-3 8.4-7 9-4-.6-7-4.6-7-9V5l7-3Zm-1 13 5-5-1.4-1.4L11 12.2 9.4 10.6 8 12l3 3Z"/></svg><span data-en="Hyundai Nepal official exchange partner" data-np="Hyundai Nepal आधिकारिक एक्सचेन्ज साझेदार">Hyundai Nepal official exchange partner</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm1 3v6h16V9H4Zm2 2h6v2H6v-2Z"/></svg><span data-en="Easy financing via Hulas Finserv" data-np="Hulas Finserv मार्फत सजिलो फाइनान्सिङ">Easy financing via Hulas Finserv</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 3 6v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V6l-9-4Z" opacity=".18"/><path fill="currentColor" d="M12 6.5 13.6 10l3.9.3-3 2.5.9 3.8L12 14.7 8.6 16.6l.9-3.8-3-2.5 3.9-.3L12 6.5Z"/></svg><span data-en="1800+ cars sold · trusted since 2017" data-np="१८००+ गाडी बिक्री · २०१७ देखि भरपर्दो">1800+ cars sold · trusted since 2017</span></li>
-          </ul>
+          <figure class="cd-hero__visual reveal-fade" data-delay="2" data-full="/{{ car.full }}" aria-label="{{ label }}">
+            <img class="is-{{ 'contain' if car.fit == 'contain' else 'cover' }}" src="/{{ car.full }}" width="800" height="1000" onerror="this.onerror=null;this.src='/{{ car.img }}'" alt="{{ label }} at Shreya Auto Enterprises" />
+          </figure>
         </div>
       </div>
-    </div>
+    </section>
+
+    {% if exterior %}{{ slider(exterior, '01', 'Exterior', 'बाहिरी') }}{% endif %}
+    {% if interior %}{{ slider(interior, '02', 'Interior', 'भित्री') }}{% endif %}
+    {% if angles %}{{ slider(angles, '03', 'Every angle', 'हरेक कोण') }}{% endif %}
+
+    {% if car.video %}
+    <!-- ============================== VIDEO ============================== -->
+    <section class="cd-video dark" id="cd-video">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="container">
+        <header class="head head--center">
+          <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(04)</span> <span data-en="On video" data-np="भिडियोमा">On video</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="See it move" data-np="चलेको हेर्नुहोस्">See it move</h2>
+        </header>
+        <div class="cd-video__frame reveal-fade" data-video="/{{ car.video }}">
+          <img src="/{{ car.full }}" alt="{{ label }} video preview" loading="lazy" />
+          <button class="cd-video__play" type="button" aria-label="Play video">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- ============================== SPEC SHEET ============================== -->
+    <section class="section cd-specs" id="cd-specs">
+      <div class="container">
+        <div class="cd-specs__grid">
+          <div class="cd-specs__intro">
+            <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="The details" data-np="विवरण">The details</span></p>
+            <h2 class="display reveal-up" data-delay="1" data-en="Know it inside out" data-np="पूरा जानकारी">Know it inside out</h2>
+            {% if car.desc %}<p class="cd-specs__desc reveal-up" data-delay="2">{{ car.desc }}</p>{% endif %}
+          </div>
+          <dl class="cd-spectable reveal-up" data-delay="2">
+            {% if car.brand %}<div><dt data-en="Make" data-np="ब्रान्ड">Make</dt><dd>{{ car.brand }}</dd></div>{% endif %}
+            <div><dt data-en="Model" data-np="मोडेल">Model</dt><dd>{{ car.name }}</dd></div>
+            {% if car.year %}<div><dt data-en="Year" data-np="वर्ष">Year</dt><dd>{{ car.year }}</dd></div>{% endif %}
+            {% for s in car.specs %}<div><dt data-en="Detail" data-np="विवरण">Detail</dt><dd>{{ s }}</dd></div>{% endfor %}
+            <div><dt data-en="Status" data-np="स्थिति">Status</dt><dd class="is-avail" data-en="Available" data-np="उपलब्ध">Available</dd></div>
+            <div><dt data-en="Price" data-np="मूल्य">Price</dt><dd>{% if car.price %}{{ car.price }}{% else %}<span data-en="On request" data-np="सम्पर्क गर्नुहोस्">On request</span>{% endif %}</dd></div>
+            <div><dt data-en="Location" data-np="स्थान">Location</dt><dd data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== INQUIRY FINALE ============================== -->
+    <section class="cd-inquire dark" id="cd-inquire">
+      <div class="cd-hero__wash" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="container cd-inquire__inner">
+        <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(06)</span> <span data-en="Make it yours" data-np="आफ्नो बनाउनुहोस्">Make it yours</span></p>
+        <h2 class="display reveal-up" data-delay="1" data-en="Interested in this one?" data-np="यो गाडीमा रुचि छ?">Interested in this one?</h2>
+        <p class="cd-inquire__lead reveal-up" data-delay="2" data-en="Message us for more photos, a test drive, or to check availability — you'll reach Sachit Kuinkel directly." data-np="थप फोटो, टेस्ट ड्राइभ वा उपलब्धताका लागि सन्देश पठाउनुहोस् — तपाईं सचित कुइँकेललाई सिधै सम्पर्क गर्नुहुनेछ।">Message us for more photos, a test drive, or to check availability — you'll reach Sachit Kuinkel directly.</p>
+        <div class="cd-inquire__cta reveal-up" data-delay="3">
+          <a class="btn btn--whatsapp btn--lg" href="https://wa.me/9779841594067?text={{ inquiry | urlencode }}" target="_blank" rel="noopener">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.92-7.02Zm-2.49 9.08c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+            <span data-en="Inquire on WhatsApp" data-np="व्हाट्सएपमा सोध्नुहोस्">Inquire on WhatsApp</span>
+          </a>
+          <a class="btn btn--glass btn--lg" href="mailto:shreyaauto.enterprises@gmail.com?subject={{ ('Inquiry: ' ~ label) | urlencode }}&body={{ inquiry | urlencode }}">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7 8-5H4l8 5Zm0 2.3L4 9.2V17h16V9.2l-8 5.1Z"/></svg>
+            <span data-en="Email us" data-np="इमेल पठाउनुहोस्">Email us</span>
+          </a>
+        </div>
+        <a class="cd-inquire__back reveal-up" data-delay="4" href="/cars"><span data-en="← Back to all cars" data-np="← सबै गाडीमा फर्कनुहोस्">← Back to all cars</span></a>
+      </div>
+    </section>
   </main>
 
   <!-- ============================== FOOTER ============================== -->
   <footer class="footer dark">
     <div class="grain" aria-hidden="true"></div>
     <div class="container">
-      <div class="footer__cta">
-        <h2 class="display footer__big" data-en="Find your next car." data-np="तपाईंको अर्को गाडी।">Find your next car.</h2>
-        <a class="btn btn--accent btn--lg" href="/cars"><span data-en="See all cars" data-np="सबै गाडी हेर्नुहोस्">See all cars</span></a>
-      </div>
       <div class="footer__grid">
         <div class="footer__brand">
           <div class="footer__logo">
@@ -171,6 +244,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="/assets/js/main.js?v=39" defer></script>
+  <script src="/assets/js/main.js?v=45" defer></script>
 </body>
 </html>

@@ -690,6 +690,56 @@
     });
   })();
 
+  /* ------------------------- 11d) CAR DETAIL page — galleries + video ------------------------- */
+  // Transform-based carousel (translateX). Uses no native scrolling, so it's immune to
+  // the page's scroll-snap / scroll-behavior conflicts. Buttons + swipe change the index.
+  function initCarGallery() {
+    document.querySelectorAll(".cd-sec").forEach(function (sec) {
+      var track = sec.querySelector(".cd-slider__track");
+      if (!track) return;
+      var viewport = track.parentElement;   // .cd-slider (overflow:hidden)
+      var slides = track.querySelectorAll(".cd-slide");
+      var cur = sec.querySelector(".cd-cur");
+      var index = 0;
+      function go(i) {
+        index = Math.max(0, Math.min(i, slides.length - 1));
+        var slideW = slides[0].getBoundingClientRect().width + 20;   // slide + gap
+        var trackW = slides.length * slideW - 20;
+        var x = Math.min(index * slideW, Math.max(0, trackW - viewport.clientWidth)); // never overscroll past the last
+        track.style.transform = "translateX(" + (-x) + "px)";
+        if (cur) cur.textContent = index + 1;
+      }
+      sec.querySelectorAll(".cd-slider__btn").forEach(function (b) {
+        b.addEventListener("click", function () { go(index + (+b.getAttribute("data-dir"))); });
+      });
+      // swipe (touch) + drag (mouse) to change slides; a plain tap still opens the lightbox
+      var sx = 0, sy = 0, dragging = false, moved = false;
+      function start(x, y) { sx = x; sy = y; dragging = true; moved = false; }
+      function moveTo(x, y) { if (dragging && (Math.abs(x - sx) > 6 || Math.abs(y - sy) > 6)) moved = true; }
+      function end(x) { if (!dragging) return; dragging = false; var dx = x - sx; if (Math.abs(dx) > 45) go(index + (dx < 0 ? 1 : -1)); }
+      track.addEventListener("touchstart", function (e) { start(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+      track.addEventListener("touchmove", function (e) { moveTo(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+      track.addEventListener("touchend", function (e) { end(e.changedTouches[0].clientX); });
+      track.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse") start(e.clientX, e.clientY); });
+      window.addEventListener("pointermove", function (e) { if (dragging) moveTo(e.clientX, e.clientY); });
+      window.addEventListener("pointerup", function (e) { if (dragging) end(e.clientX); });
+      track.addEventListener("click", function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+      window.addEventListener("resize", function () { go(index); });
+      go(0);
+    });
+  }
+  function initCarVideo() {
+    var frame = document.querySelector(".cd-video__frame");
+    if (!frame) return;
+    frame.addEventListener("click", function () {
+      var src = frame.getAttribute("data-video"); if (!src) return;
+      var v = document.createElement("video");
+      v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute("playsinline", "");
+      frame.innerHTML = ""; frame.appendChild(v); frame.style.cursor = "default";
+      v.play().catch(function () {});
+    });
+  }
+
   /* ------------------------- 12) INIT ------------------------- */
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -704,6 +754,8 @@
   initStatementReveal();
   initStats();
   initCursor();
+  initCarGallery();           // per-car detail page: exterior/interior/angle sliders
+  initCarVideo();             // per-car detail page: click-to-play video
   updateStatement();
   [1500, 3500, 7000].forEach(function (t) { setTimeout(revealSweep, t); }); // belt-and-suspenders on slow devices
 
