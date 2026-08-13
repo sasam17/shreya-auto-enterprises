@@ -7,32 +7,45 @@
     "img": "assets/img/cars/veh-1-md.webp",
     "full": "assets/img/cars/veh-1.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 16,00,000",
     "badge": "In stock",
     "specs": [
+      "52,028 km",
+      "1,500 cc",
       "Light Grey"
     ],
+    "km": "52,028 km",
+    "engine": "1,500 cc",
+    "colour": "Light Grey",
     "status": "available",
     "desc": "",
-    "accent": "#c9ced3"
+    "accent": "#c9ced3",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 2,
-    "brand": "Mahindra",
-    "name": "e2o",
+    "brand": "Volkswagen",
+    "name": "Polo 1.0",
     "year": "2019",
     "img": "assets/img/cars/veh-2-md.webp",
     "full": "assets/img/cars/veh-2.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 18,75,000",
     "badge": "In stock",
     "specs": [
-      "Solid White",
-      "Electric"
+      "46,042 km",
+      "1,200 cc",
+      "Reflex Silver"
     ],
+    "km": "46,042 km",
+    "engine": "1,200 cc",
+    "colour": "Reflex Silver",
     "status": "available",
     "desc": "",
-    "accent": "#eef0f2"
+    "accent": "#b6bcc3",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 3,
@@ -42,51 +55,94 @@
     "img": "assets/img/cars/veh-3-md.webp",
     "full": "assets/img/cars/veh-3.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 9,50,000",
     "badge": "In stock",
     "specs": [
+      "74,984 km",
+      "1,200 cc",
       "Dark Silver"
     ],
+    "km": "74,984 km",
+    "engine": "1,200 cc",
+    "colour": "Dark Silver",
     "status": "available",
     "desc": "",
-    "accent": "#9aa0a6"
+    "accent": "#9aa0a6",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 4,
-    "brand": "Maruti Suzuki",
-    "name": "Swift ZXi",
-    "year": "2008",
+    "brand": "Mahindra",
+    "name": "e2o",
+    "year": "2019",
     "img": "assets/img/cars/veh-4-md.webp",
     "full": "assets/img/cars/veh-4.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 9,50,000",
     "badge": "In stock",
     "specs": [
-      "Dark Grey"
+      "91,739 km",
+      "Electric",
+      "Solid White"
     ],
+    "km": "91,739 km",
+    "engine": "Electric",
+    "colour": "Solid White",
     "status": "available",
     "desc": "",
-    "accent": "#565b61"
+    "accent": "#eef0f2",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 5,
-    "brand": "Kia",
-    "name": "Sportage",
-    "year": "2008",
+    "brand": "Hyundai",
+    "name": "i20 Sportz",
+    "year": "2013",
     "img": "assets/img/cars/veh-5-md.webp",
     "full": "assets/img/cars/veh-5.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 16,50,000",
     "badge": "In stock",
     "specs": [
-      "Champagne Gold",
-      "Automatic"
+      "84,290 km",
+      "1,200 cc",
+      "Ember Grey"
     ],
+    "km": "84,290 km",
+    "engine": "1,200 cc",
+    "colour": "Ember Grey",
     "status": "available",
-    "desc": "A commanding, well-kept Kia Sportage in Champagne Gold. Smooth automatic drive, a spacious and comfortable cabin, and a clean service record. Inspected and ready to drive home from our Bishalnagar showroom — come take it for a test drive.",
+    "desc": "",
+    "accent": "#565a5f",
+    "gallery": [],
+    "video": ""
+  },
+  {
+    "id": 6,
+    "brand": "Kia",
+    "name": "Sportage",
+    "year": "2008",
+    "img": "assets/img/cars/veh-6-md.webp",
+    "full": "assets/img/cars/veh-6.webp",
+    "fit": "cover",
+    "price": "Rs. 15,50,000",
+    "badge": "In stock",
+    "specs": [
+      "1,28,299 km",
+      "2,000 cc",
+      "Champagne Gold"
+    ],
+    "km": "1,28,299 km",
+    "engine": "2,000 cc",
+    "colour": "Champagne Gold",
+    "status": "available",
+    "desc": "A commanding, well-kept Kia Sportage in Champagne Gold. Smooth 2000cc drive, a spacious cabin and a clean record at 1,28,299 km. Inspected and ready to drive home from our Bishalnagar showroom — come take it for a test drive.",
+    "accent": "#cbb88f",
     "gallery": [
       {
-        "src": "assets/img/cars/veh-5.webp",
+        "src": "assets/img/cars/veh-6.webp",
         "cat": "exterior",
         "label": "Side profile"
       },
@@ -116,282 +172,390 @@
         "label": "Wheels & details"
       }
     ],
-    "video": "assets/video/shreya-promo.mp4",
-    "accent": "#cbb88f"
-  },
-  {
-    "id": 6,
-    "brand": "Tata",
-    "name": "Nexon Diesel XM",
-    "year": "2018",
-    "img": "assets/img/cars/veh-6-md.webp",
-    "full": "assets/img/cars/veh-6.webp",
-    "fit": "cover",
-    "price": "",
-    "badge": "In stock",
-    "specs": [
-      "Vermont Red",
-      "Diesel"
-    ],
-    "status": "available",
-    "desc": "",
-    "accent": "#7e2230"
+    "video": "assets/video/shreya-promo.mp4"
   },
   {
     "id": 7,
-    "brand": "Volkswagen",
-    "name": "Polo 1.6",
-    "year": "2015",
+    "brand": "Hyundai",
+    "name": "i10 Magna",
+    "year": "2012",
     "img": "assets/img/cars/veh-7-md.webp",
     "full": "assets/img/cars/veh-7.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 13,75,000",
     "badge": "In stock",
     "specs": [
-      "Reflex Silver"
+      "57,059 km",
+      "1,200 cc",
+      "Silky Silver"
     ],
+    "km": "57,059 km",
+    "engine": "1,200 cc",
+    "colour": "Silky Silver",
     "status": "available",
     "desc": "",
-    "accent": "#b6bcc3"
+    "accent": "#c6cacf",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 8,
     "brand": "Renault",
-    "name": "Duster",
+    "name": "Duster RXL",
     "year": "2016",
     "img": "assets/img/cars/veh-8-md.webp",
     "full": "assets/img/cars/veh-8.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 18,75,000",
     "badge": "In stock",
     "specs": [
-      "Bronze",
-      "Petrol"
+      "87,000 km",
+      "1,600 cc",
+      "Bronze"
     ],
+    "km": "87,000 km",
+    "engine": "1,600 cc",
+    "colour": "Bronze",
     "status": "available",
     "desc": "",
-    "accent": "#8a6a43"
+    "accent": "#8a6a43",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 9,
-    "brand": "Kia",
-    "name": "Seltos",
+    "brand": "Hyundai",
+    "name": "Grand i10 Sportz",
     "year": "2019",
     "img": "assets/img/cars/veh-9-md.webp",
     "full": "assets/img/cars/veh-9.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 23,75,000",
     "badge": "In stock",
     "specs": [
-      "Intense Red"
+      "43,700 km",
+      "1,200 cc",
+      "Fiery Red"
     ],
+    "km": "43,700 km",
+    "engine": "1,200 cc",
+    "colour": "Fiery Red",
     "status": "available",
     "desc": "",
-    "accent": "#b71c1c"
+    "accent": "#c62828",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 10,
-    "brand": "Hyundai",
-    "name": "Santro",
-    "year": "2008",
+    "brand": "Tata",
+    "name": "Nexon Diesel",
+    "year": "2018",
     "img": "assets/img/cars/veh-10-md.webp",
     "full": "assets/img/cars/veh-10.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 22,75,000",
     "badge": "In stock",
     "specs": [
-      "Silver"
+      "93,000 km",
+      "1,500 cc · Diesel",
+      "Vermont Red"
     ],
+    "km": "93,000 km",
+    "engine": "1,500 cc · Diesel",
+    "colour": "Vermont Red",
     "status": "available",
     "desc": "",
-    "accent": "#c2c7cc"
+    "accent": "#7e2230",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 11,
-    "brand": "Hyundai",
-    "name": "Getz",
-    "year": "2008",
+    "brand": "Volkswagen",
+    "name": "Polo Highline",
+    "year": "2015",
     "img": "assets/img/cars/veh-11-md.webp",
     "full": "assets/img/cars/veh-11.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 16,75,000",
     "badge": "In stock",
     "specs": [
-      "Midnight Grey"
+      "67,112 km",
+      "1,600 cc",
+      "Reflex Silver"
     ],
+    "km": "67,112 km",
+    "engine": "1,600 cc",
+    "colour": "Reflex Silver",
     "status": "available",
     "desc": "",
-    "accent": "#3c4249"
+    "accent": "#b6bcc3",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 12,
     "brand": "Hyundai",
-    "name": "Grand i10 Nios",
-    "year": "2020",
+    "name": "Tucson",
+    "year": "2009",
     "img": "assets/img/cars/veh-12-md.webp",
     "full": "assets/img/cars/veh-12.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 14,50,000",
     "badge": "In stock",
     "specs": [
-      "Typhoon Silver"
+      "82,777 km",
+      "2,000 cc",
+      "Silver"
     ],
+    "km": "82,777 km",
+    "engine": "2,000 cc",
+    "colour": "Silver",
     "status": "available",
     "desc": "",
-    "accent": "#9ea5ac"
+    "accent": "#c2c7cc",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 13,
-    "brand": "Hyundai",
-    "name": "Grand i10 Sportz",
-    "year": "2019",
-    "img": "assets/img/cars/veh-13-md.webp",
-    "full": "assets/img/cars/veh-13.webp",
-    "fit": "cover",
-    "price": "",
-    "badge": "In stock",
-    "specs": [
-      "Fiery Red"
-    ],
-    "status": "available",
-    "desc": "",
-    "accent": "#c62828"
-  },
-  {
-    "id": 14,
-    "brand": "Volkswagen",
-    "name": "Polo Trendline",
-    "year": "2019",
-    "img": "assets/img/cars/veh-14-md.webp",
-    "full": "assets/img/cars/veh-14.webp",
-    "fit": "cover",
-    "price": "",
-    "badge": "In stock",
-    "specs": [
-      "Reflex Silver"
-    ],
-    "status": "available",
-    "desc": "",
-    "accent": "#b6bcc3"
-  },
-  {
-    "id": 15,
     "brand": "Kia",
     "name": "Picanto",
     "year": "2011",
+    "img": "assets/img/cars/veh-13-md.webp",
+    "full": "assets/img/cars/veh-13.webp",
+    "fit": "cover",
+    "price": "Rs. 11,25,000",
+    "badge": "In stock",
+    "specs": [
+      "74,304 km",
+      "1,200 cc",
+      "Light Silver"
+    ],
+    "km": "74,304 km",
+    "engine": "1,200 cc",
+    "colour": "Light Silver",
+    "status": "available",
+    "desc": "",
+    "accent": "#cdd2d7",
+    "gallery": [],
+    "video": ""
+  },
+  {
+    "id": 14,
+    "brand": "Maruti Suzuki",
+    "name": "Swift Dzire",
+    "year": "2015",
+    "img": "assets/img/cars/veh-14-md.webp",
+    "full": "assets/img/cars/veh-14.webp",
+    "fit": "cover",
+    "price": "Rs. 18,75,000",
+    "badge": "In stock",
+    "specs": [
+      "64,896 km",
+      "1,200 cc",
+      "Red"
+    ],
+    "km": "64,896 km",
+    "engine": "1,200 cc",
+    "colour": "Red",
+    "status": "available",
+    "desc": "",
+    "accent": "#c62828",
+    "gallery": [],
+    "video": ""
+  },
+  {
+    "id": 15,
+    "brand": "Maruti Suzuki",
+    "name": "Swift ZXI",
+    "year": "2008",
     "img": "assets/img/cars/veh-15-md.webp",
     "full": "assets/img/cars/veh-15.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 12,75,000",
     "badge": "In stock",
     "specs": [
-      "Light Silver"
+      "72,932 km",
+      "1,200 cc",
+      "Dark Grey"
     ],
+    "km": "72,932 km",
+    "engine": "1,200 cc",
+    "colour": "Dark Grey",
     "status": "available",
     "desc": "",
-    "accent": "#cdd2d7"
+    "accent": "#565b61",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 16,
     "brand": "Hyundai",
     "name": "i10 Magna",
-    "year": "2012",
+    "year": "2008",
     "img": "assets/img/cars/veh-16-md.webp",
     "full": "assets/img/cars/veh-16.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 11,75,000",
     "badge": "In stock",
     "specs": [
-      "Silky Silver"
+      "79,468 km",
+      "1,200 cc",
+      "Golden"
     ],
+    "km": "79,468 km",
+    "engine": "1,200 cc",
+    "colour": "Golden",
     "status": "available",
     "desc": "",
-    "accent": "#c6cacf"
+    "accent": "#d4af37",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 17,
-    "brand": "Datsun",
-    "name": "Redi-GO",
-    "year": "2017",
+    "brand": "Hyundai",
+    "name": "Getz",
+    "year": "2008",
     "img": "assets/img/cars/veh-17-md.webp",
     "full": "assets/img/cars/veh-17.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 7,75,000",
     "badge": "In stock",
     "specs": [
-      "Lime Green"
+      "1,23,882 km",
+      "1,400 cc",
+      "Midnight Grey"
     ],
+    "km": "1,23,882 km",
+    "engine": "1,400 cc",
+    "colour": "Midnight Grey",
     "status": "available",
     "desc": "",
-    "accent": "#86c440"
+    "accent": "#3c4249",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 18,
-    "brand": "Hyundai",
-    "name": "i20 Sportz",
-    "year": "2013",
+    "brand": "Maruti Suzuki",
+    "name": "Swift ZXI",
+    "year": "2014",
     "img": "assets/img/cars/veh-18-md.webp",
     "full": "assets/img/cars/veh-18.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 18,75,000",
     "badge": "In stock",
     "specs": [
-      "Ember Grey"
+      "57,937 km",
+      "1,200 cc",
+      "Silver"
     ],
+    "km": "57,937 km",
+    "engine": "1,200 cc",
+    "colour": "Silver",
     "status": "available",
     "desc": "",
-    "accent": "#565a5f"
+    "accent": "#c2c7cc",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 19,
     "brand": "Hyundai",
-    "name": "Santro Sportz",
+    "name": "i20 Active",
     "year": "2019",
     "img": "assets/img/cars/veh-19-md.webp",
     "full": "assets/img/cars/veh-19.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 29,50,000",
     "badge": "In stock",
     "specs": [
-      "Imperial Beige"
+      "53,416 km",
+      "1,200 cc",
+      "Typhoon Silver"
     ],
+    "km": "53,416 km",
+    "engine": "1,200 cc",
+    "colour": "Typhoon Silver",
     "status": "available",
     "desc": "",
-    "accent": "#d7c7a4"
+    "accent": "#9ea5ac",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 20,
-    "brand": "Hyundai",
-    "name": "i10 Magna",
-    "year": "2008",
+    "brand": "Maruti Suzuki",
+    "name": "Baleno Delta",
+    "year": "2016",
     "img": "assets/img/cars/veh-20-md.webp",
     "full": "assets/img/cars/veh-20.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 18,00,000",
     "badge": "In stock",
     "specs": [
-      "Golden"
+      "58,900 km",
+      "1,200 cc",
+      "Silver"
     ],
+    "km": "58,900 km",
+    "engine": "1,200 cc",
+    "colour": "Silver",
     "status": "available",
     "desc": "",
-    "accent": "#d4af37"
+    "accent": "#c2c7cc",
+    "gallery": [],
+    "video": ""
   },
   {
     "id": 21,
-    "brand": "Kia",
-    "name": "Niro EV",
+    "brand": "Nissan",
+    "name": "Kicks",
     "year": "2019",
     "img": "assets/img/cars/veh-21-md.webp",
     "full": "assets/img/cars/veh-21.webp",
     "fit": "cover",
-    "price": "",
+    "price": "Rs. 29,50,000",
     "badge": "In stock",
     "specs": [
-      "Snow White",
-      "Electric"
+      "52,028 km",
+      "1,500 cc",
+      "White"
     ],
+    "km": "52,028 km",
+    "engine": "1,500 cc",
+    "colour": "White",
     "status": "available",
     "desc": "",
-    "accent": "#f7f8fa"
+    "accent": "#f2f3f5",
+    "gallery": [],
+    "video": ""
+  },
+  {
+    "id": 22,
+    "brand": "Hyundai",
+    "name": "Creta S",
+    "year": "2022",
+    "img": "assets/img/cars/veh-22-md.webp",
+    "full": "assets/img/cars/veh-22.webp",
+    "fit": "cover",
+    "price": "Rs. 50,00,000",
+    "badge": "In stock",
+    "specs": [
+      "20,900 km",
+      "1,500 cc",
+      "Typhoon Silver"
+    ],
+    "km": "20,900 km",
+    "engine": "1,500 cc",
+    "colour": "Typhoon Silver",
+    "status": "available",
+    "desc": "",
+    "accent": "#9ea5ac",
+    "gallery": [],
+    "video": ""
   }
 ]

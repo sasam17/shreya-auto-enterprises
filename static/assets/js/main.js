@@ -730,13 +730,22 @@
   }
   function initCarVideo() {
     var frame = document.querySelector(".cd-video__frame");
-    if (!frame) return;
+    if (!frame || frame.classList.contains("cd-video__frame--empty")) return;
     frame.addEventListener("click", function () {
       var src = frame.getAttribute("data-video"); if (!src) return;
-      var v = document.createElement("video");
-      v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute("playsinline", "");
-      frame.innerHTML = ""; frame.appendChild(v); frame.style.cursor = "default";
-      v.play().catch(function () {});
+      var yt = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+      frame.innerHTML = ""; frame.style.cursor = "default";
+      if (yt) {   // YouTube link → embed
+        var f = document.createElement("iframe");
+        f.src = "https://www.youtube.com/embed/" + yt[1] + "?autoplay=1&rel=0";
+        f.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen";
+        f.setAttribute("allowfullscreen", ""); f.setAttribute("frameborder", "0");
+        frame.appendChild(f);
+      } else {    // direct file / URL → <video>
+        var v = document.createElement("video");
+        v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute("playsinline", "");
+        frame.appendChild(v); v.play().catch(function () {});
+      }
     });
   }
 

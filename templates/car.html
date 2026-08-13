@@ -22,14 +22,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="/assets/css/styles.css?v=45" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=46" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
 {% set gallery = car.gallery or [] %}
-{% set exterior = gallery | selectattr('cat', 'equalto', 'exterior') | list %}
-{% set interior = gallery | selectattr('cat', 'equalto', 'interior') | list %}
-{% set angles   = gallery | selectattr('cat', 'equalto', 'angle') | list %}
+{# Every car shows all sections; empty categories fall back to an "add photos" placeholder. #}
+{% set exterior = (gallery | selectattr('cat', 'equalto', 'exterior') | list) or [{'src': car.full, 'label': 'Photo'}] %}
+{% set interior = (gallery | selectattr('cat', 'equalto', 'interior') | list) or [{'label': 'Interior'}] %}
+{% set angles   = (gallery | selectattr('cat', 'equalto', 'angle') | list) or [{'label': 'Angles & details'}] %}
 
 {% macro slider(items, idx, en, np) %}
   <section class="section cd-sec" id="cd-{{ idx }}">
@@ -50,10 +51,20 @@
       <div class="cd-slider reveal-fade">
         <div class="cd-slider__track">
           {% for it in items %}
+          {% if it.src %}
           <figure class="cd-slide" data-full="/{{ it.src }}" aria-label="{{ it.label }}">
-            <img src="/{{ it.src }}" loading="lazy" decoding="async" alt="{{ label }} — {{ it.label }}" />
+            <img src="/{{ it.src }}" loading="lazy" decoding="async" alt="{{ it.label }}" />
             <figcaption>{{ it.label }}</figcaption>
           </figure>
+          {% else %}
+          <figure class="cd-slide cd-slide--add" aria-label="{{ it.label }}">
+            <span class="cd-slide__ph">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9Zm3 5.5A4.5 4.5 0 1 1 7.5 13 4.5 4.5 0 0 1 12 8.5Zm0 2A2.5 2.5 0 1 0 14.5 13 2.5 2.5 0 0 0 12 10.5Z"/></svg>
+              <b>{{ it.label }}</b>
+              <em data-en="Add photos in the admin" data-np="एडमिनमा फोटो थप्नुहोस्">Add photos in the admin</em>
+            </span>
+          </figure>
+          {% endif %}
           {% endfor %}
         </div>
       </div>
@@ -137,11 +148,11 @@
       </div>
     </section>
 
-    {% if exterior %}{{ slider(exterior, '01', 'Exterior', 'बाहिरी') }}{% endif %}
-    {% if interior %}{{ slider(interior, '02', 'Interior', 'भित्री') }}{% endif %}
-    {% if angles %}{{ slider(angles, '03', 'Every angle', 'हरेक कोण') }}{% endif %}
+    {# every car shows the full set of sections; empty ones fall back to "add in admin" placeholders #}
+    {{ slider(exterior, '01', 'Exterior', 'बाहिरी') }}
+    {{ slider(interior, '02', 'Interior', 'भित्री') }}
+    {{ slider(angles, '03', 'Every angle', 'हरेक कोण') }}
 
-    {% if car.video %}
     <!-- ============================== VIDEO ============================== -->
     <section class="cd-video dark" id="cd-video">
       <div class="grain" aria-hidden="true"></div>
@@ -150,15 +161,24 @@
           <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(04)</span> <span data-en="On video" data-np="भिडियोमा">On video</span></p>
           <h2 class="display reveal-up" data-delay="1" data-en="See it move" data-np="चलेको हेर्नुहोस्">See it move</h2>
         </header>
-        <div class="cd-video__frame reveal-fade" data-video="/{{ car.video }}">
+        {% if car.video %}
+        <div class="cd-video__frame reveal-fade" data-video="{% if car.video.startswith('http') %}{{ car.video }}{% else %}/{{ car.video }}{% endif %}">
           <img src="/{{ car.full }}" alt="{{ label }} video preview" loading="lazy" />
           <button class="cd-video__play" type="button" aria-label="Play video">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
           </button>
         </div>
+        {% else %}
+        <div class="cd-video__frame cd-video__frame--empty reveal-fade">
+          <span class="cd-slide__ph">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11z"/></svg>
+            <b data-en="Video coming soon" data-np="भिडियो चाँडै">Video coming soon</b>
+            <em data-en="Add a video link in the admin" data-np="एडमिनमा भिडियो लिङ्क थप्नुहोस्">Add a video link in the admin</em>
+          </span>
+        </div>
+        {% endif %}
       </div>
     </section>
-    {% endif %}
 
     <!-- ============================== SPEC SHEET ============================== -->
     <section class="section cd-specs" id="cd-specs">
@@ -173,7 +193,9 @@
             {% if car.brand %}<div><dt data-en="Make" data-np="ब्रान्ड">Make</dt><dd>{{ car.brand }}</dd></div>{% endif %}
             <div><dt data-en="Model" data-np="मोडेल">Model</dt><dd>{{ car.name }}</dd></div>
             {% if car.year %}<div><dt data-en="Year" data-np="वर्ष">Year</dt><dd>{{ car.year }}</dd></div>{% endif %}
-            {% for s in car.specs %}<div><dt data-en="Detail" data-np="विवरण">Detail</dt><dd>{{ s }}</dd></div>{% endfor %}
+            {% if car.km %}<div><dt data-en="Kilometres" data-np="किलोमिटर">Kilometres</dt><dd>{{ car.km }}</dd></div>{% endif %}
+            {% if car.engine %}<div><dt data-en="Engine" data-np="इन्जिन">Engine</dt><dd>{{ car.engine }}</dd></div>{% endif %}
+            {% if car.colour %}<div><dt data-en="Colour" data-np="रङ">Colour</dt><dd>{{ car.colour }}</dd></div>{% endif %}
             <div><dt data-en="Status" data-np="स्थिति">Status</dt><dd class="is-avail" data-en="Available" data-np="उपलब्ध">Available</dd></div>
             <div><dt data-en="Price" data-np="मूल्य">Price</dt><dd>{% if car.price %}{{ car.price }}{% else %}<span data-en="On request" data-np="सम्पर्क गर्नुहोस्">On request</span>{% endif %}</dd></div>
             <div><dt data-en="Location" data-np="स्थान">Location</dt><dd data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</dd></div>
@@ -244,6 +266,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="/assets/js/main.js?v=45" defer></script>
+  <script src="/assets/js/main.js?v=46" defer></script>
 </body>
 </html>
