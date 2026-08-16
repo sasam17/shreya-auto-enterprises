@@ -175,6 +175,14 @@ html[data-theme="light"] .hero__spotlight{mix-blend-mode:normal;
 .hero__caption{position:absolute; left:14px; bottom:14px; z-index:2; padding:8px 15px; border-radius:999px;
   background:rgba(6,24,46,.62); backdrop-filter:blur(8px); color:#fff;
   font-family:var(--font-display); font-size:12.5px; font-weight:600; letter-spacing:.06em}
+.hero__frame .pano{position:absolute; inset:0; overflow:hidden; cursor:grab; touch-action:none; background:#0b2647; z-index:1}
+.hero__frame .pano.grabbing{cursor:grabbing}
+.hero__frame .pano__img{position:absolute; top:0; left:0; height:135%; width:auto; max-width:none; object-fit:none;
+  transform:none; transition:none; user-select:none; -webkit-user-drag:none; will-change:transform}
+.pano__hint{position:absolute; left:12px; top:12px; z-index:3; display:flex; align-items:center; gap:6px;
+  background:rgba(6,24,46,.6); color:#fff; font-family:var(--font-display); font-size:11.5px; letter-spacing:.04em;
+  padding:5px 11px; border-radius:999px; pointer-events:none}
+.pano__hint i{font-style:normal; font-size:13px; line-height:1}
 .hero__aurora{position:absolute; inset:0; pointer-events:none; overflow:hidden; mix-blend-mode:screen}
 .hero__aurora span{position:absolute; border-radius:50%; filter:blur(60px); opacity:.5}
 .hero__aurora span:nth-child(1){top:-15%; right:-5%; width:46vw; height:46vw; max-width:640px; max-height:640px; background:radial-gradient(circle,rgba(55,178,234,.55),transparent 60%); animation:aurora1 16s var(--ease) infinite alternate}

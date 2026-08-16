@@ -75,7 +75,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=47" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=48" />
 </head>
 <body>
   <a class="skip-link" href="#cars">Skip to content</a>
@@ -167,11 +167,40 @@
         <!-- framed showroom shot — sized below the photo's native resolution so it stays crisp -->
         <figure class="hero__visual reveal-fade" data-delay="2">
           <div class="hero__frame" id="heroFrame">
-            <img id="heroImg" src="assets/img/cars/car4.webp" width="1242" height="1080" fetchpriority="high" onerror="this.onerror=null;this.src=this.src.replace('.webp','.jpg')" alt="Red Kia Seltos for sale at Shreya Auto Enterprises, Kathmandu" />
-            <figcaption class="hero__caption"><span data-en="On our lot — Kia Seltos" data-np="हाम्रो लटमा — Kia Seltos">On our lot — Kia Seltos</span></figcaption>
+            <div class="pano" id="heroPano" role="img" aria-label="Panorama of the Shreya Auto Enterprises car lot in Bishalnagar, Kathmandu — drag to look around">
+              <img class="pano__img" id="panoImg" src="assets/img/pano.jpg" width="1599" height="520" fetchpriority="high" draggable="false" alt="" />
+              <span class="pano__hint"><i aria-hidden="true">↔</i><span data-en="drag to look around" data-np="वरिपरि हेर्न तान्नुहोस्">drag to look around</span></span>
+            </div>
+            <figcaption class="hero__caption"><span data-en="Our lot — Bishalnagar, Kathmandu" data-np="हाम्रो लट — बिशालनगर, काठमाडौँ">Our lot — Bishalnagar, Kathmandu</span></figcaption>
           </div>
         </figure>
       </div>
+
+      <script>
+      /* Panorama hero: drag to look across the lot; gentle auto-pan when idle. */
+      (function(){
+        var pano=document.getElementById('heroPano'), img=document.getElementById('panoImg');
+        if(!pano||!img) return;
+        var x=0,y=0,dragging=false,px=0,py=0,dir=-1,idle=0,ready=false;
+        function b(){ return { mx: pano.clientWidth-img.offsetWidth, my: pano.clientHeight-img.offsetHeight }; }
+        function clamp(){ var r=b();
+          x = r.mx>0 ? r.mx/2 : Math.min(0, Math.max(r.mx, x));
+          y = r.my>0 ? r.my/2 : Math.min(0, Math.max(r.my, y)); }
+        function apply(){ img.style.transform='translate('+x+'px,'+y+'px)'; }
+        function center(){ var r=b(); x=r.mx/2; y=r.my/2; clamp(); apply(); ready=true; }
+        function down(e){ dragging=true; idle=0; pano.classList.add('grabbing'); px=e.clientX; py=e.clientY; try{pano.setPointerCapture(e.pointerId);}catch(_){ } }
+        function move(e){ if(!dragging) return; x+=e.clientX-px; y+=e.clientY-py; px=e.clientX; py=e.clientY; clamp(); apply(); }
+        function up(){ dragging=false; idle=0; pano.classList.remove('grabbing'); }
+        pano.addEventListener('pointerdown',down);
+        pano.addEventListener('pointermove',move);
+        pano.addEventListener('pointerup',up);
+        pano.addEventListener('pointercancel',up);
+        window.addEventListener('resize',function(){ if(ready) center(); });
+        function loop(){ if(ready && !dragging){ idle++; if(idle>90){ var r=b(); x+=dir*0.35; if(x<=r.mx){x=r.mx;dir=1;} if(x>=0){x=0;dir=-1;} clamp(); apply(); } } requestAnimationFrame(loop); }
+        if(img.complete && img.naturalWidth) center(); else img.addEventListener('load',center);
+        loop();
+      })();
+      </script>
 
       <div class="hero__marquee" aria-hidden="true">
         <div class="marquee__track">
@@ -582,6 +611,6 @@
       window.SHREYA_REVIEWS = _shreya.reviews;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=47" defer></script>
+  <script src="assets/js/main.js?v=48" defer></script>
 </body>
 </html>

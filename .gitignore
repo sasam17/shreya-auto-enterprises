@@ -28,3 +28,7 @@ video awareness/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Raw hero source uploads (keep out of the repo)
+Para Image/
+_source/
