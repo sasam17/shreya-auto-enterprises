@@ -28,11 +28,24 @@
     .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px; }
     @media(max-width:640px){ .grid3{ grid-template-columns:1fr; } }
     .gmanage{ margin-top:4px; }
-    .gthumbs{ display:flex; flex-wrap:wrap; gap:12px; }
-    .gthumb{ position:relative; width:100px; margin:0; }
-    .gthumb img{ width:100px; height:66px; object-fit:cover; border-radius:8px; display:block; border:1px solid var(--mist); }
-    .gthumb__cat{ display:block; font-size:10.5px; color:var(--navy); text-transform:capitalize; margin-top:3px; }
-    .gthumb__x{ position:absolute; top:-7px; right:-7px; width:22px; height:22px; border-radius:50%; background:#b42323; color:#fff; border:none; cursor:pointer; font-size:15px; line-height:1; margin:0; padding:0; box-shadow:0 2px 6px rgba(0,0,0,.28); }
+    .gthumbs{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; }
+    .gthumb{ position:relative; width:auto; margin:0; }
+    .gthumb img{ width:100%; height:112px; object-fit:cover; border-radius:10px; display:block; border:1px solid var(--mist); cursor:zoom-in; transition:transform .15s ease, box-shadow .15s ease; }
+    .gthumb img:hover{ transform:translateY(-2px); box-shadow:0 10px 20px rgba(11,58,119,.18); border-color:var(--cyan); }
+    .gthumb__cat{ display:block; font-size:12.5px; font-weight:600; color:var(--navy); text-transform:capitalize; margin-top:6px; }
+    .gthumb__x{ position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#b42323; color:#fff; border:2px solid #fff; cursor:pointer; font-size:16px; line-height:1; margin:0; padding:0; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+    .gthumb__x:hover{ background:#8f1a1a; }
+    /* full-size image viewer (lightbox) */
+    .lbox{ position:fixed; inset:0; z-index:100; background:rgba(6,24,46,.9); display:none; align-items:center; justify-content:center; padding:26px; }
+    .lbox.show{ display:flex; }
+    .lbox__inner{ max-width:min(940px,94vw); max-height:92vh; display:flex; flex-direction:column; gap:16px; }
+    .lbox__inner img{ max-width:100%; max-height:76vh; object-fit:contain; border-radius:12px; background:#fff; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+    .lbox__bar{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .lbox__label{ font:600 17px "Space Grotesk",sans-serif; color:#fff; }
+    .lbox__actions{ display:flex; gap:10px; }
+    .lbox .btn{ margin-top:0; }
+    .btn--ghost{ background:rgba(255,255,255,.16); color:#fff; padding:11px 22px; }
+    .btn--ghost:hover{ background:rgba(255,255,255,.26); }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
     .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
     .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
@@ -187,7 +200,7 @@
       <h2>Current cars ({{ cars|length }})</h2>
       {% for car in cars %}
       <div class="carrow">
-        <img class="carrow__img" src="{{ car.img }}" alt="" onerror="this.style.opacity=.2" />
+        <img class="carrow__img" src="{{ car.img }}" data-src="{{ car.full or car.img }}" data-label="{{ car.brand }} {{ car.name }} — main photo" alt="" title="Click to view full-size" style="cursor:zoom-in" onerror="this.style.opacity=.2" />
         <div class="carrow__info">
           <strong>{{ car.brand }} {{ car.name }}</strong> <span class="hint" style="display:inline">{{ car.year }}</span>
           <span class="status-tag status-tag--{{ 'sold' if car.status == 'sold' else 'available' }}">{{ 'Sold out' if car.status == 'sold' else 'Available' }}</span>
@@ -236,15 +249,16 @@
             </form>
             {% if car.gallery %}
             <div class="gmanage">
-              <div class="hint" style="margin:14px 0 8px">Gallery photos ({{ car.gallery|length }}) — click × to remove:</div>
+              <div class="hint" style="margin:14px 0 8px">Gallery photos ({{ car.gallery|length }}) — <b>click a photo to view it full-size</b>, then remove it if you don't want it. The × removes it straight away.</div>
               <div class="gthumbs">
                 {% for g in car.gallery %}
-                <form method="POST" action="{{ url_for('admin_gallery_delete') }}" class="gthumb" onsubmit="return confirm('Remove this photo?')">
+                {% set gid = 'gform-' ~ car.id ~ '-' ~ loop.index %}
+                <form id="{{ gid }}" method="POST" action="{{ url_for('admin_gallery_delete') }}" class="gthumb" onsubmit="return confirm('Remove “{{ (g.label or g.cat)|e }}”? This cannot be undone.')">
                   <input type="hidden" name="id" value="{{ car.id }}" />
                   <input type="hidden" name="src" value="{{ g.src }}" />
-                  <img src="{{ g.src }}" alt="" onerror="this.style.opacity=.2" />
-                  <span class="gthumb__cat">{{ g.cat }}</span>
-                  <button type="submit" class="gthumb__x" aria-label="Remove photo">×</button>
+                  <img src="{{ g.src }}" class="gthumb__img" data-src="{{ g.src }}" data-label="{{ g.label or g.cat }}" data-form="{{ gid }}" alt="{{ g.label or g.cat }}" title="Click to view full-size" onerror="this.style.opacity=.2" />
+                  <span class="gthumb__cat">{{ g.label or g.cat }}</span>
+                  <button type="submit" class="gthumb__x" aria-label="Remove {{ g.label or g.cat }}" title="Remove this photo">×</button>
                 </form>
                 {% endfor %}
               </div>
@@ -289,5 +303,60 @@
       {% endfor %}
     {% endif %}
   </div>
+
+  <!-- ───── FULL-SIZE IMAGE VIEWER ───── -->
+  <div class="lbox" id="lbox">
+    <div class="lbox__inner">
+      <img id="lboxImg" src="" alt="" />
+      <div class="lbox__bar">
+        <span class="lbox__label" id="lboxLabel"></span>
+        <div class="lbox__actions">
+          <button type="button" class="btn btn--ghost" id="lboxClose">Close</button>
+          <button type="button" class="btn btn--danger" id="lboxRemove">Remove this photo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var lbox   = document.getElementById('lbox');
+      var lImg   = document.getElementById('lboxImg');
+      var lLabel = document.getElementById('lboxLabel');
+      var lRemove= document.getElementById('lboxRemove');
+      var currentForm = null;
+
+      function open(src, label, formId) {
+        lImg.src = src;
+        lLabel.textContent = label || '';
+        currentForm = formId ? document.getElementById(formId) : null;
+        lRemove.style.display = currentForm ? 'inline-flex' : 'none';
+        lbox.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+      function close() {
+        lbox.classList.remove('show');
+        lImg.src = '';
+        currentForm = null;
+        document.body.style.overflow = '';
+      }
+
+      // Any clickable image opens the viewer (gallery thumbs + each car's main photo).
+      document.querySelectorAll('.gthumb__img, .carrow__img').forEach(function (img) {
+        img.addEventListener('click', function () {
+          open(img.dataset.src || img.src, img.dataset.label || '', img.dataset.form || null);
+        });
+      });
+
+      // Remove from inside the viewer → triggers the same confirm + delete as the × button.
+      lRemove.addEventListener('click', function () {
+        if (currentForm) { var f = currentForm; close(); f.requestSubmit(); }
+      });
+
+      document.getElementById('lboxClose').addEventListener('click', close);
+      lbox.addEventListener('click', function (e) { if (e.target === lbox) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    })();
+  </script>
 </body>
 </html>

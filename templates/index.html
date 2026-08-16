@@ -75,7 +75,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=46" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=47" />
 </head>
 <body>
   <a class="skip-link" href="#cars">Skip to content</a>
@@ -83,10 +83,13 @@
 
   <!-- choreographed intro -->
   <div class="preloader" id="preloader" aria-hidden="true">
-    <svg class="preloader__mark" viewBox="0 0 64 34">
-      <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M2 15h13M0 20h9M5 26h7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-    </svg>
+    <div class="preloader__logo">
+      <svg class="preloader__mark" viewBox="0 0 64 34" aria-hidden="true">
+        <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 15h13M0 20h9M5 26h7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <span class="preloader__text"><b>Shreya<i>Auto</i></b><em>Enterprises</em></span>
+    </div>
   </div>
 
   <!-- ============================ HEADER / NAV ============================ -->
@@ -579,6 +582,6 @@
       window.SHREYA_REVIEWS = _shreya.reviews;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=46" defer></script>
+  <script src="assets/js/main.js?v=47" defer></script>
 </body>
 </html>
