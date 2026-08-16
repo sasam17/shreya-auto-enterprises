@@ -770,8 +770,8 @@
 
   if (reduceMotion) hidePreloader();
   else {
-    if (document.readyState === "complete") setTimeout(hidePreloader, 1500);
-    else window.addEventListener("load", function () { setTimeout(hidePreloader, 1500); });
-    setTimeout(hidePreloader, 3000); // failsafe so the intro can never get stuck
+    if (document.readyState === "complete") setTimeout(hidePreloader, 1800);
+    else window.addEventListener("load", function () { setTimeout(hidePreloader, 1800); });
+    setTimeout(hidePreloader, 3200); // failsafe so the intro can never get stuck
   }
 })();

@@ -622,9 +622,9 @@ body.lang-np .cd-spectable dt{letter-spacing:normal}
 .preloader__logo{display:flex; align-items:center; gap:clamp(16px,3vw,26px); padding:0 24px}
 .preloader__mark{width:clamp(88px,20vw,150px); height:auto; color:var(--cyan)}
 .preloader__text{display:flex; flex-direction:column; line-height:1; font-family:var(--font-display)}
-.preloader__text b{font-size:clamp(30px,8vw,56px); font-weight:700; color:#fff; letter-spacing:-.01em}
+.preloader__text b{font-size:clamp(33px,8.6vw,62px); font-weight:700; color:#fff; letter-spacing:-.01em}
 .preloader__text b i{font-style:normal; color:var(--cyan)}
-.preloader__text em{font-style:normal; font-size:clamp(11px,2.4vw,18px); font-weight:600; letter-spacing:.32em; color:var(--cyan); margin-top:clamp(6px,1.4vw,11px); text-transform:uppercase}
+.preloader__text em{font-style:normal; font-size:clamp(12px,2.6vw,20px); font-weight:600; letter-spacing:.32em; color:var(--cyan); margin-top:clamp(6px,1.4vw,12px); text-transform:uppercase}
 .js .preloader__mark path{stroke-dasharray:240; stroke-dashoffset:240; animation:draw 1.1s var(--ease) forwards}
 .js .preloader__mark path:nth-child(2){animation-delay:.18s}
 .js .preloader__text{opacity:0; transform:translateY(10px); animation:pl-text-in .7s var(--ease) .5s forwards}
