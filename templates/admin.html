@@ -50,6 +50,8 @@
     .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
     .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
     .hint{ font-size:12.5px; color:rgba(10,37,64,.6); margin-top:4px; }
+    .exportlink{ font-size:12px; font-weight:600; color:var(--navy); text-decoration:none; border:1px solid var(--mist); background:#f3f8fd; padding:4px 12px; border-radius:999px; margin-left:12px; vertical-align:middle; white-space:nowrap; }
+    .exportlink:hover{ border-color:var(--cyan); color:var(--dark); }
     table{ width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 14px 34px rgba(11,58,119,.08); }
     th,td{ text-align:left; padding:13px 16px; border-bottom:1px solid var(--mist); font-size:14px; vertical-align:middle; }
     th{ background:#f3f8fd; font-family:"Space Grotesk",sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); }
@@ -100,7 +102,7 @@
       </form>
     {% else %}
       <!-- ───── INQUIRIES (newest first) ───── -->
-      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }})</h2>
+      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }}){% if inquiries %}<a class="exportlink" href="{{ url_for('admin_export', kind='inquiries') }}">⤓ Export CSV</a>{% endif %}</h2>
       <form method="POST" action="{{ url_for('admin_test_email') }}" style="margin:-6px 0 16px">
         <button class="btn" type="submit">✉ Send test email</button>
       </form>
@@ -130,7 +132,7 @@
       {% endif %}
 
       <!-- ───── REVIEWS (pending first — approve to publish) ───── -->
-      <h2>Reviews ({{ reviews|length }})</h2>
+      <h2>Reviews ({{ reviews|length }}){% if reviews %}<a class="exportlink" href="{{ url_for('admin_export', kind='reviews') }}">⤓ Export CSV</a>{% endif %}</h2>
       {% if reviews %}
       <table>
         <tr><th>When</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>
@@ -161,7 +163,7 @@
       {% endif %}
 
       <!-- ───── CAR SALES / BUYERS ───── -->
-      <h2>Car sales ({{ sales|length }})</h2>
+      <h2>Car sales ({{ sales|length }}){% if sales %}<a class="exportlink" href="{{ url_for('admin_export', kind='sales') }}">⤓ Export CSV</a>{% endif %}</h2>
       {% if sales_summary and sales_summary.count %}
       <div class="hint" style="margin:-6px 0 12px; font-size:14px">
         <b>{{ sales_summary.count }}</b> car{{ 's' if sales_summary.count != 1 else '' }} sold{% if sales_summary.total %} · <b>{{ sales_summary.total }}</b> recorded (private){% endif %}

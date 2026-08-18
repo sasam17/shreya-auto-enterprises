@@ -21,6 +21,8 @@
 =============================================================================
 """
 
+import csv
+import io
 import json
 import os
 import re
@@ -35,7 +37,7 @@ from functools import wraps
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    session, jsonify, flash, abort,
+    session, jsonify, flash, abort, Response,
 )
 from werkzeug.utils import secure_filename
 
@@ -588,6 +590,30 @@ def admin_sale_delete():
     db.delete_sale(int(request.form.get("id", 0)))
     flash("Sale record removed.")
     return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/export/<kind>")
+@admin_required
+def admin_export(kind):
+    """Download inquiries / reviews / sales as a CSV spreadsheet (opens in Excel).
+    A UTF-8 BOM is prepended so Excel shows Nepali text correctly."""
+    tables = {
+        "inquiries": (["time", "name", "phone", "car", "message"], db.all_inquiries()),
+        "reviews":   (["time", "name", "rating", "location", "approved", "text"], db.all_reviews()),
+        "sales":     (["sold_on", "car_desc", "buyer_name", "buyer_phone", "price", "notes"], db.all_sales()),
+    }
+    if kind not in tables:
+        abort(404)
+    cols, rows = tables[kind]
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(cols)
+    for r in rows:
+        writer.writerow([r.get(c, "") for c in cols])
+    fname = f"shreya-{kind}-{datetime.now().strftime('%Y-%m-%d')}.csv"
+    return Response("﻿" + buf.getvalue(),
+                    content_type="text/csv; charset=utf-8",
+                    headers={"Content-Disposition": f'attachment; filename="{fname}"'})
 
 
 @app.route(f"/{config.ADMIN_PATH}/add", methods=["POST"])
