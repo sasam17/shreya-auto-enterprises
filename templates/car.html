@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="/assets/css/styles.css?v=52" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=53" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
@@ -233,6 +233,15 @@
             <div class="emi-out__row"><span data-en="Total payable" data-np="कुल भुक्तानी">Total payable</span><b id="emiTotal">—</b></div>
           </div>
         </div>
+        <div class="emi-reqs reveal-up" data-delay="3">
+          <h3 data-en="What you'll need to apply for financing" data-np="फाइनान्सका लागि के चाहिन्छ">What you'll need to apply for financing</h3>
+          <ul>
+            <li data-en="Nepali citizenship" data-np="नेपाली नागरिकता">Nepali citizenship</li>
+            <li data-en="Kathmandu residency" data-np="काठमाडौँ बसोबास">Kathmandu residency</li>
+            <li data-en="A source of income" data-np="आम्दानीको स्रोत">A source of income</li>
+            <li data-en="A guarantor with Nepali citizenship" data-np="नेपाली नागरिकता भएको जमानीकर्ता">A guarantor with Nepali citizenship</li>
+          </ul>
+        </div>
         <p class="emi-note reveal-up" data-en="An estimate only. Banks in Nepal typically finance up to about 50% of a used car's value, so ~50% is the usual down payment. Final terms vary — contact us for exact pricing and financing help." data-np="यो अनुमान मात्र हो। नेपालमा बैंकहरूले प्रायः सेकेन्डह्यान्ड गाडीको करिब ५०% सम्म मात्र फाइनान्स गर्छन्, त्यसैले प्रायः ५०% अग्रिम भुक्तानी हुन्छ। अन्तिम सर्त फरक हुन सक्छ — सही मूल्यका लागि सम्पर्क गर्नुहोस्।">An estimate only. Banks in Nepal typically finance up to about 50% of a used car's value, so ~50% is the usual down payment. Final terms vary — contact us for exact pricing.</p>
       </div>
     </section>
@@ -299,6 +308,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="/assets/js/main.js?v=52" defer></script>
+  <script src="/assets/js/main.js?v=53" defer></script>
 </body>
 </html>

@@ -866,7 +866,13 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
 .emi-out__row{display:flex; align-items:center; justify-content:space-between; font-size:14px}
 .emi-out__row span{color:#c3dbf6}
 .emi-note{text-align:center; color:var(--ink-dim, #5b7189); font-size:13px; margin-top:14px; max-width:640px; margin-left:auto; margin-right:auto}
+.emi-reqs{max-width:660px; margin:20px auto 0; background:var(--card,#fff); border:1px solid var(--line,#dceaf7); border-radius:14px; padding:18px 22px; box-shadow:0 10px 26px rgba(11,58,119,.06)}
+.emi-reqs h3{font-family:var(--font-display,"Space Grotesk"),sans-serif; font-size:15px; margin:0 0 12px; color:var(--navy,#0b3a77)}
+.emi-reqs ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:10px 20px}
+.emi-reqs li{position:relative; padding-left:26px; font-size:14px; color:var(--ink,#0a2540)}
+.emi-reqs li::before{content:"✓"; position:absolute; left:0; top:-1px; width:18px; height:18px; border-radius:50%; background:#e2f6ea; color:#1ba94c; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center}
 @media(max-width:680px){ .emi-card{grid-template-columns:1fr} .emi-inputs{grid-template-columns:1fr 1fr} }
+@media(max-width:560px){ .emi-reqs ul{grid-template-columns:1fr} }
 
 /* compare button on cards + floating tray */
 .car-card__cmp{width:34px; height:34px; flex:0 0 auto; border:1.5px solid var(--line, #dceaf7); background:var(--card,#fff); color:var(--navy,#0b3a77); border-radius:50%; cursor:pointer; font-size:15px; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .18s, color .18s, border-color .18s}
