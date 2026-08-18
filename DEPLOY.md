@@ -141,11 +141,41 @@ The code is ready; it sends over Gmail's secure SMTP **in the background** and *
 site if email fails**. Leave the mail settings blank to keep email off (inquiries still save + show
 in admin).
 
+## 5c. The database — inquiries, reviews & car sales (buyers)
+
+Inquiries, customer **reviews**, and **car sales / buyers** are stored in a real database.
+There are two options — you don't have to do anything for the first one.
+
+> ⚠️ **After pulling this update you must, once:** open a **Bash console** and run
+> `pip install -r requirements.txt` (it adds the database libraries), then click **Reload**
+> on the Web tab. Skip this and the site errors with *"No module named 'sqlalchemy'"*.
+
+**A) SQLite (default — zero setup).** The app keeps everything in one file, `data/shreya.db`,
+created automatically on first run. PythonAnywhere's disk is permanent, so this just works.
+Any inquiries/reviews from the older file-based version are imported automatically the first
+time the new code runs — **nothing is lost**.
+
+**B) MySQL (optional).** PythonAnywhere gives you a free MySQL database:
+1. **Databases tab** → set a MySQL password → **Create a database** (note its full name,
+   e.g. `USERNAME$shreya`).
+2. In your **WSGI file** (next to the other `os.environ[...]` lines) add — all one line:
+   ```python
+   os.environ["SHREYA_DATABASE_URL"] = "mysql+pymysql://USERNAME:MYSQL_PASSWORD@USERNAME.mysql.pythonanywhere-services.com/USERNAME$shreya"
+   ```
+   (That password lives only here in the server settings — never in the code/GitHub.)
+3. Click **Reload**. The same tables are created in MySQL automatically.
+
+**Where to see it all:** the **admin panel** already lists every inquiry, every review
+(click **Approve** to publish it), and every **car sale** — with a small summary of how many
+cars sold and the total recorded. You rarely need to open the database directly.
+
 ## 6. Back up your data (recommended monthly)
 
-Your whole inventory is three small files. On the **Files** tab download:
-`data/cars.json`, `data/partners.json`, `data/inquiries.json`, and the `static/assets/img/`
-folder. Keep a copy. That's a full backup.
+On the **Files** tab download: `data/cars.json`, `data/partners.json`, the database file
+`data/shreya.db` (this holds your inquiries, reviews and car sales), and the
+`static/assets/img/` folder. Keep a copy — that's a full backup.
+*(If you switched to MySQL (option B above), back the database up from the **Databases** tab
+instead of the `data/shreya.db` file.)*
 
 ---
 

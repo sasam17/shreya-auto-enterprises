@@ -162,6 +162,11 @@
 
       <!-- ───── CAR SALES / BUYERS ───── -->
       <h2>Car sales ({{ sales|length }})</h2>
+      {% if sales_summary and sales_summary.count %}
+      <div class="hint" style="margin:-6px 0 12px; font-size:14px">
+        <b>{{ sales_summary.count }}</b> car{{ 's' if sales_summary.count != 1 else '' }} sold{% if sales_summary.total %} · <b>{{ sales_summary.total }}</b> recorded (private){% endif %}
+      </div>
+      {% endif %}
       {% if sales %}
       <table>
         <tr><th>Sold on</th><th>Car</th><th>Buyer</th><th>Phone</th><th>Price (private)</th><th>Notes</th><th></th></tr>

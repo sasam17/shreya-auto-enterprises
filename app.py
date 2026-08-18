@@ -23,6 +23,7 @@
 
 import json
 import os
+import re
 import secrets
 import smtplib
 import threading
@@ -495,6 +496,22 @@ def wa_number(phone):
     return digits
 
 
+def _price_to_int(price):
+    """Pull the number out of a price string like 'Rs. 48,00,000' → 4800000 (0 if none)."""
+    digits = "".join(ch for ch in (price or "") if ch.isdigit())
+    return int(digits) if digits else 0
+
+
+def _inr_group(n):
+    """Group a number the Nepali/Indian way: 4800000 → '48,00,000'."""
+    s = str(int(n))
+    if len(s) <= 3:
+        return s
+    head, tail = s[:-3], s[-3:]
+    head = re.sub(r"(\d)(?=(\d\d)+$)", r"\1,", head)
+    return head + "," + tail
+
+
 # ---- Admin: dashboard (inquiries + cars + partners) -------------------------
 @app.route(f"/{config.ADMIN_PATH}")
 @admin_required
@@ -505,9 +522,17 @@ def admin():
     mail_on = bool(config.MAIL_USERNAME and config.MAIL_PASSWORD)
     reviews = db.all_reviews()                           # pending first, then approved
     sales = db.all_sales()                               # car sales / buyer records, newest first
+    # Small sales summary for the admin: how many sold + total of any recorded prices.
+    _total = sum(_price_to_int(s.get("price")) for s in sales)
+    sales_summary = {
+        "count": len(sales),
+        "total": ("Rs. " + _inr_group(_total)) if _total else "",
+        "pending_reviews": sum(1 for r in reviews if not r.get("approved")),
+    }
     return render_template("admin.html", logged_in=True, cars=load_cars(),
                            partners=load_partners(), inquiries=inquiries, mail_on=mail_on,
-                           mail_to=config.MAIL_TO, reviews=reviews, sales=sales)
+                           mail_to=config.MAIL_TO, reviews=reviews, sales=sales,
+                           sales_summary=sales_summary)
 
 
 @app.route(f"/{config.ADMIN_PATH}/test-email", methods=["POST"])
