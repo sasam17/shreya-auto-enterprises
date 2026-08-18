@@ -96,3 +96,15 @@ MAIL_TO       = _env("SHREYA_MAIL_TO", "shreyaauto.enterprises@gmail.com")
 # When you upload a car photo in the admin, the app shrinks + converts it to a
 # fast WebP automatically. This is the max width it resizes large photos to.
 IMAGE_MAX_WIDTH = int(_env("SHREYA_IMAGE_MAX_WIDTH", "1240"))
+
+# ── Database ─────────────────────────────────────────────────────────────────
+# Where structured records (inquiries, reviews, car sales / buyers) are stored.
+# Default: a local SQLite file at data/shreya.db — no server, no password needed.
+# For a hosted MySQL database instead, set ONE environment variable:
+#   SHREYA_DATABASE_URL=mysql+pymysql://USER:PASSWORD@HOST:3306/DBNAME
+# (Keep that URL — it contains the DB password — only in .env or the host's
+#  settings, never written in this committed file.)
+# Host override:  SHREYA_DATABASE_URL
+_DB_PATH    = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "shreya.db")
+_DEFAULT_DB = "sqlite:///" + _DB_PATH.replace("\\", "/")
+DATABASE_URL = _env("SHREYA_DATABASE_URL", _DEFAULT_DB)

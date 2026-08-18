@@ -130,7 +130,7 @@
             <p class="eyebrow eyebrow--light reveal-up">{{ car.brand }}</p>
             <h1 class="cd-hero__title reveal-up" data-delay="1">{{ car.name }}{% if car.year %} <span>{{ car.year }}</span>{% endif %}</h1>
             <p class="cd-hero__sub reveal-up" data-delay="2">
-              {% if car.specs %}{{ car.specs[0] }} · {% endif %}{% if car.price %}{{ car.price }}{% else %}<span data-en="Price on request" data-np="मूल्यका लागि सम्पर्क">Price on request</span>{% endif %}
+              {% if car.specs %}{{ car.specs[0] }} · {% endif %}{% if car.price %}{{ car.price }}{% else %}<span data-en="Price on inquiry" data-np="मूल्यका लागि सोध्नुहोस्">Price on inquiry</span>{% endif %}
               <span class="cd-hero__status" data-en="Available" data-np="उपलब्ध">Available</span>
             </p>
             <div class="cd-hero__cta reveal-up" data-delay="3">
@@ -197,7 +197,7 @@
             {% if car.engine %}<div><dt data-en="Engine" data-np="इन्जिन">Engine</dt><dd>{{ car.engine }}</dd></div>{% endif %}
             {% if car.colour %}<div><dt data-en="Colour" data-np="रङ">Colour</dt><dd>{{ car.colour }}</dd></div>{% endif %}
             <div><dt data-en="Status" data-np="स्थिति">Status</dt><dd class="is-avail" data-en="Available" data-np="उपलब्ध">Available</dd></div>
-            <div><dt data-en="Price" data-np="मूल्य">Price</dt><dd>{% if car.price %}{{ car.price }}{% else %}<span data-en="On request" data-np="सम्पर्क गर्नुहोस्">On request</span>{% endif %}</dd></div>
+            <div><dt data-en="Price" data-np="मूल्य">Price</dt><dd>{% if car.price %}{{ car.price }}{% else %}<span data-en="On inquiry" data-np="सोध्नुहोस्">On inquiry</span>{% endif %}</dd></div>
             <div><dt data-en="Location" data-np="स्थान">Location</dt><dd data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</dd></div>
           </dl>
         </div>

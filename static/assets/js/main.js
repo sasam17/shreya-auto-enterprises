@@ -49,7 +49,7 @@
     var specs = (car.specs || []).map(function (s) { return '<span class="spec">' + esc(s) + "</span>"; }).join("");
     var price = car.price
       ? '<div class="car-card__price">' + esc(car.price) + "</div>"
-      : '<div class="car-card__price is-request" data-en="Price on request" data-np="मूल्यका लागि सम्पर्क">Price on request</div>';
+      : '<div class="car-card__price is-request" data-en="Price on inquiry" data-np="मूल्यका लागि सोध्नुहोस्">Price on inquiry</div>';
     var plainLabel = (car.brand || "") + " " + (car.name || "") + (car.year ? " " + car.year : "");
     var label = esc(plainLabel);
     var fit = car.fit === "contain" ? "contain" : "cover";   // whitelist, never raw

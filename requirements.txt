@@ -4,3 +4,9 @@ Pillow>=10.0
 # Cross-platform production WSGI server (used by `python wsgi.py`).
 # PythonAnywhere doesn't need it; Linux hosts may use gunicorn instead. Harmless to keep.
 waitress>=3.0
+
+# Database layer. SQLAlchemy works the same on SQLite (default, local, no server) and
+# MySQL (production) — you only change SHREYA_DATABASE_URL. PyMySQL is the pure-Python
+# MySQL driver (no compiler needed); it's only actually used when the URL points at MySQL.
+SQLAlchemy>=2.0
+PyMySQL>=1.1

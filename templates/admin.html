@@ -107,7 +107,7 @@
       {% if inquiries %}
       <table>
         <tr><th>When</th><th>Name</th><th>Phone</th><th>Car</th><th>Message</th><th></th></tr>
-        {% for i, q in inquiries %}
+        {% for q in inquiries %}
         <tr>
           <td style="white-space:nowrap">{{ q.time }}</td>
           <td><strong>{{ q.name }}</strong></td>
@@ -118,7 +118,7 @@
           <td>{{ q.message }}</td>
           <td>
             <form method="POST" action="{{ url_for('admin_inquiry_delete') }}" onsubmit="return confirm('Remove this inquiry?')">
-              <input type="hidden" name="index" value="{{ i }}" />
+              <input type="hidden" name="id" value="{{ q.id }}" />
               <button class="btn btn--danger" type="submit">Remove</button>
             </form>
           </td>
@@ -158,6 +158,32 @@
       </table>
       {% else %}
       <div class="hint">No reviews yet.</div>
+      {% endif %}
+
+      <!-- ───── CAR SALES / BUYERS ───── -->
+      <h2>Car sales ({{ sales|length }})</h2>
+      {% if sales %}
+      <table>
+        <tr><th>Sold on</th><th>Car</th><th>Buyer</th><th>Phone</th><th>Price (private)</th><th>Notes</th><th></th></tr>
+        {% for sl in sales %}
+        <tr>
+          <td style="white-space:nowrap">{{ sl.sold_on }}</td>
+          <td>{{ sl.car_desc }}</td>
+          <td><strong>{{ sl.buyer_name or "—" }}</strong></td>
+          <td style="white-space:nowrap">{% if sl.buyer_phone %}<a href="tel:{{ sl.buyer_phone }}">{{ sl.buyer_phone }}</a>{% else %}—{% endif %}</td>
+          <td style="white-space:nowrap">{{ sl.price or "—" }}</td>
+          <td>{{ sl.notes }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_sale_delete') }}" onsubmit="return confirm('Remove this sale record?')">
+              <input type="hidden" name="id" value="{{ sl.id }}" />
+              <button class="btn btn--danger" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <div class="hint">No sales recorded yet. Mark a car <b>Sold out</b> in its Edit box (with the buyer's details) to log a sale here.</div>
       {% endif %}
 
       <!-- ───── ADD A CAR ───── -->
@@ -232,6 +258,15 @@
                     <option value="cover"{% if car.fit != 'contain' %} selected{% endif %}>Photo (fills the card)</option>
                     <option value="contain"{% if car.fit == 'contain' %} selected{% endif %}>Poster / spec-card (shown whole)</option>
                   </select>
+                </div>
+              </div>
+              <div class="soldbox">
+                <div class="hint" style="margin:12px 0 8px">Buyer details — saved to <b>Car sales</b> when you switch Status to <b>Sold out</b> and click Save (all optional):</div>
+                <div class="grid2">
+                  <div><label>Buyer name</label><input name="buyer_name" placeholder="e.g. Hari Thapa" /></div>
+                  <div><label>Buyer phone</label><input name="buyer_phone" placeholder="98…" /></div>
+                  <div><label>Sale price (kept private)</label><input name="sale_price" placeholder="blank = the car's listed price" /></div>
+                  <div><label>Notes</label><input name="sale_notes" placeholder="e.g. paid in full / exchange" /></div>
                 </div>
               </div>
               <label>Description (optional — shown on the car's own page)</label>

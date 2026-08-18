@@ -39,6 +39,7 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 import config
+import db
 
 # Pillow is used to shrink + convert uploaded photos to WebP. If it is not
 # installed the app still runs — it just stores the original photo as-is.
@@ -123,10 +124,11 @@ for _live, _seed in ((CARS_FILE, CARS_SEED), (PARTNERS_FILE, PARTNERS_SEED), (RE
 
 @app.after_request
 def set_security_headers(resp):
-    """Defense-in-depth response headers. The site has no database (so no SQL injection)
-    and Jinja auto-escapes everything (so XSS is contained); these add the standard extras
-    browsers look for. The CSP is permissive enough for the site's real sources (Google
-    Fonts, the embedded map) — verify the live site's fonts + map after deploy."""
+    """Defense-in-depth response headers. Database access goes through SQLAlchemy with
+    bound parameters (so no SQL injection) and Jinja auto-escapes everything (so XSS is
+    contained); these add the standard extras browsers look for. The CSP is permissive
+    enough for the site's real sources (Google Fonts, the embedded map) — verify the live
+    site's fonts + map after deploy."""
     resp.headers["X-Content-Type-Options"] = "nosniff"
     resp.headers["X-Frame-Options"] = "SAMEORIGIN"
     resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
@@ -170,8 +172,39 @@ def write_json(path, data):
     os.replace(tmp, path)
 
 
+# ── Database bootstrap ───────────────────────────────────────────────────────
+# Inquiries, reviews and car sales (buyers) now live in a real database (SQLite by
+# default, MySQL in production — see db.py / config.DATABASE_URL). On first run we
+# create the tables and import any existing JSON records, so upgrading from the old
+# file-based version loses nothing. The JSON files are left untouched as a backup.
+db.init_db()
+_present = db.count_rows()
+if not _present["inquiries"]:
+    _rows = read_json(INQUIRY_FILE, [])
+    if _rows:
+        db.bulk_import_inquiries(_rows)
+        print(f"Migrated {len(_rows)} inquiries from inquiries.json into the database.")
+if not _present["reviews"]:
+    _rows = read_json(REVIEWS_FILE, [])
+    if _rows:
+        db.bulk_import_reviews(_rows)
+        print(f"Migrated {len(_rows)} reviews from reviews.json into the database.")
+
+
 def load_cars():
     return read_json(CARS_FILE, [])
+
+
+def public_cars():
+    """Cars for the PUBLIC site with the price removed — policy is 'Price on inquiry',
+    so prices are never sent to visitors (not even hidden in the page source). The
+    admin panel still uses load_cars() and shows the real prices to the owner."""
+    out = []
+    for c in load_cars():
+        c = dict(c)
+        c["price"] = ""
+        out.append(c)
+    return out
 
 
 def save_cars(cars):
@@ -200,25 +233,11 @@ def next_partner_order(partners):
     return (max([p.get("order", 0) for p in partners]) + 1) if partners else 1
 
 
-def load_reviews():
-    return read_json(REVIEWS_FILE, [])
-
-
-def save_reviews(reviews):
-    write_json(REVIEWS_FILE, reviews)
-
-
-def next_review_id(reviews):
-    return (max([r.get("id", 0) for r in reviews]) + 1) if reviews else 1
-
-
 def public_reviews():
     """Only APPROVED reviews are shown on the site (newest first). Customer-submitted
     reviews stay hidden until the owner approves them in the admin — this stops spam
     or abuse from ever appearing publicly."""
-    revs = [r for r in load_reviews() if r.get("approved")]
-    revs.sort(key=lambda r: r.get("id", 0), reverse=True)
-    return revs
+    return db.approved_reviews()
 
 
 # ── Email ────────────────────────────────────────────────────────────────────
@@ -356,14 +375,14 @@ def admin_required(view):
 @app.route("/")
 def home():
     """The public home page. We pass the car + partner + approved-review lists in."""
-    return render_template("index.html", cars=load_cars(), partners=load_partners(),
+    return render_template("index.html", cars=public_cars(), partners=load_partners(),
                            reviews=public_reviews())
 
 
 @app.route("/cars")
 def all_cars():
     """The full inventory page — every car in a grid with brand filters."""
-    return render_template("cars.html", cars=load_cars(), partners=load_partners())
+    return render_template("cars.html", cars=public_cars(), partners=load_partners())
 
 
 @app.route("/car/<int:car_id>")
@@ -373,6 +392,7 @@ def car_detail(car_id):
     car = next((c for c in load_cars() if c.get("id") == car_id), None)
     if not car or car.get("status") == "sold":
         return redirect(url_for("all_cars"))
+    car = dict(car); car["price"] = ""   # 'Price on inquiry' policy — never expose the price
     return render_template("car.html", car=car, partners=load_partners())
 
 
@@ -393,9 +413,7 @@ def inquiry():
     if not data["name"] or not data["phone"]:
         return jsonify(ok=False, error="Name and phone are required."), 400
 
-    inquiries = read_json(INQUIRY_FILE, [])
-    inquiries.append(data)
-    write_json(INQUIRY_FILE, inquiries)
+    db.add_inquiry(data["name"], data["phone"], data["car"], data["message"])
 
     # Send the email in the background so the customer gets an instant reply even if
     # Gmail is slow. The inquiry is already safely saved above, so nothing is lost.
@@ -421,17 +439,7 @@ def review():
     if not name or not text:
         return jsonify(ok=False, error="Name and review are required."), 400
 
-    reviews = load_reviews()
-    reviews.append({
-        "id":       next_review_id(reviews),
-        "name":     name,
-        "rating":   rating,
-        "text":     text,
-        "location": location,
-        "time":     datetime.now().strftime("%Y-%m-%d"),
-        "approved": False,     # held for admin approval before it shows on the site
-    })
-    save_reviews(reviews)
+    db.add_review(name, rating, text, location)   # saved as PENDING (approved=False)
     return jsonify(ok=True)
 
 
@@ -491,16 +499,15 @@ def wa_number(phone):
 @app.route(f"/{config.ADMIN_PATH}")
 @admin_required
 def admin():
-    items = read_json(INQUIRY_FILE, [])
-    for q in items:
+    inquiries = db.all_inquiries()                       # newest first, each has a stable id
+    for q in inquiries:
         q["wa"] = wa_number(q.get("phone", ""))
-    inquiries = list(reversed(list(enumerate(items))))   # newest first, keep original index for delete
     mail_on = bool(config.MAIL_USERNAME and config.MAIL_PASSWORD)
-    # Reviews: pending (awaiting approval) first, then approved — newest within each group.
-    reviews = sorted(load_reviews(), key=lambda r: (r.get("approved", False), -r.get("id", 0)))
+    reviews = db.all_reviews()                           # pending first, then approved
+    sales = db.all_sales()                               # car sales / buyer records, newest first
     return render_template("admin.html", logged_in=True, cars=load_cars(),
                            partners=load_partners(), inquiries=inquiries, mail_on=mail_on,
-                           mail_to=config.MAIL_TO, reviews=reviews)
+                           mail_to=config.MAIL_TO, reviews=reviews, sales=sales)
 
 
 @app.route(f"/{config.ADMIN_PATH}/test-email", methods=["POST"])
@@ -529,25 +536,15 @@ def admin_test_email():
 @app.route(f"/{config.ADMIN_PATH}/inquiry/delete", methods=["POST"])
 @admin_required
 def admin_inquiry_delete():
-    idx = int(request.form.get("index", -1))
-    items = read_json(INQUIRY_FILE, [])
-    if 0 <= idx < len(items):
-        items.pop(idx)
-        write_json(INQUIRY_FILE, items)
-        flash("Inquiry removed.")
+    db.delete_inquiry(int(request.form.get("id", 0)))
+    flash("Inquiry removed.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/review/approve", methods=["POST"])
 @admin_required
 def admin_review_approve():
-    rid = int(request.form.get("id", 0))
-    reviews = load_reviews()
-    for r in reviews:
-        if r.get("id") == rid:
-            r["approved"] = True
-            break
-    save_reviews(reviews)
+    db.approve_review(int(request.form.get("id", 0)))
     flash("Review approved — it's now live on the site.")
     return redirect(url_for("admin"))
 
@@ -555,9 +552,16 @@ def admin_review_approve():
 @app.route(f"/{config.ADMIN_PATH}/review/delete", methods=["POST"])
 @admin_required
 def admin_review_delete():
-    rid = int(request.form.get("id", 0))
-    save_reviews([r for r in load_reviews() if r.get("id") != rid])
+    db.delete_review(int(request.form.get("id", 0)))
     flash("Review removed.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/sale/delete", methods=["POST"])
+@admin_required
+def admin_sale_delete():
+    db.delete_sale(int(request.form.get("id", 0)))
+    flash("Sale record removed.")
     return redirect(url_for("admin"))
 
 
@@ -623,7 +627,20 @@ def admin_edit():
             c["km"]     = c["specs"][0] if len(c["specs"]) > 0 else ""
             c["engine"] = c["specs"][1] if len(c["specs"]) > 1 else ""
             c["colour"] = c["specs"][2] if len(c["specs"]) > 2 else ""
+            was_sold = (c.get("status") == "sold")
             c["status"] = "sold" if request.form.get("status") == "sold" else "available"
+            # Buyer capture: when a car is NEWLY marked Sold, record the sale + who bought it.
+            # (Only on the available→sold transition, so re-saving a sold car won't duplicate it.)
+            if c["status"] == "sold" and not was_sold:
+                desc = " ".join(x for x in [c.get("brand", ""), c.get("name", ""),
+                                            str(c.get("year", ""))] if x).strip()
+                db.add_sale(
+                    car_id=car_id, car_desc=desc[:200],
+                    buyer_name=request.form.get("buyer_name", "").strip()[:120],
+                    buyer_phone=request.form.get("buyer_phone", "").strip()[:40],
+                    price=(request.form.get("sale_price", "").strip() or c.get("price", ""))[:60],
+                    notes=request.form.get("sale_notes", "").strip()[:1000],
+                )
             c["desc"]  = request.form.get("desc", "").strip()
             c["video"] = request.form.get("video", "").strip()
             photo = request.files.get("photo")

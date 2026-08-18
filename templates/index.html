@@ -58,14 +58,14 @@
     ],
     "makesOffer": [
       {
-        "@type": "Offer", "priceCurrency": "NPR", "price": "3750000", "availability": "https://schema.org/InStock",
+        "@type": "Offer", "availability": "https://schema.org/InStock",
         "itemOffered": {
           "@type": "Vehicle", "name": "Maruti Suzuki Brezza 2021", "fuelType": "Petrol",
           "mileageFromOdometer": { "@type": "QuantitativeValue", "value": 53000, "unitCode": "KMT" }
         }
       },
       {
-        "@type": "Offer", "priceCurrency": "NPR", "price": "5000000", "availability": "https://schema.org/InStock",
+        "@type": "Offer", "availability": "https://schema.org/InStock",
         "itemOffered": {
           "@type": "Vehicle", "name": "Kia Sportage 2019", "fuelType": "Petrol", "vehicleTransmission": "Automatic",
           "mileageFromOdometer": { "@type": "QuantitativeValue", "value": 34325, "unitCode": "KMT" }
@@ -75,7 +75,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=49" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=50" />
 </head>
 <body>
   <a class="skip-link" href="#cars">Skip to content</a>
@@ -160,7 +160,7 @@
           <span class="hero__spec-tag" data-en="In stock now" data-np="अहिले उपलब्ध">In stock now</span>
           <strong>Kia Sportage</strong>
           <span class="hero__spec-meta">2019 · Automatic · 34,325 km</span>
-          <span class="hero__spec-price">Rs. 50,00,000</span>
+          <span class="hero__spec-price" data-en="Price on inquiry" data-np="मूल्यका लागि सोध्नुहोस्">Price on inquiry</span>
         </aside>
         </div>
 
@@ -611,6 +611,6 @@
       window.SHREYA_REVIEWS = _shreya.reviews;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=49" defer></script>
+  <script src="assets/js/main.js?v=50" defer></script>
 </body>
 </html>

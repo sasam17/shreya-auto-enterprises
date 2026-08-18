@@ -17,6 +17,10 @@ data/partners.json
 data/reviews.json
 # customer phone numbers — keep private
 data/inquiries.json
+# the database (inquiries, reviews, sales/buyers) — live customer data, keep private
+data/shreya.db
+*.db
+*.sqlite3
 
 # Admin-uploaded car photos (named upload-<id>.webp). Runtime data, not shipped assets.
 static/assets/img/cars/upload-*
