@@ -98,13 +98,53 @@ MAIL_TO       = _env("SHREYA_MAIL_TO", "shreyaauto.enterprises@gmail.com")
 IMAGE_MAX_WIDTH = int(_env("SHREYA_IMAGE_MAX_WIDTH", "1240"))
 
 # ── Database ─────────────────────────────────────────────────────────────────
-# Where structured records (inquiries, reviews, car sales / buyers) are stored.
-# Default: a local SQLite file at data/shreya.db — no server, no password needed.
-# For a hosted MySQL database instead, set ONE environment variable:
-#   SHREYA_DATABASE_URL=mysql+pymysql://USER:PASSWORD@HOST:3306/DBNAME
-# (Keep that URL — it contains the DB password — only in .env or the host's
-#  settings, never written in this committed file.)
-# Host override:  SHREYA_DATABASE_URL
+# Where all records (users, cars, partners, inquiries, reviews, buyers, sales,
+# audit logs) are stored. The app is DUAL-ENGINE — the SAME code runs on either:
+#
+#   • SQLite  (default, local dev): a single file data/shreya.db — no server.
+#   • MySQL   (production, e.g. PythonAnywhere): a real database server.
+#
+# The connection string is chosen in this order:
+#   1. SHREYA_DATABASE_URL if set (full URL — simplest for PythonAnywhere), else
+#   2. the individual MYSQL_* variables below (HOST/PORT/USER/PASSWORD/DB), else
+#   3. the local SQLite file.
+# Any DB password lives ONLY in .env or the host's settings — never in this file.
 _DB_PATH    = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "shreya.db")
 _DEFAULT_DB = "sqlite:///" + _DB_PATH.replace("\\", "/")
-DATABASE_URL = _env("SHREYA_DATABASE_URL", _DEFAULT_DB)
+
+
+def _build_database_url():
+    """Pick the database connection string (see the ordered rules above)."""
+    explicit = _env("SHREYA_DATABASE_URL", "")
+    if explicit:
+        return explicit
+    host = _env("MYSQL_HOST", "")
+    if host:
+        port = _env("MYSQL_PORT", "3306")
+        user = _env("MYSQL_USER", "root")
+        pwd  = _env("MYSQL_PASSWORD", "")
+        name = _env("MYSQL_DB", "shreya_db")
+        # utf8mb4 = full Unicode incl. Nepali (Devanagari) and emoji.
+        return f"mysql+pymysql://{user}:{pwd}@{host}:{port}/{name}?charset=utf8mb4"
+    return _DEFAULT_DB
+
+
+DATABASE_URL = _build_database_url()
+
+# Connection-pool tuning (used by db.py's create_engine). Sensible for a small
+# hosted MySQL; harmless for SQLite. Overridable via env if ever needed.
+DB_POOL_SIZE    = int(_env("SHREYA_DB_POOL_SIZE", "10"))
+DB_MAX_OVERFLOW = int(_env("SHREYA_DB_MAX_OVERFLOW", "20"))
+DB_POOL_RECYCLE = int(_env("SHREYA_DB_POOL_RECYCLE", "3600"))   # recycle conns hourly
+
+# ── Superadmin bootstrap (RBAC) ──────────────────────────────────────────────
+# On first run, if there are no user accounts yet, ONE superadmin is created from
+# these values so you can log in. For safety the seeded account is flagged
+# "must change password", so the very first login forces a new password — the
+# default below is never a usable long-term password. Set real values in .env /
+# host settings for production.
+SUPERADMIN_USERNAME = _env("SHREYA_SUPERADMIN_USERNAME", "admin")
+_DEFAULT_SUPERADMIN_PASSWORD = "admin123"
+SUPERADMIN_PASSWORD = _env("SHREYA_SUPERADMIN_PASSWORD", _DEFAULT_SUPERADMIN_PASSWORD)
+# Production must not boot on the built-in default superadmin password (wsgi.py enforces).
+SUPERADMIN_IS_DEFAULT = (SUPERADMIN_PASSWORD == _DEFAULT_SUPERADMIN_PASSWORD)

@@ -33,8 +33,14 @@ Railway, etc. also work *only if* you attach a persistent disk — see §7.)
 
 ## 2. Pre-flight (2 minutes, do this once)
 
-1. **Pick a strong admin password.** You'll set it as an environment variable in step 3
-   (don't leave it as `shreya2017`).
+> **The admin now has per-person logins.** The first **superadmin** account is created on
+> first run from `SHREYA_SUPERADMIN_USERNAME` (default `admin`) and `SHREYA_SUPERADMIN_PASSWORD`.
+> That first login **forces a password change**, and from the **Users** tab the superadmin can
+> add Manager and Sales-Rep accounts. So in production you must set a strong
+> `SHREYA_SUPERADMIN_PASSWORD` (the site refuses to boot on the built-in default).
+
+1. **Pick a strong superadmin password.** You'll set it as `SHREYA_SUPERADMIN_PASSWORD` in
+   step 3 (the site won't start on the built-in default `admin123`).
 2. **Generate a secret key.** On your PC run:
    ```
    py -c "import secrets; print(secrets.token_hex(32))"
@@ -77,9 +83,11 @@ so no password ever sits in your code.
    if path not in sys.path:
        sys.path.insert(0, path)
 
-   os.environ["SHREYA_ADMIN_PASSWORD"] = "your-strong-password"   # required — the site won't start without it
-   os.environ["SHREYA_SECRET_KEY"]     = "paste-the-long-random-line-from-step-2"
-   os.environ["SHREYA_ADMIN_PATH"]     = "office-2f9k7x"          # your secret admin address (change if you like)
+   os.environ["SHREYA_SUPERADMIN_PASSWORD"] = "your-strong-password"   # required — the site won't start without it
+   os.environ["SHREYA_SECRET_KEY"]          = "paste-the-long-random-line-from-step-2"
+   os.environ["SHREYA_ADMIN_PATH"]          = "office-2f9k7x"          # your secret admin address (change if you like)
+   # (optional) use MySQL instead of the default SQLite file — see §5c:
+   # os.environ["SHREYA_DATABASE_URL"] = "mysql+pymysql://USER:PASS@USER.mysql.pythonanywhere-services.com/USER$shreya"
 
    from wsgi import application   # this is your app; it forces debug off automatically
    ```

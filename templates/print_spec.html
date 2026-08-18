@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ car.brand }} {{ car.name }} — Spec Sheet · Shreya Auto Enterprises</title>
+  <link rel="icon" href="{{ url_for('static', filename='assets/img/logo.jpg') }}" />
+  <style>
+    :root{ --navy:#0b3a77; --dark:#06182e; --cyan:#37b2ea; --ink:#0a2540; --mist:#dceaf7; }
+    *{ box-sizing:border-box; margin:0; }
+    body{ font-family:"Poppins",system-ui,Segoe UI,sans-serif; color:var(--ink); background:#eef4fb; padding:24px; }
+    .sheet{ max-width:800px; margin:0 auto; background:#fff; border:1px solid var(--mist); border-radius:14px; overflow:hidden; box-shadow:0 12px 40px rgba(11,58,119,.12); }
+    .head{ background:var(--dark); color:#fff; padding:20px 26px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .brand svg{ width:52px; height:auto; color:var(--cyan); }
+    .brand b{ font-family:"Space Grotesk",sans-serif; font-size:20px; font-weight:700; }
+    .brand b i{ font-style:normal; color:var(--cyan); }
+    .brand span{ display:block; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--cyan); margin-top:2px; }
+    .head .loc{ text-align:right; font-size:12px; color:#cfe0f2; line-height:1.5; }
+    .body{ padding:26px; }
+    h1{ font-family:"Space Grotesk",sans-serif; font-size:30px; line-height:1.1; }
+    h1 span{ color:var(--navy); }
+    .status{ display:inline-block; margin-top:8px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:4px 12px; border-radius:999px; }
+    .status--available{ background:#e2f6ea; color:#1ba94c; }
+    .status--sold{ background:#fde8e8; color:#c0392b; }
+    .status--reserved{ background:#fff2d6; color:#9a6a12; }
+    .photo{ width:100%; height:300px; object-fit:cover; border-radius:12px; margin:18px 0 20px; border:1px solid var(--mist); }
+    .grid{ display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--mist); border-radius:12px; overflow:hidden; }
+    .grid div{ padding:13px 16px; border-bottom:1px solid var(--mist); }
+    .grid div:nth-child(odd){ border-right:1px solid var(--mist); background:#f6fafe; }
+    .grid dt{ font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--navy); font-weight:600; }
+    .grid dd{ font-size:16px; margin-top:2px; }
+    .price{ margin:22px 0 6px; padding:16px 20px; background:var(--navy); color:#fff; border-radius:12px; display:flex; align-items:center; justify-content:space-between; }
+    .price b{ font-family:"Space Grotesk",sans-serif; font-size:22px; }
+    .desc{ margin-top:18px; color:#33465c; line-height:1.6; }
+    .foot{ margin-top:22px; padding-top:16px; border-top:2px solid var(--mist); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:14px; }
+    .foot b{ color:var(--navy); }
+    .actions{ max-width:800px; margin:16px auto 0; display:flex; gap:10px; justify-content:center; }
+    .btn{ font:600 14px "Space Grotesk",sans-serif; padding:11px 22px; border-radius:999px; border:none; cursor:pointer; text-decoration:none; }
+    .btn--print{ background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#052033; }
+    .btn--back{ background:#fff; color:var(--navy); border:1px solid var(--mist); }
+    @media print{
+      body{ background:#fff; padding:0; }
+      .sheet{ border:none; box-shadow:none; border-radius:0; }
+      .actions{ display:none; }
+      @page{ margin:14mm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="head">
+      <div class="brand">
+        <svg viewBox="0 0 64 34" aria-hidden="true">
+          <path d="M6 24c0-2 2-4 4-4h2c3-7 8-11 17-11h10c8 0 13 4 18 10l3 1c4 1 6 3 6 5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 15h13M0 20h9M5 26h7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+        <div><b>Shreya<i>Auto</i></b><span>Enterprises</span></div>
+      </div>
+      <div class="loc">Bishalnagar, Kathmandu<br>Ph: 9841594067</div>
+    </div>
+    <div class="body">
+      <h1>{{ car.brand }} <span>{{ car.name }}</span>{% if car.year %} · {{ car.year }}{% endif %}</h1>
+      <span class="status status--{{ car.status or 'available' }}">
+        {{ {'available':'Available','sold':'Sold','reserved':'Reserved'}.get(car.status, 'Available') }}
+      </span>
+      {% if car.full or car.img %}
+      <img class="photo" src="{{ url_for('static', filename=(car.full or car.img)) }}" alt="{{ car.brand }} {{ car.name }}"
+           onerror="this.style.display='none'" />
+      {% endif %}
+      <dl class="grid">
+        <div><dt>Year</dt><dd>{{ car.year or '—' }}</dd></div>
+        <div><dt>Kilometres</dt><dd>{{ car.km or '—' }}</dd></div>
+        <div><dt>Fuel</dt><dd>{{ car.fuel_type or '—' }}</dd></div>
+        <div><dt>Transmission</dt><dd>{{ car.transmission or '—' }}</dd></div>
+        <div><dt>Engine</dt><dd>{{ car.engine or '—' }}</dd></div>
+        <div><dt>Colour</dt><dd>{{ car.colour or '—' }}</dd></div>
+      </dl>
+      {% if car.specs %}<p class="desc"><b>Features:</b> {{ car.specs|join(' · ') }}</p>{% endif %}
+      <div class="price"><span>Price</span><b>Price on inquiry</b></div>
+      {% if car.desc %}<p class="desc">{{ car.desc }}</p>{% endif %}
+      <div class="foot">
+        <span><b>Shreya Auto Enterprises</b><br>Buy · Sell · Exchange — trusted used cars</span>
+        <span>Visit us at Bishalnagar, Kathmandu<br>WhatsApp / Call: <b>9841594067</b></span>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn btn--print" onclick="window.print()">🖨 Print this sheet</button>
+    <a class="btn btn--back" href="{{ url_for('car_detail', car_id=car.id) }}">← Back to car</a>
+  </div>
+</body>
+</html>

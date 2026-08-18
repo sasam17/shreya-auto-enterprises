@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="assets/css/styles.css?v=46" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=51" />
 </head>
 <body>
   <a class="skip-link" href="#carsGrid">Skip to content</a>
@@ -78,6 +78,20 @@
         </div>
         <p class="head__note reveal-up" data-delay="2" data-en="Every car currently on the lot. Filter by brand, and tap any car to see it bigger or message us." data-np="अहिले लटमा भएका सबै गाडी। ब्रान्डअनुसार छान्नुहोस्, र कुनै पनि गाडी हेर्न ट्याप गर्नुहोस्।">Every car currently on the lot. Filter by brand, and tap any car to see it bigger or message us.</p>
       </header>
+
+      <form class="carfilter reveal-up" method="GET" action="/cars" role="search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Search brand or model…" aria-label="Search cars" />
+        <select name="fuel" aria-label="Filter by fuel">
+          <option value="">All fuel</option>
+          {% for f in fuels %}<option value="{{ f }}"{% if sel_fuel == f %} selected{% endif %}>{{ f }}</option>{% endfor %}
+        </select>
+        <select name="transmission" aria-label="Filter by transmission">
+          <option value="">All transmissions</option>
+          {% for t in transmissions %}<option value="{{ t }}"{% if sel_trans == t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+        </select>
+        <button type="submit" class="carfilter__go">Search</button>
+        {% if q or sel_fuel or sel_trans %}<a class="carfilter__clear" href="/cars">Clear</a>{% endif %}
+      </form>
 
       <div class="filters reveal-up" id="filters" role="tablist" aria-label="Filter cars by brand">
         <button class="chip is-active" data-filter="all" data-en="All" data-np="सबै">All</button>
@@ -152,6 +166,6 @@
       window.SHREYA_PARTNERS = _shreya.partners;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=46" defer></script>
+  <script src="assets/js/main.js?v=51" defer></script>
 </body>
 </html>

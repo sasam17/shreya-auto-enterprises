@@ -34,6 +34,7 @@ import webbrowser
 from datetime import datetime
 from email.message import EmailMessage
 from functools import wraps
+from urllib.parse import quote
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
@@ -176,12 +177,24 @@ def write_json(path, data):
 
 
 # ── Database bootstrap ───────────────────────────────────────────────────────
-# Inquiries, reviews and car sales (buyers) now live in a real database (SQLite by
-# default, MySQL in production — see db.py / config.DATABASE_URL). On first run we
-# create the tables and import any existing JSON records, so upgrading from the old
-# file-based version loses nothing. The JSON files are left untouched as a backup.
+# Everything (users, cars, partners, inquiries, reviews, buyers, sales, audit) now
+# lives in a real database (SQLite by default, MySQL in production — see db.py /
+# config.DATABASE_URL). On first run we create the tables, seed one superadmin, and
+# import any existing JSON records so upgrading loses nothing. JSON files are kept
+# as a backup; each table is only imported when it's still empty.
 db.init_db()
+db.ensure_superadmin(config.SUPERADMIN_USERNAME, config.SUPERADMIN_PASSWORD)
 _present = db.count_rows()
+if not _present["cars"]:
+    _rows = read_json(CARS_FILE, [])
+    if _rows:
+        db.bulk_import_cars_from_json(_rows)
+        print(f"Migrated {len(_rows)} cars from cars.json into the database.")
+if not _present["partners"]:
+    _rows = read_json(PARTNERS_FILE, [])
+    if _rows:
+        db.bulk_import_partners_from_json(_rows)
+        print(f"Migrated {len(_rows)} partners from partners.json into the database.")
 if not _present["inquiries"]:
     _rows = read_json(INQUIRY_FILE, [])
     if _rows:
@@ -195,7 +208,8 @@ if not _present["reviews"]:
 
 
 def load_cars():
-    return read_json(CARS_FILE, [])
+    """All cars from the database (admin view — includes the private price)."""
+    return db.all_cars_db()
 
 
 def public_cars():
@@ -220,7 +234,7 @@ def next_car_id(cars):
 
 
 def load_partners():
-    return read_json(PARTNERS_FILE, [])
+    return db.all_partners_db()
 
 
 def save_partners(partners):
@@ -343,32 +357,59 @@ def process_partner_photo(file_storage, base_name):
         return None
 
 
-# ── Login protection for the admin pages ─────────────────────────────────────
-# Fail-safe: never let a LIVE site run with the shipped default password. wsgi.py
-# refuses to even start in that case; this in-app flag is the backstop for anyone
-# who runs app.py directly with debug turned off.
-ADMIN_LOCKED = (not config.DEBUG) and config.PASSWORD_IS_DEFAULT
+# ── Login protection for the admin pages (RBAC: per-user logins + roles) ─────
+def current_user():
+    """The logged-in user dict (id, username, role, …) or None."""
+    return session.get("user")
+
+
+def _role():
+    u = session.get("user") or {}
+    return u.get("role", "")
+
+
+# Make current_user() / role available inside every template.
+@app.context_processor
+def _inject_user():
+    return {"current_user": session.get("user"), "role": _role()}
 
 
 def admin_required(view):
-    """A guard: only a logged-in admin with a fresh (non-idle) session gets through."""
+    """A guard: only a logged-in user with a fresh (non-idle) session gets through.
+    Also forces a password change when the account is flagged for it."""
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if ADMIN_LOCKED:
-            # Misconfigured production (still the default password) — deny everything.
-            abort(503)
-        if not session.get("is_admin"):
+        user = session.get("user")
+        if not user:
             return redirect(url_for("admin_login"))
-        # Idle auto-logout: expire the session after N minutes of no admin activity.
+        # Idle auto-logout: expire the session after N minutes of no activity.
         now = time.time()
         if now - session.get("last_seen", 0) > config.SESSION_TIMEOUT_MIN * 60:
-            session.pop("is_admin", None)
-            session.pop("last_seen", None)
+            session.clear()
             flash("You were logged out after a period of inactivity. Please log in again.")
             return redirect(url_for("admin_login"))
         session["last_seen"] = now      # sliding window — every action refreshes it
+        # A seeded / reset account must set a new password before doing anything else.
+        if user.get("must_change_password") and request.endpoint not in (
+                "admin_change_password", "admin_logout"):
+            return redirect(url_for("admin_change_password"))
         return view(*args, **kwargs)
     return wrapped
+
+
+def roles_required(*roles):
+    """Restrict a route to the given roles (use UNDER @admin_required)."""
+    def decorator(view):
+        @wraps(view)
+        def wrapped(*args, **kwargs):
+            user = session.get("user")
+            if not user:
+                return redirect(url_for("admin_login"))
+            if user.get("role") not in roles:
+                abort(403)
+            return view(*args, **kwargs)
+        return wrapped
+    return decorator
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -384,8 +425,29 @@ def home():
 
 @app.route("/cars")
 def all_cars():
-    """The full inventory page — every car in a grid with brand filters."""
-    return render_template("cars.html", cars=public_cars(), partners=load_partners())
+    """The full inventory page. Supports server-side filters: ?q=&fuel=&transmission="""
+    q = request.args.get("q", "").strip().lower()
+    fuel = request.args.get("fuel", "").strip().lower()
+    trans = request.args.get("transmission", "").strip().lower()
+    every = public_cars()
+    fuels = sorted({c["fuel_type"] for c in every if c.get("fuel_type")})
+    transmissions = sorted({c["transmission"] for c in every if c.get("transmission")})
+
+    def keep(c):
+        hay = f'{c.get("brand","")} {c.get("name","")} {c.get("year","")}'.lower()
+        if q and q not in hay:
+            return False
+        if fuel and (c.get("fuel_type", "") or "").lower() != fuel:
+            return False
+        if trans and (c.get("transmission", "") or "").lower() != trans:
+            return False
+        return True
+
+    cars = [c for c in every if keep(c)]
+    return render_template("cars.html", cars=cars, partners=load_partners(),
+                           q=request.args.get("q", ""), sel_fuel=request.args.get("fuel", ""),
+                           sel_trans=request.args.get("transmission", ""),
+                           fuels=fuels, transmissions=transmissions)
 
 
 @app.route("/car/<int:car_id>")
@@ -397,6 +459,48 @@ def car_detail(car_id):
         return redirect(url_for("all_cars"))
     car = dict(car); car["price"] = ""   # 'Price on inquiry' policy — never expose the price
     return render_template("car.html", car=car, partners=load_partners())
+
+
+@app.route("/car/<int:car_id>/print")
+def car_print(car_id):
+    """A print-optimised window sticker / spec sheet for a walk-in customer."""
+    car = next((c for c in load_cars() if c.get("id") == car_id), None)
+    if not car:
+        return redirect(url_for("all_cars"))
+    car = dict(car); car["price"] = ""   # price stays private even on the printout
+    return render_template("print_spec.html", car=car)
+
+
+@app.route("/compare")
+def compare():
+    """Side-by-side comparison of up to 3 cars: /compare?id=1&id=2&id=3"""
+    ids, seen = [], set()
+    for raw in request.args.getlist("id"):
+        try:
+            i = int(raw)
+        except ValueError:
+            continue
+        if i not in seen:
+            seen.add(i); ids.append(i)
+    ids = ids[:3]
+    by_id = {c["id"]: c for c in public_cars()}
+    cars = [by_id[i] for i in ids if i in by_id]
+    return render_template("compare.html", cars=cars, all_cars=public_cars())
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    """A dynamic XML sitemap so search engines can index every live car page."""
+    base = request.url_root.rstrip("/")
+    locs = [base + "/", base + "/cars"]
+    for c in public_cars():
+        if c.get("status") != "sold":
+            locs.append(f"{base}/car/{c['id']}")
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    parts += [f"  <url><loc>{u}</loc></url>" for u in locs]
+    parts.append("</urlset>")
+    return Response("\n".join(parts), mimetype="application/xml")
 
 
 @app.route("/inquiry", methods=["POST"])
@@ -462,31 +566,61 @@ def _login_blocked(ip):
 
 @app.route(f"/{config.ADMIN_PATH}/login", methods=["GET", "POST"])
 def admin_login():
-    if ADMIN_LOCKED:
-        # Live site still on the default password — refuse to log anyone in.
-        flash("Admin is disabled until a real password is set (SHREYA_ADMIN_PASSWORD). See DEPLOYER.md.")
-        return render_template("admin.html", logged_in=False), 503
+    if session.get("user"):
+        return redirect(url_for("admin"))
     if request.method == "POST":
         ip = request.remote_addr or "?"
         if _login_blocked(ip):
             flash("Too many attempts — please wait a few minutes and try again.")
             return render_template("admin.html", logged_in=False)
-        # Constant-time compare so the password can't be guessed by timing the response.
-        if secrets.compare_digest(request.form.get("password", ""), config.ADMIN_PASSWORD):
+        username = request.form.get("username", "").strip()
+        user = db.authenticate_user(username, request.form.get("password", ""))
+        if user:
             _LOGIN_FAILS.pop(ip, None)
-            session["is_admin"] = True
+            session.clear()
+            session["user"] = user
             session["last_seen"] = time.time()      # start the idle-timeout clock
+            db.log_audit(user_id=user["id"], username=user["username"], action="login",
+                         ip_address=ip)
+            if user.get("must_change_password"):
+                return redirect(url_for("admin_change_password"))
             return redirect(url_for("admin"))
         _LOGIN_FAILS.setdefault(ip, []).append(time.time())
-        flash("Wrong password.")
+        flash("Wrong username or password.")
     return render_template("admin.html", logged_in=False)
 
 
 @app.route(f"/{config.ADMIN_PATH}/logout")
 def admin_logout():
-    session.pop("is_admin", None)
-    session.pop("last_seen", None)
+    user = session.get("user")
+    if user:
+        db.log_audit(user_id=user.get("id", 0), username=user.get("username", ""),
+                     action="logout", ip_address=request.remote_addr or "?")
+    session.clear()
     return redirect(url_for("admin_login"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/change-password", methods=["GET", "POST"])
+@admin_required
+def admin_change_password():
+    """Forced/voluntary password change. Seeded or reset accounts land here first."""
+    user = session["user"]
+    if request.method == "POST":
+        new = request.form.get("new_password", "")
+        confirm = request.form.get("confirm_password", "")
+        if len(new) < 6:
+            flash("Password must be at least 6 characters.")
+        elif new != confirm:
+            flash("The two passwords don't match.")
+        else:
+            db.update_user(user["id"], password=new)
+            user["must_change_password"] = False
+            session["user"] = user
+            db.log_audit(user_id=user["id"], username=user["username"],
+                         action="change_password", ip_address=request.remote_addr or "?")
+            flash("Password updated.")
+            return redirect(url_for("admin"))
+    return render_template("admin.html", logged_in=True, change_password=True)
 
 
 def wa_number(phone):
@@ -496,6 +630,17 @@ def wa_number(phone):
     if len(digits) == 10 and digits.startswith("9"):
         digits = "977" + digits
     return digits
+
+
+def _lead_whatsapp(inq):
+    """A pre-filled wa.me link so the team can reply to a lead in one click."""
+    wa = wa_number(inq.get("phone", ""))
+    if not wa:
+        return ""
+    car = inq.get("car", "")
+    msg = f"Hello {inq.get('name', '')}, thank you for contacting Shreya Auto Enterprises"
+    msg += f" about the {car}." if car else "."
+    return "https://wa.me/" + wa + "?text=" + quote(msg)
 
 
 def _price_to_int(price):
@@ -514,27 +659,63 @@ def _inr_group(n):
     return head + "," + tail
 
 
+def _norm_status(v):
+    """Clamp a car status to one of the three allowed values."""
+    return v if v in ("available", "sold", "reserved") else "available"
+
+
+def _audit(action, target_type="", target_id=0, details=""):
+    """Write an audit-log entry for the currently logged-in user."""
+    u = session.get("user") or {}
+    db.log_audit(user_id=u.get("id", 0), username=u.get("username", ""),
+                 action=action, target_type=target_type, target_id=target_id,
+                 details=details, ip_address=request.remote_addr or "?")
+
+
 # ---- Admin: dashboard (inquiries + cars + partners) -------------------------
 @app.route(f"/{config.ADMIN_PATH}")
 @admin_required
 def admin():
+    role = _role()
+    cars = load_cars()
+    partners = load_partners()
     inquiries = db.all_inquiries()                       # newest first, each has a stable id
     for q in inquiries:
         q["wa"] = wa_number(q.get("phone", ""))
-    mail_on = bool(config.MAIL_USERNAME and config.MAIL_PASSWORD)
+        q["car_wa"] = _lead_whatsapp(q)
     reviews = db.all_reviews()                           # pending first, then approved
-    sales = db.all_sales()                               # car sales / buyer records, newest first
-    # Small sales summary for the admin: how many sold + total of any recorded prices.
-    _total = sum(_price_to_int(s.get("price")) for s in sales)
-    sales_summary = {
+    sales = db.all_sales()
+    buyers = db.all_buyers()
+    for b in buyers:
+        b["total_fmt"] = ("Rs. " + _inr_group(b["total_spent"])) if b.get("total_spent") else "—"
+    # Superadmin-only data
+    users = db.all_users() if role == "superadmin" else []
+    audit_logs = db.all_audit_logs() if role == "superadmin" else []
+    db_status = db.check_db_status() if role == "superadmin" else {}
+
+    total = db.sales_total()
+    hot = sum(1 for q in inquiries if q.get("status") in ("new", "contacted", "test_drive"))
+    stats = {
+        "revenue":   ("Rs. " + _inr_group(total)) if total else "Rs. 0",
+        "available": sum(1 for c in cars if c.get("status") == "available"),
+        "sold":      sum(1 for c in cars if c.get("status") == "sold"),
+        "reserved":  sum(1 for c in cars if c.get("status") == "reserved"),
+        "leads_hot": hot,
+        "buyers":    len(buyers),
+        "cars":      len(cars),
+    }
+    sales_summary = {  # kept for the existing Car sales table header
         "count": len(sales),
-        "total": ("Rs. " + _inr_group(_total)) if _total else "",
+        "total": ("Rs. " + _inr_group(total)) if total else "",
         "pending_reviews": sum(1 for r in reviews if not r.get("approved")),
     }
-    return render_template("admin.html", logged_in=True, cars=load_cars(),
-                           partners=load_partners(), inquiries=inquiries, mail_on=mail_on,
-                           mail_to=config.MAIL_TO, reviews=reviews, sales=sales,
-                           sales_summary=sales_summary)
+    return render_template(
+        "admin.html", logged_in=True, cars=cars, partners=partners,
+        inquiries=inquiries, reviews=reviews, sales=sales, buyers=buyers,
+        users=users, audit_logs=audit_logs, db_status=db_status,
+        stats=stats, sales_summary=sales_summary,
+        mail_on=bool(config.MAIL_USERNAME and config.MAIL_PASSWORD), mail_to=config.MAIL_TO,
+        lead_statuses=db.VALID_LEAD_STATUS)
 
 
 @app.route(f"/{config.ADMIN_PATH}/test-email", methods=["POST"])
@@ -562,32 +743,44 @@ def admin_test_email():
 
 @app.route(f"/{config.ADMIN_PATH}/inquiry/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_inquiry_delete():
-    db.delete_inquiry(int(request.form.get("id", 0)))
+    iid = int(request.form.get("id", 0))
+    db.delete_inquiry(iid)
+    _audit("delete_inquiry", "inquiry", iid)
     flash("Inquiry removed.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/review/approve", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_review_approve():
-    db.approve_review(int(request.form.get("id", 0)))
+    rid = int(request.form.get("id", 0))
+    db.approve_review(rid)
+    _audit("approve_review", "review", rid)
     flash("Review approved — it's now live on the site.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/review/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_review_delete():
-    db.delete_review(int(request.form.get("id", 0)))
+    rid = int(request.form.get("id", 0))
+    db.delete_review(rid)
+    _audit("delete_review", "review", rid)
     flash("Review removed.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/sale/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_sale_delete():
-    db.delete_sale(int(request.form.get("id", 0)))
+    sid = int(request.form.get("id", 0))
+    db.delete_sale(sid)
+    _audit("delete_sale", "sale", sid)
     flash("Sale record removed.")
     return redirect(url_for("admin"))
 
@@ -595,15 +788,20 @@ def admin_sale_delete():
 @app.route(f"/{config.ADMIN_PATH}/export/<kind>")
 @admin_required
 def admin_export(kind):
-    """Download inquiries / reviews / sales as a CSV spreadsheet (opens in Excel).
-    A UTF-8 BOM is prepended so Excel shows Nepali text correctly."""
+    """Download a table as a CSV spreadsheet (opens in Excel). A UTF-8 BOM is
+    prepended so Excel shows Nepali text correctly."""
     tables = {
-        "inquiries": (["time", "name", "phone", "car", "message"], db.all_inquiries()),
+        "inquiries": (["time", "name", "phone", "car", "status", "message"], db.all_inquiries()),
         "reviews":   (["time", "name", "rating", "location", "approved", "text"], db.all_reviews()),
-        "sales":     (["sold_on", "car_desc", "buyer_name", "buyer_phone", "price", "notes"], db.all_sales()),
+        "sales":     (["sold_on", "car_desc", "buyer_name", "buyer_phone", "price", "payment_method", "notes"], db.all_sales()),
+        "buyers":    (["name", "phone", "email", "address", "id_number", "purchases", "total_spent"], db.all_buyers()),
+        "cars":      (["id", "brand", "name", "year", "price", "status", "fuel_type", "transmission", "km"], db.all_cars_db()),
+        "users":     (["username", "full_name", "email", "role", "is_active", "last_login"], db.all_users()),
     }
     if kind not in tables:
         abort(404)
+    if kind == "users" and _role() != "superadmin":
+        abort(403)
     cols, rows = tables[kind]
     buf = io.StringIO()
     writer = csv.writer(buf)
@@ -618,10 +816,9 @@ def admin_export(kind):
 
 @app.route(f"/{config.ADMIN_PATH}/add", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_add():
-    cars = load_cars()
-    new_id = next_car_id(cars)
-
+    new_id = db.next_car_id_db()
     # Photo (optional). We name the files after the car id so they never clash.
     card_path = full_path = "assets/img/cars/car1-md.webp"   # a sensible default
     photo = request.files.get("photo")
@@ -629,188 +826,251 @@ def admin_add():
         c, fpath = process_upload(photo, f"upload-{new_id}")
         if c:
             card_path, full_path = c, fpath
-
-    # "53,000 km, Petrol, 1500 cc" → ["53,000 km", "Petrol", "1500 cc"]
     specs = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
-
-    cars.append({
-        "id":     new_id,
+    car = db.save_car_db({
         "brand":  request.form.get("brand", "").strip(),
         "name":   request.form.get("name", "").strip(),
         "year":   request.form.get("year", "").strip(),
-        "img":    card_path,
-        "full":   full_path,
-        "fit":    request.form.get("fit", "cover"),
         "price":  request.form.get("price", "").strip(),
         "badge":  request.form.get("badge", "In stock").strip() or "In stock",
+        "status": _norm_status(request.form.get("status")),
+        "fuel_type":    request.form.get("fuel_type", "").strip(),
+        "transmission": request.form.get("transmission", "").strip(),
         "specs":  specs,
-        "km":     specs[0] if len(specs) > 0 else "",
-        "engine": specs[1] if len(specs) > 1 else "",
-        "colour": specs[2] if len(specs) > 2 else "",
-        "status": "sold" if request.form.get("status") == "sold" else "available",
         "desc":   request.form.get("desc", "").strip(),
         "video":  request.form.get("video", "").strip(),
+        "img":    card_path, "full": full_path,
+        "fit":    request.form.get("fit", "cover"),
         "accent": "#37b2ea",
-        "gallery": [],
     })
-    save_cars(cars)
+    _audit("add_car", "car", car["id"], f'{car["brand"]} {car["name"]}')
     flash("Car added.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/edit", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_edit():
-    """Update an existing car in place (all fields; photo optional). Keeps the same
-    id and, if no new photo is uploaded, keeps the current photo."""
+    """Update an existing car (all fields; photo optional). Records a sale + buyer
+    when the car is newly marked Sold."""
     car_id = int(request.form.get("id", 0))
-    cars = load_cars()
-    for c in cars:
-        if c.get("id") == car_id:
-            c["brand"] = request.form.get("brand", "").strip() or c.get("brand", "")
-            c["name"]  = request.form.get("name", "").strip() or c.get("name", "")
-            c["year"]  = request.form.get("year", "").strip()
-            c["price"] = request.form.get("price", "").strip()
-            c["badge"] = request.form.get("badge", "").strip() or "In stock"
-            c["fit"]   = "contain" if request.form.get("fit") == "contain" else "cover"
-            c["specs"] = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
-            # keep the labelled detail fields (Kilometres / Engine / Colour) in sync with specs
-            c["km"]     = c["specs"][0] if len(c["specs"]) > 0 else ""
-            c["engine"] = c["specs"][1] if len(c["specs"]) > 1 else ""
-            c["colour"] = c["specs"][2] if len(c["specs"]) > 2 else ""
-            was_sold = (c.get("status") == "sold")
-            c["status"] = "sold" if request.form.get("status") == "sold" else "available"
-            # Buyer capture: when a car is NEWLY marked Sold, record the sale + who bought it.
-            # (Only on the available→sold transition, so re-saving a sold car won't duplicate it.)
-            if c["status"] == "sold" and not was_sold:
-                desc = " ".join(x for x in [c.get("brand", ""), c.get("name", ""),
-                                            str(c.get("year", ""))] if x).strip()
-                db.add_sale(
-                    car_id=car_id, car_desc=desc[:200],
-                    buyer_name=request.form.get("buyer_name", "").strip()[:120],
-                    buyer_phone=request.form.get("buyer_phone", "").strip()[:40],
-                    price=(request.form.get("sale_price", "").strip() or c.get("price", ""))[:60],
-                    notes=request.form.get("sale_notes", "").strip()[:1000],
-                )
-            c["desc"]  = request.form.get("desc", "").strip()
-            c["video"] = request.form.get("video", "").strip()
-            photo = request.files.get("photo")
-            if photo and photo.filename:
-                card_path, full_path = process_upload(photo, f"upload-{car_id}")
-                if card_path:
-                    c["img"], c["full"] = card_path, full_path
-            # gallery: append any newly-uploaded photos, tagged by section
-            c.setdefault("gallery", [])
-            for cat, field in (("exterior", "photos_exterior"), ("interior", "photos_interior"), ("angle", "photos_angle")):
-                for f in request.files.getlist(field):
-                    if f and f.filename:
-                        _card, _full = process_upload(f, f"upload-{car_id}-{secrets.token_hex(4)}")
-                        if _full:
-                            n = sum(1 for g in c["gallery"] if g.get("cat") == cat) + 1
-                            c["gallery"].append({"src": _full, "cat": cat, "label": cat.capitalize() + " " + str(n)})
-            break
-    save_cars(cars)
+    car = db.get_car_db(car_id)
+    if not car:
+        flash("Car not found.")
+        return redirect(url_for("admin"))
+    was_sold = (car.get("status") == "sold")
+    new_status = _norm_status(request.form.get("status"))
+    specs = [s.strip() for s in request.form.get("specs", "").split(",") if s.strip()]
+    data = {
+        "id":     car_id,
+        "brand":  request.form.get("brand", "").strip() or car.get("brand", ""),
+        "name":   request.form.get("name", "").strip() or car.get("name", ""),
+        "year":   request.form.get("year", "").strip(),
+        "price":  request.form.get("price", "").strip(),
+        "badge":  request.form.get("badge", "").strip() or "In stock",
+        "fit":    "contain" if request.form.get("fit") == "contain" else "cover",
+        "status": new_status,
+        "fuel_type":    request.form.get("fuel_type", "").strip(),
+        "transmission": request.form.get("transmission", "").strip(),
+        "specs":  specs,
+        "desc":   request.form.get("desc", "").strip(),
+        "video":  request.form.get("video", "").strip(),
+    }
+    photo = request.files.get("photo")
+    if photo and photo.filename:
+        card_path, full_path = process_upload(photo, f"upload-{car_id}")
+        if card_path:
+            data["img"], data["full"] = card_path, full_path
+    db.save_car_db(data)
+    # gallery: append any newly-uploaded photos, tagged by section
+    for cat, field in (("exterior", "photos_exterior"), ("interior", "photos_interior"),
+                       ("angle", "photos_angle"), ("document", "photos_document")):
+        for f in request.files.getlist(field):
+            if f and f.filename:
+                _card, _full = process_upload(f, f"upload-{car_id}-{secrets.token_hex(4)}")
+                if _full:
+                    db.add_car_gallery_photo(car_id, _full, cat)
+    # Buyer capture on the available→sold transition (won't duplicate on re-save).
+    if new_status == "sold" and not was_sold:
+        desc = " ".join(x for x in [data["brand"], data["name"], str(data["year"])] if x).strip()
+        db.add_sale(
+            car_id=car_id, car_desc=desc[:200],
+            buyer_name=request.form.get("buyer_name", "").strip()[:120],
+            buyer_phone=request.form.get("buyer_phone", "").strip()[:40],
+            price=(request.form.get("sale_price", "").strip() or data["price"])[:60],
+            payment_method=request.form.get("payment_method", "").strip()[:50],
+            notes=request.form.get("sale_notes", "").strip()[:1000],
+            buyer_email=request.form.get("buyer_email", "").strip()[:120],
+            buyer_address=request.form.get("buyer_address", "").strip()[:255],
+            buyer_id_number=request.form.get("buyer_id_number", "").strip()[:60],
+        )
+        _audit("record_sale", "car", car_id, desc)
+    _audit("edit_car", "car", car_id, f'{data["brand"]} {data["name"]}')
     flash("Car updated.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/gallery/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_gallery_delete():
-    """Remove a single photo from a car's gallery (leaves shipped files on disk)."""
+    """Remove a single photo from a car's gallery (leaves the file on disk)."""
     car_id = int(request.form.get("id", 0))
-    src = request.form.get("src", "")
-    cars = load_cars()
-    for c in cars:
-        if c.get("id") == car_id:
-            c["gallery"] = [g for g in c.get("gallery", []) if g.get("src") != src]
-            break
-    save_cars(cars)
+    db.delete_car_gallery_photo(car_id, request.form.get("src", ""))
     flash("Photo removed.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_delete():
     car_id = int(request.form.get("id", 0))
-    cars = [c for c in load_cars() if c.get("id") != car_id]
-    save_cars(cars)
+    db.delete_car_db(car_id)
+    _audit("delete_car", "car", car_id)
     flash("Car removed.")
     return redirect(url_for("admin"))
 
 
-# ---- Admin: partners (add + delete) -----------------------------------------
+# ---- Admin: partners --------------------------------------------------------
 @app.route(f"/{config.ADMIN_PATH}/partner/add", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_partner_add():
-    partners = load_partners()
-    new_id = next_partner_id(partners)
-
     img = "assets/img/team/team-1.webp"   # sensible default if no photo is given
     photo = request.files.get("photo")
     if photo and photo.filename:
-        p = process_partner_photo(photo, f"partner-{new_id}")
+        p = process_partner_photo(photo, f"partner-{secrets.token_hex(4)}")
         if p:
             img = p
-
-    order_raw = request.form.get("order", "").strip()
     try:
-        order = int(order_raw)
+        order = int(request.form.get("order", "").strip())
     except ValueError:
-        order = next_partner_order(partners)
-
-    partners.append({
-        "id":    new_id,
-        "name":  request.form.get("name", "").strip(),
-        "role":  request.form.get("role", "Partner").strip() or "Partner",
-        "img":   img,
-        "order": order,
-    })
-    partners.sort(key=lambda p: p.get("order", 999))
-    save_partners(partners)
+        order = None
+    partner = db.add_partner_db(request.form.get("name", "").strip(),
+                                request.form.get("role", "Partner").strip() or "Partner",
+                                img, order)
+    _audit("add_partner", "partner", partner["id"], partner["name"])
     flash("Partner added.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/partner/delete", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_partner_delete():
     pid = int(request.form.get("id", 0))
-    partners = [p for p in load_partners() if p.get("id") != pid]
-    save_partners(partners)
+    db.delete_partner_db(pid)
+    _audit("delete_partner", "partner", pid)
     flash("Partner removed.")
     return redirect(url_for("admin"))
 
 
 @app.route(f"/{config.ADMIN_PATH}/partner/update", methods=["POST"])
 @admin_required
+@roles_required("superadmin", "manager")
 def admin_partner_update():
     """Save the inline edits (name, role, order) for one partner card."""
     pid = int(request.form.get("id", 0))
-
-    order_raw = request.form.get("order", "").strip()
     try:
-        order = int(order_raw)
+        order = int(request.form.get("order", "").strip())
     except ValueError:
         order = None
-
-    partners = load_partners()
-    for p in partners:
-        if p.get("id") == pid:
-            name = request.form.get("name", "").strip()
-            role = request.form.get("role", "").strip()
-            if name:
-                p["name"] = name
-            if role:
-                p["role"] = role
-            if order is not None:
-                p["order"] = order
-            break
-
-    partners.sort(key=lambda p: p.get("order", 999))
-    save_partners(partners)
+    db.update_partner_db(pid, name=request.form.get("name", "").strip() or None,
+                         role=request.form.get("role", "").strip() or None, order=order)
+    _audit("edit_partner", "partner", pid)
     flash("Partner updated.")
+    return redirect(url_for("admin"))
+
+
+# ---- Admin: CRM lead status + buyers ----------------------------------------
+@app.route(f"/{config.ADMIN_PATH}/inquiry/status", methods=["POST"])
+@admin_required
+def admin_inquiry_status():
+    """Move a lead along the pipeline (new → contacted → test_drive → closed/lost)."""
+    iid = int(request.form.get("id", 0))
+    db.update_inquiry_status(iid, request.form.get("status", "new"))
+    _audit("inquiry_status", "inquiry", iid, request.form.get("status", ""))
+    flash("Lead status updated.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/buyer/delete", methods=["POST"])
+@admin_required
+@roles_required("superadmin", "manager")
+def admin_buyer_delete():
+    bid = int(request.form.get("id", 0))
+    db.delete_buyer(bid)
+    _audit("delete_buyer", "buyer", bid)
+    flash("Buyer removed.")
+    return redirect(url_for("admin"))
+
+
+# ---- Admin: user accounts (superadmin only) ---------------------------------
+@app.route(f"/{config.ADMIN_PATH}/user/create", methods=["POST"])
+@admin_required
+@roles_required("superadmin")
+def admin_user_create():
+    user, err = db.create_user(
+        request.form.get("username", "").strip(),
+        request.form.get("password", ""),
+        role=request.form.get("role", "sales_rep"),
+        full_name=request.form.get("full_name", "").strip(),
+        email=request.form.get("email", "").strip(),
+        must_change=True,
+    )
+    if err:
+        flash(err)
+    else:
+        _audit("create_user", "user", user["id"], user["username"])
+        flash(f"User '{user['username']}' created.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/user/update", methods=["POST"])
+@admin_required
+@roles_required("superadmin")
+def admin_user_update():
+    uid = int(request.form.get("id", 0))
+    db.update_user(uid,
+                   full_name=request.form.get("full_name", "").strip(),
+                   email=request.form.get("email", "").strip(),
+                   role=request.form.get("role", None),
+                   password=request.form.get("password", "") or None)
+    _audit("update_user", "user", uid)
+    flash("User updated.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/user/toggle", methods=["POST"])
+@admin_required
+@roles_required("superadmin")
+def admin_user_toggle():
+    uid = int(request.form.get("id", 0))
+    me = session.get("user") or {}
+    if uid == me.get("id"):
+        flash("You can't disable your own account.")
+        return redirect(url_for("admin"))
+    u = db.get_user(uid)
+    if u:
+        db.update_user(uid, is_active=not u["is_active"])
+        _audit("toggle_user", "user", uid, "disabled" if u["is_active"] else "enabled")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/user/delete", methods=["POST"])
+@admin_required
+@roles_required("superadmin")
+def admin_user_delete():
+    uid = int(request.form.get("id", 0))
+    me = session.get("user") or {}
+    if uid == me.get("id"):
+        flash("You can't delete your own account.")
+        return redirect(url_for("admin"))
+    db.delete_user(uid)
+    _audit("delete_user", "user", uid)
+    flash("User removed.")
     return redirect(url_for("admin"))
 
 

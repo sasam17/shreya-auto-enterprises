@@ -10,11 +10,8 @@
     :root{ --navy:#0b3a77; --dark:#06182e; --cyan:#37b2ea; --mist:#dceaf7; --ink:#0a2540; }
     *{ box-sizing:border-box; margin:0; }
     body{ font-family:"Poppins",system-ui,sans-serif; background:#eef5fc; color:var(--ink); line-height:1.5; }
-    .bar{ background:var(--dark); color:#fff; padding:16px 22px; display:flex; align-items:center; justify-content:space-between; }
-    .bar h1{ font-family:"Space Grotesk",sans-serif; font-size:18px; }
-    .bar h1 b{ color:var(--cyan); }
-    .bar a{ color:var(--cyan); text-decoration:none; font-size:14px; font-weight:600; }
-    .wrap{ max-width:1000px; margin:0 auto; padding:26px 22px 60px; }
+    a{ color:var(--navy); }
+    .wrap{ max-width:1100px; margin:0 auto; padding:24px 22px 70px; }
     .flash{ background:#d9f0e2; color:#176c43; border:1px solid #9fd9bb; padding:10px 14px; border-radius:10px; margin-bottom:18px; font-weight:600; }
     h2{ font-family:"Space Grotesk",sans-serif; margin:26px 0 14px; }
     .card{ background:#fff; border:1px solid var(--mist); border-radius:16px; padding:24px; box-shadow:0 14px 34px rgba(11,58,119,.08); }
@@ -25,9 +22,23 @@
     .status-tag{ display:inline-block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:999px; }
     .status-tag--available{ background:#e2f6ea; color:#1ba94c; }
     .status-tag--sold{ background:#fde8e8; color:#c0392b; }
+    .status-tag--reserved{ background:#fff2d6; color:#9a6a12; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
     .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:0 14px; }
-    @media(max-width:640px){ .grid3{ grid-template-columns:1fr; } }
-    .gmanage{ margin-top:4px; }
+    @media(max-width:640px){ .grid3,.grid2{ grid-template-columns:1fr; } }
+    .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
+    .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
+    .btn--save{ background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; padding:9px 18px; font-size:13px; margin:0; }
+    .btn--ghost{ background:rgba(255,255,255,.16); color:#fff; padding:11px 22px; }
+    .hint{ font-size:12.5px; color:rgba(10,37,64,.6); margin-top:4px; }
+    .exportlink{ font-size:12px; font-weight:600; color:var(--navy); text-decoration:none; border:1px solid var(--mist); background:#f3f8fd; padding:4px 12px; border-radius:999px; margin-left:12px; vertical-align:middle; white-space:nowrap; }
+    .exportlink:hover{ border-color:var(--cyan); color:var(--dark); }
+    .scroll{ overflow-x:auto; }
+    table{ width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 14px 34px rgba(11,58,119,.08); }
+    th,td{ text-align:left; padding:13px 16px; border-bottom:1px solid var(--mist); font-size:14px; vertical-align:middle; }
+    th{ background:#f3f8fd; font-family:"Space Grotesk",sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); }
+    td img{ width:64px; height:48px; object-fit:cover; border-radius:8px; }
+    /* gallery + lightbox */
     .gthumbs{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; }
     .gthumb{ position:relative; width:auto; margin:0; }
     .gthumb img{ width:100%; height:112px; object-fit:cover; border-radius:10px; display:block; border:1px solid var(--mist); cursor:zoom-in; transition:transform .15s ease, box-shadow .15s ease; }
@@ -35,7 +46,6 @@
     .gthumb__cat{ display:block; font-size:12.5px; font-weight:600; color:var(--navy); text-transform:capitalize; margin-top:6px; }
     .gthumb__x{ position:absolute; top:-8px; right:-8px; width:26px; height:26px; border-radius:50%; background:#b42323; color:#fff; border:2px solid #fff; cursor:pointer; font-size:16px; line-height:1; margin:0; padding:0; box-shadow:0 2px 8px rgba(0,0,0,.3); }
     .gthumb__x:hover{ background:#8f1a1a; }
-    /* full-size image viewer (lightbox) */
     .lbox{ position:fixed; inset:0; z-index:100; background:rgba(6,24,46,.9); display:none; align-items:center; justify-content:center; padding:26px; }
     .lbox.show{ display:flex; }
     .lbox__inner{ max-width:min(940px,94vw); max-height:92vh; display:flex; flex-direction:column; gap:16px; }
@@ -44,29 +54,12 @@
     .lbox__label{ font:600 17px "Space Grotesk",sans-serif; color:#fff; }
     .lbox__actions{ display:flex; gap:10px; }
     .lbox .btn{ margin-top:0; }
-    .btn--ghost{ background:rgba(255,255,255,.16); color:#fff; padding:11px 22px; }
-    .btn--ghost:hover{ background:rgba(255,255,255,.26); }
-    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; }
-    .btn{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:13px 24px; border:none; border-radius:999px; font:600 15px "Space Grotesk",sans-serif; cursor:pointer; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; }
-    .btn--danger{ background:#fde8e8; color:#b42323; padding:8px 16px; font-size:13px; margin:0; }
-    .hint{ font-size:12.5px; color:rgba(10,37,64,.6); margin-top:4px; }
-    .exportlink{ font-size:12px; font-weight:600; color:var(--navy); text-decoration:none; border:1px solid var(--mist); background:#f3f8fd; padding:4px 12px; border-radius:999px; margin-left:12px; vertical-align:middle; white-space:nowrap; }
-    .exportlink:hover{ border-color:var(--cyan); color:var(--dark); }
-    table{ width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 14px 34px rgba(11,58,119,.08); }
-    th,td{ text-align:left; padding:13px 16px; border-bottom:1px solid var(--mist); font-size:14px; vertical-align:middle; }
-    th{ background:#f3f8fd; font-family:"Space Grotesk",sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--navy); }
-    td img{ width:64px; height:48px; object-fit:cover; border-radius:8px; }
-    .btn--save{ background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; padding:9px 18px; font-size:13px; margin:0; }
     .prow{ display:grid; grid-template-columns:64px 1.6fr 1.3fr .7fr auto; gap:10px 14px; align-items:end; background:#fff; border:1px solid var(--mist); border-radius:14px; padding:14px 16px; margin-bottom:12px; box-shadow:0 10px 26px rgba(11,58,119,.06); }
     .prow img{ width:60px; height:60px; object-fit:cover; border-radius:10px; align-self:center; }
-    .prow .f{ min-width:0; }
-    .prow label{ margin:0 0 4px; font-size:11.5px; }
-    .prow input, .prow select{ padding:9px 11px; }
+    .prow .f{ min-width:0; } .prow label{ margin:0 0 4px; font-size:11.5px; } .prow input, .prow select{ padding:9px 11px; }
     .prow .btns{ display:flex; gap:8px; align-items:end; }
     @media(max-width:760px){ .prow{ grid-template-columns:60px 1fr 1fr; } .prow .btns{ grid-column:1/-1; } }
-    .login{ max-width:380px; margin:14vh auto 0; }
-    .login .btn{ width:100%; justify-content:center; }
-    /* editable car rows */
+    .login{ max-width:380px; margin:12vh auto 0; } .login .btn{ width:100%; justify-content:center; }
     .carrow{ display:flex; align-items:center; gap:14px; background:#fff; border:1px solid var(--mist); border-radius:14px; padding:12px 16px; margin-bottom:12px; box-shadow:0 10px 26px rgba(11,58,119,.06); flex-wrap:wrap; }
     .carrow__img{ width:70px; height:52px; object-fit:cover; border-radius:9px; flex:0 0 auto; }
     .carrow__info{ flex:1; min-width:180px; }
@@ -75,170 +68,172 @@
     .btn--edit::-webkit-details-marker{ display:none; }
     .editbox{ position:relative; }
     .editbox[open] > .btn--edit{ background:var(--dark); color:#fff; }
-    .editcard{ position:absolute; z-index:5; right:0; top:calc(100% + 8px); width:min(560px,86vw); }
+    .editcard{ position:absolute; z-index:5; right:0; top:calc(100% + 8px); width:min(580px,88vw); }
     .editcard .btn{ margin-top:16px; }
     @media(max-width:760px){ .carrow__actions{ width:100%; } .editcard{ position:static; width:100%; margin-top:10px; } }
+    /* ── executive shell ── */
+    .topbar{ background:var(--dark); color:#fff; }
+    .topbar__in{ max-width:1100px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    .topbar .brand{ font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:18px; }
+    .topbar .brand i{ font-style:normal; color:var(--cyan); }
+    .userpill{ margin-left:auto; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); padding:6px 10px 6px 14px; border-radius:999px; }
+    .userpill .who b{ display:block; font-size:13px; color:#fff; } .userpill .who span{ font-size:11px; color:#a9c4e4; }
+    .rolebadge{ font-size:10px; font-weight:800; letter-spacing:.05em; padding:3px 9px; border-radius:999px; text-transform:uppercase; }
+    .rolebadge--superadmin{ background:#fce8f4; color:#a91b8a; }
+    .rolebadge--manager{ background:#e8f4fc; color:#0b3a77; }
+    .rolebadge--sales_rep{ background:#e2f6ea; color:#1ba94c; }
+    .topbar__actions{ display:flex; gap:8px; }
+    .topbar__actions a{ font-size:13px; font-weight:600; color:#fff; background:rgba(255,255,255,.12); padding:8px 14px; border-radius:999px; text-decoration:none; }
+    .topbar__actions a:hover{ background:rgba(255,255,255,.22); }
+    .tabwrap{ background:var(--dark); }
+    .tabs{ max-width:1100px; margin:0 auto; padding:0 14px; display:flex; gap:2px; overflow-x:auto; }
+    .tab{ flex:0 0 auto; background:none; border:none; color:#a9c4e4; font:600 14px "Space Grotesk",sans-serif; padding:12px 16px; cursor:pointer; border-bottom:3px solid transparent; margin:0; border-radius:0; white-space:nowrap; }
+    .tab:hover{ color:#fff; } .tab.active{ color:#fff; border-bottom-color:var(--cyan); }
+    .panel{ display:none; } .panel.active{ display:block; }
+    .metrics{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin:8px 0; }
+    .metric{ background:#fff; border:1px solid var(--mist); border-radius:16px; padding:18px 20px; box-shadow:0 12px 30px rgba(11,58,119,.08); }
+    .metric .k{ font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--navy); font-weight:600; }
+    .metric .v{ font-family:"Space Grotesk",sans-serif; font-size:30px; font-weight:700; margin-top:6px; line-height:1; }
+    .metric--accent{ background:linear-gradient(135deg,#0b3a77,#1577d6); border:none; }
+    .metric--accent .k{ color:#c3dbf6; } .metric--accent .v{ color:#fff; }
+    .section-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:22px 0 12px; }
+    .section-head h2{ margin:0; }
+    .pill{ font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; text-transform:capitalize; white-space:nowrap; }
+    .pill--new{ background:#e8f0fc; color:#0b3a77; } .pill--contacted{ background:#e6f6fb; color:#1481a8; }
+    .pill--test_drive{ background:#f3e9fb; color:#7a3aa9; } .pill--closed{ background:#e2f6ea; color:#1ba94c; } .pill--lost{ background:#fde8e8; color:#c0392b; }
+    .lead-sel{ padding:7px 10px; font-size:13px; border-radius:8px; width:auto; min-width:120px; }
+    .dbstat{ display:flex; gap:10px 22px; flex-wrap:wrap; font-size:13.5px; }
+    .dbstat b{ color:var(--navy); }
+    .wa{ color:#1ba94c; font-weight:600; text-decoration:none; }
   </style>
 </head>
 <body>
-  <div class="bar">
-    <h1>Shreya<b>Auto</b> — Admin</h1>
-    {% if logged_in %}<a href="{{ url_for('admin_logout') }}">Log out</a>
-    {% else %}<a href="{{ url_for('home') }}">View site →</a>{% endif %}
-  </div>
-
+{% if not logged_in or change_password %}
+  <div class="topbar"><div class="topbar__in"><span class="brand">Shreya<i>Auto</i> — Admin</span>
+    <a href="{{ url_for('home') }}" style="margin-left:auto;color:var(--cyan);text-decoration:none;font-weight:600;font-size:14px">View site →</a></div></div>
   <div class="wrap">
-    {% with messages = get_flashed_messages() %}
-      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
-    {% endwith %}
-
-    {% if not logged_in %}
-      <!-- ───── LOGIN ───── -->
-      <form class="card login" method="POST" action="{{ url_for('admin_login') }}">
-        <h2 style="margin-top:0">Admin login</h2>
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" autofocus required />
-        <button class="btn" type="submit">Log in</button>
+    {% with messages = get_flashed_messages() %}{% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}{% endwith %}
+    {% if change_password %}
+      <form class="card login" method="POST" action="{{ url_for('admin_change_password') }}">
+        <h2 style="margin-top:0">Set a new password</h2>
+        <p class="hint" style="margin-bottom:6px">Choose a new password to continue.</p>
+        <label for="new_password">New password</label>
+        <input id="new_password" name="new_password" type="password" autofocus required minlength="6" />
+        <label for="confirm_password">Confirm password</label>
+        <input id="confirm_password" name="confirm_password" type="password" required minlength="6" />
+        <button class="btn" type="submit">Save password</button>
       </form>
     {% else %}
-      <!-- ───── INQUIRIES (newest first) ───── -->
-      <h2 style="margin-top:0">Inquiries ({{ inquiries|length }}){% if inquiries %}<a class="exportlink" href="{{ url_for('admin_export', kind='inquiries') }}">⤓ Export CSV</a>{% endif %}</h2>
-      <form method="POST" action="{{ url_for('admin_test_email') }}" style="margin:-6px 0 16px">
-        <button class="btn" type="submit">✉ Send test email</button>
+      <form class="card login" method="POST" action="{{ url_for('admin_login') }}">
+        <h2 style="margin-top:0">Admin login</h2>
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" autofocus required />
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <button class="btn" type="submit">Log in</button>
       </form>
-      {% if inquiries %}
-      <table>
-        <tr><th>When</th><th>Name</th><th>Phone</th><th>Car</th><th>Message</th><th></th></tr>
-        {% for q in inquiries %}
-        <tr>
-          <td style="white-space:nowrap">{{ q.time }}</td>
-          <td><strong>{{ q.name }}</strong></td>
-          <td style="white-space:nowrap">
-            <a href="tel:{{ q.phone }}">{{ q.phone }}</a>{% if q.wa %} · <a href="https://wa.me/{{ q.wa }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}
-          </td>
-          <td>{{ q.car }}</td>
-          <td>{{ q.message }}</td>
-          <td>
-            <form method="POST" action="{{ url_for('admin_inquiry_delete') }}" onsubmit="return confirm('Remove this inquiry?')">
-              <input type="hidden" name="id" value="{{ q.id }}" />
-              <button class="btn btn--danger" type="submit">Remove</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <div class="hint">No inquiries yet.</div>
-      {% endif %}
+    {% endif %}
+  </div>
+{% else %}
+  {% set is_super = (role == 'superadmin') %}
+  {% set can_manage = (role in ['superadmin','manager']) %}
+  <div class="topbar"><div class="topbar__in">
+    <span class="brand">Shreya<i>Auto</i> — Admin</span>
+    <div class="userpill">
+      <span class="who"><b>{{ current_user.full_name or current_user.username }}</b><span>@{{ current_user.username }}</span></span>
+      <span class="rolebadge rolebadge--{{ current_user.role }}">{{ current_user.role|replace('_',' ') }}</span>
+    </div>
+    <div class="topbar__actions">
+      <a href="{{ url_for('home') }}" target="_blank">View site</a>
+      <a href="{{ url_for('admin_change_password') }}">Password</a>
+      <a href="{{ url_for('admin_logout') }}">Log out</a>
+    </div>
+  </div></div>
+  <div class="tabwrap"><div class="tabs">
+    <button class="tab" data-tab="dash">📊 Dashboard</button>
+    <button class="tab" data-tab="inventory">🚗 Inventory</button>
+    <button class="tab" data-tab="crm">💬 CRM Leads</button>
+    <button class="tab" data-tab="buyers">👤 Buyers</button>
+    {% if can_manage %}<button class="tab" data-tab="reviews">⭐ Reviews</button>{% endif %}
+    {% if can_manage %}<button class="tab" data-tab="team">👥 Team</button>{% endif %}
+    {% if is_super %}<button class="tab" data-tab="users">🔑 Users</button>{% endif %}
+    {% if is_super %}<button class="tab" data-tab="audit">📜 Audit</button>{% endif %}
+  </div></div>
 
-      <!-- ───── REVIEWS (pending first — approve to publish) ───── -->
-      <h2>Reviews ({{ reviews|length }}){% if reviews %}<a class="exportlink" href="{{ url_for('admin_export', kind='reviews') }}">⤓ Export CSV</a>{% endif %}</h2>
-      {% if reviews %}
-      <table>
-        <tr><th>When</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>
-        {% for r in reviews %}
-        <tr>
-          <td style="white-space:nowrap">{{ r.time }}</td>
-          <td><strong>{{ r.name }}</strong>{% if r.location %}<br><span class="hint">{{ r.location }}</span>{% endif %}</td>
-          <td style="white-space:nowrap; color:#f5b301; letter-spacing:1px">{{ "★" * r.rating }}<span style="color:#ccd">{{ "★" * (5 - r.rating) }}</span></td>
-          <td>{{ r.text }}</td>
-          <td style="white-space:nowrap">{% if r.approved %}<span style="color:#1ba94c; font-weight:600">● Live</span>{% else %}<span style="color:#e0902a; font-weight:600">● Pending</span>{% endif %}</td>
-          <td style="white-space:nowrap">
-            {% if not r.approved %}
-            <form method="POST" action="{{ url_for('admin_review_approve') }}" style="display:inline">
-              <input type="hidden" name="id" value="{{ r.id }}" />
-              <button class="btn" type="submit">Approve</button>
-            </form>
-            {% endif %}
-            <form method="POST" action="{{ url_for('admin_review_delete') }}" style="display:inline" onsubmit="return confirm('Remove this review?')">
-              <input type="hidden" name="id" value="{{ r.id }}" />
-              <button class="btn btn--danger" type="submit">Remove</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <div class="hint">No reviews yet.</div>
-      {% endif %}
+  <div class="wrap">
+    {% with messages = get_flashed_messages() %}{% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}{% endwith %}
 
-      <!-- ───── CAR SALES / BUYERS ───── -->
-      <h2>Car sales ({{ sales|length }}){% if sales %}<a class="exportlink" href="{{ url_for('admin_export', kind='sales') }}">⤓ Export CSV</a>{% endif %}</h2>
-      {% if sales_summary and sales_summary.count %}
-      <div class="hint" style="margin:-6px 0 12px; font-size:14px">
-        <b>{{ sales_summary.count }}</b> car{{ 's' if sales_summary.count != 1 else '' }} sold{% if sales_summary.total %} · <b>{{ sales_summary.total }}</b> recorded (private){% endif %}
+    <!-- ═══ DASHBOARD ═══ -->
+    <section class="panel" id="panel-dash">
+      <div class="metrics">
+        {% if is_super %}<div class="metric metric--accent"><div class="k">Sales revenue (recorded)</div><div class="v">{{ stats.revenue }}</div></div>{% endif %}
+        <div class="metric"><div class="k">Available cars</div><div class="v">{{ stats.available }}</div></div>
+        <div class="metric"><div class="k">Sold cars</div><div class="v">{{ stats.sold }}</div></div>
+        <div class="metric"><div class="k">Hot leads</div><div class="v">{{ stats.leads_hot }}</div></div>
+        <div class="metric"><div class="k">Registered buyers</div><div class="v">{{ stats.buyers }}</div></div>
+        <div class="metric"><div class="k">Total cars</div><div class="v">{{ stats.cars }}</div></div>
+      </div>
+      {% if is_super and db_status %}
+      <div class="card" style="margin-top:16px">
+        <h2 style="margin-top:0;font-size:16px">Database health</h2>
+        <div class="dbstat">
+          <span>Engine: <b>{{ db_status.engine }}</b></span>
+          <span>Status: <b style="color:{{ '#1ba94c' if db_status.connected else '#c0392b' }}">{{ '● Connected' if db_status.connected else '○ Error' }}</b></span>
+          {% for k, v in (db_status.counts or {}).items() %}<span>{{ k|capitalize }}: <b>{{ v }}</b></span>{% endfor %}
+        </div>
       </div>
       {% endif %}
-      {% if sales %}
-      <table>
-        <tr><th>Sold on</th><th>Car</th><th>Buyer</th><th>Phone</th><th>Price (private)</th><th>Notes</th><th></th></tr>
-        {% for sl in sales %}
-        <tr>
-          <td style="white-space:nowrap">{{ sl.sold_on }}</td>
-          <td>{{ sl.car_desc }}</td>
-          <td><strong>{{ sl.buyer_name or "—" }}</strong></td>
-          <td style="white-space:nowrap">{% if sl.buyer_phone %}<a href="tel:{{ sl.buyer_phone }}">{{ sl.buyer_phone }}</a>{% else %}—{% endif %}</td>
-          <td style="white-space:nowrap">{{ sl.price or "—" }}</td>
-          <td>{{ sl.notes }}</td>
-          <td>
-            <form method="POST" action="{{ url_for('admin_sale_delete') }}" onsubmit="return confirm('Remove this sale record?')">
-              <input type="hidden" name="id" value="{{ sl.id }}" />
-              <button class="btn btn--danger" type="submit">Remove</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-      {% else %}
-      <div class="hint">No sales recorded yet. Mark a car <b>Sold out</b> in its Edit box (with the buyer's details) to log a sale here.</div>
-      {% endif %}
+    </section>
 
-      <!-- ───── ADD A CAR ───── -->
-      <h2>Add a car</h2>
+    <!-- ═══ INVENTORY ═══ -->
+    <section class="panel" id="panel-inventory">
+      {% if can_manage %}
+      <h2 style="margin-top:6px">Add a car</h2>
       <form class="card" method="POST" action="{{ url_for('admin_add') }}" enctype="multipart/form-data">
         <div class="grid2">
           <div><label>Brand</label><input name="brand" placeholder="Kia" required /></div>
           <div><label>Model</label><input name="name" placeholder="Sonet" required /></div>
           <div><label>Year</label><input name="year" placeholder="2021" /></div>
-          <div><label>Price</label><input name="price" placeholder="Rs. 35,00,000  (leave blank = Price on request)" /></div>
+          <div><label>Price (private — never shown publicly)</label><input name="price" placeholder="Rs. 35,00,000" /></div>
         </div>
         <label>Specs (separate with commas)</label>
         <input name="specs" placeholder="45,000 km, Petrol, 1500 cc, Automatic" />
+        <div class="grid3">
+          <div><label>Fuel</label>
+            <select name="fuel_type"><option value="">—</option><option>Petrol</option><option>Diesel</option><option>Electric</option><option>Hybrid</option></select></div>
+          <div><label>Transmission</label>
+            <select name="transmission"><option value="">—</option><option>Manual</option><option>Automatic</option></select></div>
+          <div><label>Status</label>
+            <select name="status"><option value="available">Available</option><option value="reserved">Reserved</option><option value="sold">Sold</option></select></div>
+        </div>
         <div class="grid2">
           <div><label>Badge</label><input name="badge" placeholder="In stock" /></div>
-          <div><label>Status</label>
-            <select name="status">
-              <option value="available">Available</option>
-              <option value="sold">Sold out</option>
-            </select>
-          </div>
           <div><label>Image style</label>
-            <select name="fit">
-              <option value="cover">Photo (fills the card)</option>
-              <option value="contain">Poster / spec-card (shown whole)</option>
-            </select>
-          </div>
+            <select name="fit"><option value="cover">Photo (fills the card)</option><option value="contain">Poster / spec-card (shown whole)</option></select></div>
         </div>
-        <label>Description (optional — shown on the car's own page)</label>
+        <label>Description (optional)</label>
         <textarea name="desc" rows="3" placeholder="A few lines about this car"></textarea>
-        <label>Video link (YouTube or .mp4 URL — optional)</label>
+        <label>Video link (optional)</label>
         <input name="video" placeholder="https://youtu.be/…" />
         <label>Main photo</label>
         <input name="photo" type="file" accept="image/*" />
-        <div class="hint" style="margin-top:8px">Add gallery photos (exterior / interior / angles) after saving — click <b>Edit</b> on the car.</div>
+        <div class="hint" style="margin-top:8px">Add gallery photos (exterior / interior / angles / documents) after saving — click <b>Edit</b> on the car.</div>
         <button class="btn" type="submit">Add car</button>
       </form>
+      {% else %}
+      <div class="hint" style="margin-top:10px">You have view-only access to inventory.</div>
+      {% endif %}
 
-      <!-- ───── CURRENT CARS (edit or remove) ───── -->
       <h2>Current cars ({{ cars|length }})</h2>
       {% for car in cars %}
       <div class="carrow">
         <img class="carrow__img" src="{{ car.img }}" data-src="{{ car.full or car.img }}" data-label="{{ car.brand }} {{ car.name }} — main photo" alt="" title="Click to view full-size" style="cursor:zoom-in" onerror="this.style.opacity=.2" />
         <div class="carrow__info">
           <strong>{{ car.brand }} {{ car.name }}</strong> <span class="hint" style="display:inline">{{ car.year }}</span>
-          <span class="status-tag status-tag--{{ 'sold' if car.status == 'sold' else 'available' }}">{{ 'Sold out' if car.status == 'sold' else 'Available' }}</span>
-          <div class="hint">{{ car.price or "Price on request" }} · {{ car.badge }}{% if car.specs %} · {{ car.specs|join(", ") }}{% endif %}</div>
+          <span class="status-tag status-tag--{{ car.status or 'available' }}">{{ {'available':'Available','sold':'Sold','reserved':'Reserved'}.get(car.status,'Available') }}</span>
+          <div class="hint">{{ car.price or "Price on inquiry" }} · {{ car.badge }}{% if car.fuel_type %} · {{ car.fuel_type }}{% endif %}{% if car.transmission %} · {{ car.transmission }}{% endif %}</div>
         </div>
+        {% if can_manage %}
         <div class="carrow__actions">
           <details class="editbox">
             <summary class="btn btn--edit">Edit</summary>
@@ -248,59 +243,71 @@
                 <div><label>Brand</label><input name="brand" value="{{ car.brand }}" /></div>
                 <div><label>Model</label><input name="name" value="{{ car.name }}" /></div>
                 <div><label>Year</label><input name="year" value="{{ car.year }}" /></div>
-                <div><label>Price</label><input name="price" value="{{ car.price }}" placeholder="blank = Price on request" /></div>
+                <div><label>Price (private)</label><input name="price" value="{{ car.price }}" /></div>
               </div>
               <label>Specs (separate with commas)</label>
               <input name="specs" value="{{ car.specs|join(', ') }}" />
-              <div class="grid2">
-                <div><label>Badge</label><input name="badge" value="{{ car.badge }}" placeholder="In stock / Featured" /></div>
-                <div><label>Status</label>
-                  <select name="status">
-                    <option value="available"{% if car.status != 'sold' %} selected{% endif %}>Available</option>
-                    <option value="sold"{% if car.status == 'sold' %} selected{% endif %}>Sold out</option>
-                  </select>
-                </div>
-                <div><label>Image style</label>
-                  <select name="fit">
-                    <option value="cover"{% if car.fit != 'contain' %} selected{% endif %}>Photo (fills the card)</option>
-                    <option value="contain"{% if car.fit == 'contain' %} selected{% endif %}>Poster / spec-card (shown whole)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="soldbox">
-                <div class="hint" style="margin:12px 0 8px">Buyer details — saved to <b>Car sales</b> when you switch Status to <b>Sold out</b> and click Save (all optional):</div>
-                <div class="grid2">
-                  <div><label>Buyer name</label><input name="buyer_name" placeholder="e.g. Hari Thapa" /></div>
-                  <div><label>Buyer phone</label><input name="buyer_phone" placeholder="98…" /></div>
-                  <div><label>Sale price (kept private)</label><input name="sale_price" placeholder="blank = the car's listed price" /></div>
-                  <div><label>Notes</label><input name="sale_notes" placeholder="e.g. paid in full / exchange" /></div>
-                </div>
-              </div>
-              <label>Description (optional — shown on the car's own page)</label>
-              <textarea name="desc" rows="3" placeholder="A few lines about this car">{{ car.desc }}</textarea>
-              <label>Video link (YouTube or a direct .mp4 URL — optional)</label>
-              <input name="video" value="{{ car.video }}" placeholder="https://youtu.be/… or https://…/clip.mp4" />
-              <label>Replace main photo (optional)</label>
-              <input name="photo" type="file" accept="image/*" />
               <div class="grid3">
+                <div><label>Fuel</label><select name="fuel_type">
+                  <option value="">—</option>
+                  {% for f in ['Petrol','Diesel','Electric','Hybrid'] %}<option{% if car.fuel_type==f %} selected{% endif %}>{{ f }}</option>{% endfor %}
+                </select></div>
+                <div><label>Transmission</label><select name="transmission">
+                  <option value="">—</option>
+                  {% for t in ['Manual','Automatic'] %}<option{% if car.transmission==t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+                </select></div>
+                <div><label>Status</label><select name="status">
+                  <option value="available"{% if car.status=='available' %} selected{% endif %}>Available</option>
+                  <option value="reserved"{% if car.status=='reserved' %} selected{% endif %}>Reserved</option>
+                  <option value="sold"{% if car.status=='sold' %} selected{% endif %}>Sold</option>
+                </select></div>
+              </div>
+              <div class="grid2">
+                <div><label>Badge</label><input name="badge" value="{{ car.badge }}" /></div>
+                <div><label>Image style</label><select name="fit">
+                  <option value="cover"{% if car.fit!='contain' %} selected{% endif %}>Photo (fills the card)</option>
+                  <option value="contain"{% if car.fit=='contain' %} selected{% endif %}>Poster (shown whole)</option>
+                </select></div>
+              </div>
+              <div class="hint" style="margin:14px 0 6px">Buyer &amp; sale details — saved to <b>Buyers</b> + <b>Car sales</b> when you switch Status to <b>Sold</b> (optional):</div>
+              <div class="grid2">
+                <div><label>Buyer name</label><input name="buyer_name" placeholder="Hari Thapa" /></div>
+                <div><label>Buyer phone</label><input name="buyer_phone" placeholder="98…" /></div>
+                <div><label>Buyer email</label><input name="buyer_email" placeholder="optional" /></div>
+                <div><label>Citizenship / PAN / ID</label><input name="buyer_id_number" placeholder="for transfer records" /></div>
+                <div><label>Buyer address</label><input name="buyer_address" placeholder="City / area" /></div>
+                <div><label>Payment method</label><select name="payment_method">
+                  <option value="">—</option><option>Cash</option><option>Bank Transfer</option><option>Loan/Finance</option><option>Cheque</option>
+                </select></div>
+                <div><label>Sale price (private)</label><input name="sale_price" placeholder="blank = listed price" /></div>
+                <div><label>Notes</label><input name="sale_notes" placeholder="e.g. paid in full" /></div>
+              </div>
+              <label>Description</label>
+              <textarea name="desc" rows="3">{{ car.desc }}</textarea>
+              <label>Video link</label>
+              <input name="video" value="{{ car.video }}" />
+              <label>Replace main photo</label>
+              <input name="photo" type="file" accept="image/*" />
+              <div class="grid2">
                 <div><label>Add exterior photos</label><input name="photos_exterior" type="file" accept="image/*" multiple /></div>
                 <div><label>Add interior photos</label><input name="photos_interior" type="file" accept="image/*" multiple /></div>
                 <div><label>Add angle / detail photos</label><input name="photos_angle" type="file" accept="image/*" multiple /></div>
+                <div><label>Add document photos</label><input name="photos_document" type="file" accept="image/*" multiple /></div>
               </div>
               <button class="btn" type="submit">Save changes</button>
             </form>
             {% if car.gallery %}
             <div class="gmanage">
-              <div class="hint" style="margin:14px 0 8px">Gallery photos ({{ car.gallery|length }}) — <b>click a photo to view it full-size</b>, then remove it if you don't want it. The × removes it straight away.</div>
+              <div class="hint" style="margin:14px 0 8px">Gallery photos ({{ car.gallery|length }}) — <b>click to view full-size</b>; × removes it.</div>
               <div class="gthumbs">
                 {% for g in car.gallery %}
                 {% set gid = 'gform-' ~ car.id ~ '-' ~ loop.index %}
-                <form id="{{ gid }}" method="POST" action="{{ url_for('admin_gallery_delete') }}" class="gthumb" onsubmit="return confirm('Remove “{{ (g.label or g.cat)|e }}”? This cannot be undone.')">
+                <form id="{{ gid }}" method="POST" action="{{ url_for('admin_gallery_delete') }}" class="gthumb" onsubmit="return confirm('Remove “{{ (g.label or g.cat)|e }}”?')">
                   <input type="hidden" name="id" value="{{ car.id }}" />
                   <input type="hidden" name="src" value="{{ g.src }}" />
-                  <img src="{{ g.src }}" class="gthumb__img" data-src="{{ g.src }}" data-label="{{ g.label or g.cat }}" data-form="{{ gid }}" alt="{{ g.label or g.cat }}" title="Click to view full-size" onerror="this.style.opacity=.2" />
+                  <img src="{{ g.src }}" class="gthumb__img" data-src="{{ g.src }}" data-label="{{ g.label or g.cat }}" data-form="{{ gid }}" alt="{{ g.label or g.cat }}" onerror="this.style.opacity=.2" />
                   <span class="gthumb__cat">{{ g.label or g.cat }}</span>
-                  <button type="submit" class="gthumb__x" aria-label="Remove {{ g.label or g.cat }}" title="Remove this photo">×</button>
+                  <button type="submit" class="gthumb__x" aria-label="Remove" title="Remove this photo">×</button>
                 </form>
                 {% endfor %}
               </div>
@@ -312,23 +319,140 @@
             <button class="btn btn--danger" type="submit">Remove</button>
           </form>
         </div>
+        {% endif %}
       </div>
       {% endfor %}
 
-      <!-- ───── ADD A PARTNER ───── -->
-      <h2>Add a partner</h2>
+      <!-- Car sales -->
+      <div class="section-head">
+        <h2>Car sales ({{ sales|length }})</h2>
+        {% if sales %}<a class="exportlink" href="{{ url_for('admin_export', kind='sales') }}">⤓ Export CSV</a>{% endif %}
+      </div>
+      {% if sales_summary and sales_summary.count %}
+      <div class="hint" style="margin:-6px 0 12px; font-size:14px"><b>{{ sales_summary.count }}</b> car{{ 's' if sales_summary.count != 1 else '' }} sold{% if is_super and sales_summary.total %} · <b>{{ sales_summary.total }}</b> recorded (private){% endif %}</div>
+      {% endif %}
+      {% if sales %}
+      <div class="scroll"><table>
+        <tr><th>Sold on</th><th>Car</th><th>Buyer</th><th>Phone</th><th>Payment</th>{% if is_super %}<th>Price</th>{% endif %}<th></th></tr>
+        {% for sl in sales %}
+        <tr>
+          <td style="white-space:nowrap">{{ sl.sold_on }}</td>
+          <td>{{ sl.car_desc }}</td>
+          <td><strong>{{ sl.buyer_name or "—" }}</strong></td>
+          <td style="white-space:nowrap">{% if sl.buyer_phone %}<a href="tel:{{ sl.buyer_phone }}">{{ sl.buyer_phone }}</a>{% else %}—{% endif %}</td>
+          <td>{{ sl.payment_method or "—" }}</td>
+          {% if is_super %}<td style="white-space:nowrap">{{ sl.price or "—" }}</td>{% endif %}
+          <td>{% if can_manage %}<form method="POST" action="{{ url_for('admin_sale_delete') }}" onsubmit="return confirm('Remove this sale record?')"><input type="hidden" name="id" value="{{ sl.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </table></div>
+      {% else %}<div class="hint">No sales yet. Mark a car <b>Sold</b> in its Edit box (with buyer details) to log a sale.</div>{% endif %}
+    </section>
+
+    <!-- ═══ CRM LEADS ═══ -->
+    <section class="panel" id="panel-crm">
+      <div class="section-head">
+        <h2 style="margin-top:6px">CRM leads ({{ inquiries|length }})</h2>
+        <div>
+          <form method="POST" action="{{ url_for('admin_test_email') }}" style="display:inline"><button class="btn" style="margin:0;padding:8px 16px;font-size:13px" type="submit">✉ Test email</button></form>
+          {% if inquiries %}<a class="exportlink" href="{{ url_for('admin_export', kind='inquiries') }}">⤓ Export CSV</a>{% endif %}
+        </div>
+      </div>
+      {% if inquiries %}
+      <div class="scroll"><table>
+        <tr><th>When</th><th>Name</th><th>Phone</th><th>Car</th><th>Status</th><th>Reply</th>{% if can_manage %}<th></th>{% endif %}</tr>
+        {% for q in inquiries %}
+        <tr>
+          <td style="white-space:nowrap">{{ q.time }}</td>
+          <td><strong>{{ q.name }}</strong>{% if q.message %}<br><span class="hint">{{ q.message }}</span>{% endif %}</td>
+          <td style="white-space:nowrap"><a href="tel:{{ q.phone }}">{{ q.phone }}</a></td>
+          <td>{{ q.car }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_inquiry_status') }}" style="margin:0">
+              <input type="hidden" name="id" value="{{ q.id }}" />
+              <select name="status" class="lead-sel" onchange="this.form.submit()">
+                {% for s in lead_statuses %}<option value="{{ s }}"{% if q.status == s %} selected{% endif %}>{{ s|replace('_',' ')|title }}</option>{% endfor %}
+              </select>
+            </form>
+          </td>
+          <td>{% if q.car_wa %}<a class="wa" href="{{ q.car_wa }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}</td>
+          {% if can_manage %}<td><form method="POST" action="{{ url_for('admin_inquiry_delete') }}" onsubmit="return confirm('Remove this lead?')"><input type="hidden" name="id" value="{{ q.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form></td>{% endif %}
+        </tr>
+        {% endfor %}
+      </table></div>
+      {% else %}<div class="hint">No leads yet.</div>{% endif %}
+    </section>
+
+    <!-- ═══ BUYERS ═══ -->
+    <section class="panel" id="panel-buyers">
+      <div class="section-head">
+        <h2 style="margin-top:6px">Buyer directory ({{ buyers|length }})</h2>
+        {% if buyers %}<a class="exportlink" href="{{ url_for('admin_export', kind='buyers') }}">⤓ Export CSV</a>{% endif %}
+      </div>
+      {% if buyers %}
+      <div class="scroll"><table>
+        <tr><th>Name</th><th>Phone</th><th>Email</th><th>PAN / ID</th><th>Cars</th>{% if is_super %}<th>Lifetime value</th>{% endif %}<th>History</th>{% if can_manage %}<th></th>{% endif %}</tr>
+        {% for b in buyers %}
+        <tr>
+          <td><strong>{{ b.name or "—" }}</strong>{% if b.address %}<br><span class="hint">{{ b.address }}</span>{% endif %}</td>
+          <td style="white-space:nowrap">{% if b.phone %}<a href="tel:{{ b.phone }}">{{ b.phone }}</a>{% else %}—{% endif %}</td>
+          <td>{{ b.email or "—" }}</td>
+          <td>{{ b.id_number or "—" }}</td>
+          <td>{{ b.purchases }}</td>
+          {% if is_super %}<td style="white-space:nowrap"><b>{{ b.total_fmt }}</b></td>{% endif %}
+          <td>
+            {% set mine = sales|selectattr('buyer_id','equalto',b.id)|list %}
+            {% if mine %}<details><summary style="cursor:pointer;color:var(--navy);font-weight:600">{{ mine|length }} purchase{{ 's' if mine|length != 1 else '' }}</summary>
+              <div class="hint" style="margin-top:6px">{% for s in mine %}{{ s.sold_on }} — {{ s.car_desc }}{% if is_super and s.price %} ({{ s.price }}){% endif %}<br>{% endfor %}</div>
+            </details>{% else %}<span class="hint">—</span>{% endif %}
+          </td>
+          {% if can_manage %}<td><form method="POST" action="{{ url_for('admin_buyer_delete') }}" onsubmit="return confirm('Remove this buyer?')"><input type="hidden" name="id" value="{{ b.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form></td>{% endif %}
+        </tr>
+        {% endfor %}
+      </table></div>
+      {% else %}<div class="hint">No buyers yet — they're created automatically when you record a car sale.</div>{% endif %}
+    </section>
+
+    {% if can_manage %}
+    <!-- ═══ REVIEWS ═══ -->
+    <section class="panel" id="panel-reviews">
+      <div class="section-head">
+        <h2 style="margin-top:6px">Reviews ({{ reviews|length }})</h2>
+        {% if reviews %}<a class="exportlink" href="{{ url_for('admin_export', kind='reviews') }}">⤓ Export CSV</a>{% endif %}
+      </div>
+      {% if reviews %}
+      <div class="scroll"><table>
+        <tr><th>When</th><th>Name</th><th>Rating</th><th>Review</th><th>Status</th><th></th></tr>
+        {% for r in reviews %}
+        <tr>
+          <td style="white-space:nowrap">{{ r.time }}</td>
+          <td><strong>{{ r.name }}</strong>{% if r.location %}<br><span class="hint">{{ r.location }}</span>{% endif %}</td>
+          <td style="white-space:nowrap; color:#f5b301; letter-spacing:1px">{{ "★" * r.rating }}<span style="color:#ccd">{{ "★" * (5 - r.rating) }}</span></td>
+          <td>{{ r.text }}</td>
+          <td style="white-space:nowrap">{% if r.approved %}<span style="color:#1ba94c; font-weight:600">● Live</span>{% else %}<span style="color:#e0902a; font-weight:600">● Pending</span>{% endif %}</td>
+          <td style="white-space:nowrap">
+            {% if not r.approved %}<form method="POST" action="{{ url_for('admin_review_approve') }}" style="display:inline"><input type="hidden" name="id" value="{{ r.id }}" /><button class="btn" style="padding:8px 16px;font-size:13px;margin:0" type="submit">Approve</button></form>{% endif %}
+            <form method="POST" action="{{ url_for('admin_review_delete') }}" style="display:inline" onsubmit="return confirm('Remove this review?')"><input type="hidden" name="id" value="{{ r.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form>
+          </td>
+        </tr>
+        {% endfor %}
+      </table></div>
+      {% else %}<div class="hint">No reviews yet.</div>{% endif %}
+    </section>
+
+    <!-- ═══ TEAM ═══ -->
+    <section class="panel" id="panel-team">
+      <h2 style="margin-top:6px">Add a partner</h2>
       <form class="card" method="POST" action="{{ url_for('admin_partner_add') }}" enctype="multipart/form-data">
         <div class="grid2">
           <div><label>Name</label><input name="name" placeholder="Dhruba Pandey" required /></div>
           <div><label>Role</label><input name="role" placeholder="Partner" value="Partner" /></div>
-          <div><label>Order (lower shows first)</label><input name="order" type="number" min="1" placeholder="leave blank = add to the end" /></div>
+          <div><label>Order (lower shows first)</label><input name="order" type="number" min="1" placeholder="blank = end" /></div>
         </div>
         <label>Photo</label>
         <input name="photo" type="file" accept="image/*" />
         <button class="btn" type="submit">Add partner</button>
       </form>
-
-      <!-- ───── CURRENT PARTNERS ───── -->
       <h2>Current partners ({{ partners|length }})</h2>
       {% for p in partners %}
       <form class="prow" method="POST" action="{{ url_for('admin_partner_update') }}">
@@ -343,62 +467,111 @@
         </div>
       </form>
       {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if is_super %}
+    <!-- ═══ USERS ═══ -->
+    <section class="panel" id="panel-users">
+      <div class="section-head"><h2 style="margin-top:6px">Staff accounts ({{ users|length }})</h2><a class="exportlink" href="{{ url_for('admin_export', kind='users') }}">⤓ Export CSV</a></div>
+      <form class="card" method="POST" action="{{ url_for('admin_user_create') }}">
+        <div class="grid2">
+          <div><label>Username</label><input name="username" placeholder="raju" required /></div>
+          <div><label>Full name</label><input name="full_name" placeholder="Raju Sharma" /></div>
+          <div><label>Email</label><input name="email" placeholder="optional" /></div>
+          <div><label>Role</label><select name="role"><option value="sales_rep">Sales Rep</option><option value="manager">Manager</option><option value="superadmin">Super Admin</option></select></div>
+        </div>
+        <label>Temporary password (they'll be forced to change it)</label>
+        <input name="password" type="text" placeholder="give them this to log in first" required minlength="6" />
+        <button class="btn" type="submit">Create account</button>
+      </form>
+      <h2>Existing accounts</h2>
+      <div class="scroll"><table>
+        <tr><th>Username</th><th>Name</th><th>Role</th><th>Active</th><th>Last login</th><th></th></tr>
+        {% for u in users %}
+        <tr>
+          <td><strong>@{{ u.username }}</strong></td>
+          <td>{{ u.full_name or "—" }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_user_update') }}" style="margin:0;display:flex;gap:6px;align-items:center">
+              <input type="hidden" name="id" value="{{ u.id }}" />
+              <select name="role" class="lead-sel">
+                {% for rr in ['sales_rep','manager','superadmin'] %}<option value="{{ rr }}"{% if u.role==rr %} selected{% endif %}>{{ rr|replace('_',' ')|title }}</option>{% endfor %}
+              </select>
+              <button class="btn btn--save" type="submit">Save</button>
+            </form>
+          </td>
+          <td>{% if u.is_active %}<span style="color:#1ba94c;font-weight:600">● Active</span>{% else %}<span style="color:#c0392b;font-weight:600">○ Disabled</span>{% endif %}</td>
+          <td style="white-space:nowrap">{{ u.last_login or "never" }}</td>
+          <td style="white-space:nowrap">
+            {% if u.id != current_user.id %}
+            <form method="POST" action="{{ url_for('admin_user_toggle') }}" style="display:inline"><input type="hidden" name="id" value="{{ u.id }}" /><button class="btn btn--save" type="submit">{{ 'Disable' if u.is_active else 'Enable' }}</button></form>
+            <form method="POST" action="{{ url_for('admin_user_delete') }}" style="display:inline" onsubmit="return confirm('Delete this account?')"><input type="hidden" name="id" value="{{ u.id }}" /><button class="btn btn--danger" type="submit">Delete</button></form>
+            {% else %}<span class="hint">(you)</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table></div>
+    </section>
+
+    <!-- ═══ AUDIT ═══ -->
+    <section class="panel" id="panel-audit">
+      <h2 style="margin-top:6px">Security audit log</h2>
+      {% if audit_logs %}
+      <div class="scroll"><table>
+        <tr><th>When</th><th>User</th><th>Action</th><th>Target</th><th>Details</th><th>IP</th></tr>
+        {% for a in audit_logs %}
+        <tr>
+          <td style="white-space:nowrap">{{ a.time }}</td>
+          <td>@{{ a.username }}</td>
+          <td><span class="pill pill--new">{{ a.action|replace('_',' ') }}</span></td>
+          <td>{{ a.target_type }}{% if a.target_id %} #{{ a.target_id }}{% endif %}</td>
+          <td>{{ a.details }}</td>
+          <td style="white-space:nowrap">{{ a.ip_address }}</td>
+        </tr>
+        {% endfor %}
+      </table></div>
+      {% else %}<div class="hint">No activity logged yet.</div>{% endif %}
+    </section>
     {% endif %}
   </div>
 
-  <!-- ───── FULL-SIZE IMAGE VIEWER ───── -->
-  <div class="lbox" id="lbox">
-    <div class="lbox__inner">
-      <img id="lboxImg" src="" alt="" />
-      <div class="lbox__bar">
-        <span class="lbox__label" id="lboxLabel"></span>
-        <div class="lbox__actions">
-          <button type="button" class="btn btn--ghost" id="lboxClose">Close</button>
-          <button type="button" class="btn btn--danger" id="lboxRemove">Remove this photo</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- full-size image viewer -->
+  <div class="lbox" id="lbox"><div class="lbox__inner">
+    <img id="lboxImg" src="" alt="" />
+    <div class="lbox__bar"><span class="lbox__label" id="lboxLabel"></span>
+      <div class="lbox__actions"><button type="button" class="btn btn--ghost" id="lboxClose">Close</button>
+        <button type="button" class="btn btn--danger" id="lboxRemove">Remove this photo</button></div></div>
+  </div></div>
 
   <script>
+    // Tabs
     (function () {
-      var lbox   = document.getElementById('lbox');
-      var lImg   = document.getElementById('lboxImg');
-      var lLabel = document.getElementById('lboxLabel');
-      var lRemove= document.getElementById('lboxRemove');
-      var currentForm = null;
-
-      function open(src, label, formId) {
-        lImg.src = src;
-        lLabel.textContent = label || '';
-        currentForm = formId ? document.getElementById(formId) : null;
-        lRemove.style.display = currentForm ? 'inline-flex' : 'none';
-        lbox.classList.add('show');
-        document.body.style.overflow = 'hidden';
+      var tabs = document.querySelectorAll('.tab'), panels = document.querySelectorAll('.panel');
+      function activate(name) {
+        var ok = false;
+        tabs.forEach(function (t) { var on = t.dataset.tab === name; t.classList.toggle('active', on); if (on) ok = true; });
+        panels.forEach(function (p) { p.classList.toggle('active', p.id === 'panel-' + name); });
+        return ok;
       }
-      function close() {
-        lbox.classList.remove('show');
-        lImg.src = '';
-        currentForm = null;
-        document.body.style.overflow = '';
-      }
-
-      // Any clickable image opens the viewer (gallery thumbs + each car's main photo).
-      document.querySelectorAll('.gthumb__img, .carrow__img').forEach(function (img) {
-        img.addEventListener('click', function () {
-          open(img.dataset.src || img.src, img.dataset.label || '', img.dataset.form || null);
-        });
-      });
-
-      // Remove from inside the viewer → triggers the same confirm + delete as the × button.
-      lRemove.addEventListener('click', function () {
-        if (currentForm) { var f = currentForm; close(); f.requestSubmit(); }
-      });
-
+      tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.dataset.tab); try { localStorage.setItem('adminTab', t.dataset.tab); } catch (e) {} }); });
+      var saved = null; try { saved = localStorage.getItem('adminTab'); } catch (e) {}
+      if (!(saved && activate(saved))) { if (tabs[0]) activate(tabs[0].dataset.tab); }
+    })();
+    // Lightbox (gallery + car photos)
+    (function () {
+      var lbox = document.getElementById('lbox'), lImg = document.getElementById('lboxImg'),
+          lLabel = document.getElementById('lboxLabel'), lRemove = document.getElementById('lboxRemove'), cf = null;
+      if (!lbox) return;
+      function open(src, label, formId) { lImg.src = src; lLabel.textContent = label || ''; cf = formId ? document.getElementById(formId) : null; lRemove.style.display = cf ? 'inline-flex' : 'none'; lbox.classList.add('show'); document.body.style.overflow = 'hidden'; }
+      function close() { lbox.classList.remove('show'); lImg.src = ''; cf = null; document.body.style.overflow = ''; }
+      document.querySelectorAll('.gthumb__img, .carrow__img').forEach(function (img) { img.addEventListener('click', function () { open(img.dataset.src || img.src, img.dataset.label || '', img.dataset.form || null); }); });
+      lRemove.addEventListener('click', function () { if (cf) { var f = cf; close(); f.requestSubmit(); } });
       document.getElementById('lboxClose').addEventListener('click', close);
       lbox.addEventListener('click', function (e) { if (e.target === lbox) close(); });
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
     })();
   </script>
+{% endif %}
 </body>
 </html>

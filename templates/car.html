@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="/assets/css/styles.css?v=46" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=51" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
@@ -31,6 +31,7 @@
 {% set exterior = (gallery | selectattr('cat', 'equalto', 'exterior') | list) or [{'src': car.full, 'label': 'Photo'}] %}
 {% set interior = (gallery | selectattr('cat', 'equalto', 'interior') | list) or [{'label': 'Interior'}] %}
 {% set angles   = (gallery | selectattr('cat', 'equalto', 'angle') | list) or [{'label': 'Angles & details'}] %}
+{% set documents = gallery | selectattr('cat', 'equalto', 'document') | list %}
 
 {% macro slider(items, idx, en, np) %}
   <section class="section cd-sec" id="cd-{{ idx }}">
@@ -140,6 +141,10 @@
               </a>
               <a class="cd-scroll" href="#cd-specs"><span data-en="Explore this car" data-np="यो गाडी हेर्नुहोस्">Explore this car</span><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4v12l5-5 1.4 1.4L12 18.8 5.6 12.4 7 11l5 5z"/></svg></a>
             </div>
+            <div class="cd-hero__links reveal-up" data-delay="4">
+              <a href="{{ url_for('car_print', car_id=car.id) }}" target="_blank" rel="noopener"><span data-en="🖨 Print spec sheet" data-np="🖨 स्पेक सिट प्रिन्ट">🖨 Print spec sheet</span></a>
+              <a href="{{ url_for('compare', id=car.id) }}"><span data-en="⚖ Compare this car" data-np="⚖ तुलना गर्नुहोस्">⚖ Compare this car</span></a>
+            </div>
           </div>
           <figure class="cd-hero__visual reveal-fade" data-delay="2" data-full="/{{ car.full }}" aria-label="{{ label }}">
             <img class="is-{{ 'contain' if car.fit == 'contain' else 'cover' }}" src="/{{ car.full }}" width="800" height="1000" onerror="this.onerror=null;this.src='/{{ car.img }}'" alt="{{ label }} at Shreya Auto Enterprises" />
@@ -152,6 +157,7 @@
     {{ slider(exterior, '01', 'Exterior', 'बाहिरी') }}
     {{ slider(interior, '02', 'Interior', 'भित्री') }}
     {{ slider(angles, '03', 'Every angle', 'हरेक कोण') }}
+    {% if documents %}{{ slider(documents, '03d', 'Documents', 'कागजातहरू') }}{% endif %}
 
     <!-- ============================== VIDEO ============================== -->
     <section class="cd-video dark" id="cd-video">
@@ -195,12 +201,39 @@
             {% if car.year %}<div><dt data-en="Year" data-np="वर्ष">Year</dt><dd>{{ car.year }}</dd></div>{% endif %}
             {% if car.km %}<div><dt data-en="Kilometres" data-np="किलोमिटर">Kilometres</dt><dd>{{ car.km }}</dd></div>{% endif %}
             {% if car.engine %}<div><dt data-en="Engine" data-np="इन्जिन">Engine</dt><dd>{{ car.engine }}</dd></div>{% endif %}
+            {% if car.fuel_type %}<div><dt data-en="Fuel" data-np="इन्धन">Fuel</dt><dd>{{ car.fuel_type }}</dd></div>{% endif %}
+            {% if car.transmission %}<div><dt data-en="Transmission" data-np="ट्रान्समिसन">Transmission</dt><dd>{{ car.transmission }}</dd></div>{% endif %}
             {% if car.colour %}<div><dt data-en="Colour" data-np="रङ">Colour</dt><dd>{{ car.colour }}</dd></div>{% endif %}
             <div><dt data-en="Status" data-np="स्थिति">Status</dt><dd class="is-avail" data-en="Available" data-np="उपलब्ध">Available</dd></div>
             <div><dt data-en="Price" data-np="मूल्य">Price</dt><dd>{% if car.price %}{{ car.price }}{% else %}<span data-en="On inquiry" data-np="सोध्नुहोस्">On inquiry</span>{% endif %}</dd></div>
             <div><dt data-en="Location" data-np="स्थान">Location</dt><dd data-en="Bishalnagar, Kathmandu" data-np="विशालनगर, काठमाडौँ">Bishalnagar, Kathmandu</dd></div>
           </dl>
         </div>
+      </div>
+    </section>
+
+    <!-- ============================== EMI CALCULATOR ============================== -->
+    <section class="section emi" id="emi">
+      <div class="container">
+        <header class="head head--center">
+          <p class="eyebrow reveal-up"><span class="head__idx">(06)</span> <span data-en="Finance" data-np="वित्त">Finance</span></p>
+          <h2 class="display reveal-up" data-delay="1" data-en="Estimate your monthly EMI" data-np="मासिक किस्ता अनुमान गर्नुहोस्">Estimate your monthly EMI</h2>
+        </header>
+        <div class="emi-card reveal-up" data-delay="2" id="emiCalc">
+          <div class="emi-inputs">
+            <label><span data-en="Vehicle price (Rs.)" data-np="गाडीको मूल्य (रु.)">Vehicle price (Rs.)</span><input type="number" id="emiPrice" value="4000000" min="0" step="50000" /></label>
+            <label><span data-en="Down payment (%)" data-np="अग्रिम भुक्तानी (%)">Down payment (%)</span><input type="number" id="emiDown" value="20" min="0" max="90" /></label>
+            <label><span data-en="Tenure (months)" data-np="अवधि (महिना)">Tenure (months)</span><input type="number" id="emiMonths" value="60" min="12" max="84" step="6" /></label>
+            <label><span data-en="Interest rate (% p.a.)" data-np="ब्याज दर (% वार्षिक)">Interest rate (% p.a.)</span><input type="number" id="emiRate" value="12" min="1" max="30" step="0.1" /></label>
+          </div>
+          <div class="emi-out">
+            <div class="emi-out__main"><span data-en="Monthly EMI" data-np="मासिक किस्ता">Monthly EMI</span><b id="emiMonthly">—</b></div>
+            <div class="emi-out__row"><span data-en="Loan amount" data-np="ऋण रकम">Loan amount</span><b id="emiLoan">—</b></div>
+            <div class="emi-out__row"><span data-en="Total interest" data-np="कुल ब्याज">Total interest</span><b id="emiInterest">—</b></div>
+            <div class="emi-out__row"><span data-en="Total payable" data-np="कुल भुक्तानी">Total payable</span><b id="emiTotal">—</b></div>
+          </div>
+        </div>
+        <p class="emi-note reveal-up" data-en="An estimate only — final terms depend on the bank. Contact us for exact pricing and financing help." data-np="यो अनुमान मात्र हो — अन्तिम सर्त बैंकमा निर्भर हुन्छ। सही मूल्यका लागि सम्पर्क गर्नुहोस्।">An estimate only — final terms depend on the bank. Contact us for exact pricing.</p>
       </div>
     </section>
 
@@ -266,6 +299,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="/assets/js/main.js?v=46" defer></script>
+  <script src="/assets/js/main.js?v=51" defer></script>
 </body>
 </html>

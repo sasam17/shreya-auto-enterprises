@@ -19,16 +19,16 @@ os.environ.setdefault("SHREYA_DEBUG", "0")
 
 import config  # noqa: E402  (reads the env defaults set above)
 
-# ── FAIL-SAFE: never start a live site on the shipped default password ──────────
-# If SHREYA_ADMIN_PASSWORD wasn't set, the admin would be protected by the public
-# default "shreya2017" — i.e. not protected at all. Refuse to boot so the mistake is
-# caught loudly at deploy time instead of silently shipping an open admin panel.
-if config.PASSWORD_IS_DEFAULT:
+# ── FAIL-SAFE: never start a live site on the shipped default superadmin password ──
+# The admin panel now uses per-user logins; the first superadmin is seeded from
+# SHREYA_SUPERADMIN_PASSWORD. If that's still the built-in default "admin123", anyone
+# could log in before the owner does — so refuse to boot in production until it's set.
+if config.SUPERADMIN_IS_DEFAULT:
     raise RuntimeError(
-        "\n\n  REFUSING TO START — the admin password is still the built-in default.\n"
-        "  Set a strong SHREYA_ADMIN_PASSWORD environment variable in your host's\n"
+        "\n\n  REFUSING TO START — the superadmin password is still the built-in default.\n"
+        "  Set a strong SHREYA_SUPERADMIN_PASSWORD environment variable in your host's\n"
         "  dashboard, then restart. (See DEPLOYER.md.) This guard exists so the site\n"
-        "  can never go live with an unprotected admin panel.\n"
+        "  can never go live with a guessable admin login.\n"
     )
 
 from app import app as application  # noqa: E402  (must come after the checks above)

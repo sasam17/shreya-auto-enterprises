@@ -64,9 +64,13 @@
     var media = sold
       ? '<div class="car-card__media">' + mediaInner + "</div>"
       : '<a class="car-card__media" href="' + url + '" aria-label="View ' + label + '">' + mediaInner + "</a>";
+    // "Add to compare" toggle — only on the full /cars page (carsLimit === 0), available cars.
+    var cmp = (!sold && carsLimit === 0)
+      ? '<button type="button" class="car-card__cmp" data-cmp="' + car.id + '" title="Add to compare" aria-label="Add ' + label + ' to compare">⚖</button>'
+      : '';
     var foot = sold
       ? '<div class="car-card__foot">' + price + '<span class="car-card__enq is-sold" data-en="Sold out" data-np="बिक्री भयो">Sold out</span></div>'
-      : '<div class="car-card__foot">' + price +
+      : '<div class="car-card__foot">' + price + cmp +
           '<a class="car-card__enq" href="' + url + '"><span data-en="View details" data-np="विवरण हेर्नुहोस्">View details</span><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.2 5.2 11.8 6.6l4.4 4.4H4v2h12.2l-4.4 4.4 1.4 1.4 6.8-6.8z"/></svg></a>' +
         "</div>";
 
@@ -108,6 +112,70 @@
     brands.forEach(function (b) { html += '<button class="chip" data-filter="' + esc(b) + '">' + esc(b) + "</button>"; });
     fbar.innerHTML = html;
   }
+
+  /* ---------- EMI loan calculator (car pages) ---------- */
+  function grpINR(n) {
+    n = Math.round(n || 0).toString();
+    if (n.length <= 3) return n;
+    var head = n.slice(0, -3), tail = n.slice(-3);
+    return head.replace(/\B(?=(\d\d)+(?!\d))/g, ",") + "," + tail;
+  }
+  function initEmi() {
+    var box = document.getElementById("emiCalc");
+    if (!box) return;
+    var P = document.getElementById("emiPrice"), D = document.getElementById("emiDown"),
+        M = document.getElementById("emiMonths"), R = document.getElementById("emiRate");
+    function calc() {
+      var price = Math.max(0, +P.value || 0), down = Math.min(90, Math.max(0, +D.value || 0)),
+          months = Math.max(1, +M.value || 1), rate = Math.max(0, +R.value || 0);
+      var loan = price * (1 - down / 100), r = rate / 12 / 100;
+      var emi = r > 0 ? loan * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1) : loan / months;
+      var total = emi * months;
+      document.getElementById("emiMonthly").textContent = "Rs. " + grpINR(emi);
+      document.getElementById("emiLoan").textContent = "Rs. " + grpINR(loan);
+      document.getElementById("emiInterest").textContent = "Rs. " + grpINR(total - loan);
+      document.getElementById("emiTotal").textContent = "Rs. " + grpINR(total);
+    }
+    [P, D, M, R].forEach(function (el) { el.addEventListener("input", calc); });
+    calc();
+  }
+  initEmi();
+
+  /* ---------- Compare tray (localStorage) on the /cars page ---------- */
+  function initCompare() {
+    var KEY = "shreyaCompare";
+    function get() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+    function set(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+    var bar = document.createElement("div");
+    bar.className = "cmpbar"; bar.style.display = "none";
+    document.body.appendChild(bar);
+    function render() {
+      var ids = get();
+      document.querySelectorAll(".car-card__cmp").forEach(function (b) {
+        b.classList.toggle("is-on", ids.indexOf(parseInt(b.dataset.cmp, 10)) > -1);
+      });
+      if (!ids.length) { bar.style.display = "none"; return; }
+      var q = ids.slice(0, 3).map(function (i) { return "id=" + i; }).join("&");
+      bar.innerHTML = '<span class="cmpbar__n">' + ids.length + ' selected</span>' +
+        '<a class="cmpbar__go" href="/compare?' + q + '">Compare ' + Math.min(ids.length, 3) + " →</a>" +
+        '<button type="button" class="cmpbar__clear" aria-label="Clear comparison">✕</button>';
+      bar.style.display = "flex";
+    }
+    grid.addEventListener("click", function (e) {
+      var b = e.target.closest(".car-card__cmp");
+      if (!b) return;
+      e.preventDefault();
+      var id = parseInt(b.dataset.cmp, 10), ids = get(), i = ids.indexOf(id);
+      if (i > -1) { ids.splice(i, 1); }
+      else if (ids.length >= 3) { alert("You can compare up to 3 cars at a time."); return; }
+      else { ids.push(id); }
+      set(ids); render();
+    });
+    bar.addEventListener("click", function (e) { if (e.target.closest(".cmpbar__clear")) { set([]); render(); } });
+    new MutationObserver(render).observe(grid, { childList: true });
+    render();
+  }
+  if (grid && carsLimit === 0) initCompare();
 
   var filters = document.getElementById("filters");
   if (filters) {
