@@ -75,7 +75,7 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=51" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=52" />
 </head>
 <body>
   <a class="skip-link" href="#cars">Skip to content</a>
@@ -432,8 +432,8 @@
           <div class="emi-inputs">
             <label><span data-en="Vehicle price (Rs.)" data-np="गाडीको मूल्य (रु.)">Vehicle price (Rs.)</span><input type="number" id="emiPrice" value="4000000" min="0" step="50000" /></label>
             <label><span data-en="Down payment (%)" data-np="अग्रिम भुक्तानी (%)">Down payment (%)</span><input type="number" id="emiDown" value="50" min="0" max="90" /></label>
-            <label><span data-en="Tenure (months)" data-np="अवधि (महिना)">Tenure (months)</span><input type="number" id="emiMonths" value="60" min="12" max="84" step="6" /></label>
-            <label><span data-en="Interest rate (% p.a.)" data-np="ब्याज दर (% वार्षिक)">Interest rate (% p.a.)</span><input type="number" id="emiRate" value="12" min="1" max="30" step="0.1" /></label>
+            <label><span data-en="Tenure (months, max 2.5 yrs)" data-np="अवधि (महिना, बढीमा २.५ वर्ष)">Tenure (months, max 2.5 yrs)</span><input type="number" id="emiMonths" value="30" min="6" max="30" step="6" /></label>
+            <label><span data-en="Interest rate (% p.a.)" data-np="ब्याज दर (% वार्षिक)">Interest rate (% p.a.)</span><input type="number" id="emiRate" value="10" min="1" max="30" step="0.1" /></label>
           </div>
           <div class="emi-out">
             <div class="emi-out__main"><span data-en="Monthly EMI" data-np="मासिक किस्ता">Monthly EMI</span><b id="emiMonthly">—</b></div>
@@ -636,6 +636,6 @@
       window.SHREYA_REVIEWS = _shreya.reviews;
     } catch (e) { console.error("Could not read injected showroom data:", e); }
   </script>
-  <script src="assets/js/main.js?v=51" defer></script>
+  <script src="assets/js/main.js?v=52" defer></script>
 </body>
 </html>

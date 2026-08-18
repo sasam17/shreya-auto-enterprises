@@ -126,8 +126,12 @@
     var P = document.getElementById("emiPrice"), D = document.getElementById("emiDown"),
         M = document.getElementById("emiMonths"), R = document.getElementById("emiRate");
     function calc() {
-      var price = Math.max(0, +P.value || 0), down = Math.min(90, Math.max(0, +D.value || 0)),
-          months = Math.max(1, +M.value || 1), rate = Math.max(0, +R.value || 0);
+      // Clamp each input to its own min/max so typed values stay within the allowed range
+      // (e.g. tenure can't exceed the 2.5-year / 30-month cap).
+      var price = Math.max(0, +P.value || 0),
+          down = Math.min(+D.max || 90, Math.max(0, +D.value || 0)),
+          months = Math.min(+M.max || 360, Math.max(+M.min || 1, +M.value || (+M.max || 1))),
+          rate = Math.min(+R.max || 100, Math.max(0, +R.value || 0));
       var loan = price * (1 - down / 100), r = rate / 12 / 100;
       var emi = r > 0 ? loan * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1) : loan / months;
       var total = emi * months;
