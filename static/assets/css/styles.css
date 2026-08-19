@@ -852,42 +852,43 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
 .cd-hero__links a{color:var(--on-dark); font-weight:600; font-size:14px; text-decoration:none; border-bottom:1px solid transparent; transition:color .2s, border-color .2s}
 .cd-hero__links a:hover{color:#fff; border-bottom-color:var(--cyan)}
 
-/* EMI calculator */
-.emi{background:var(--surface, #f4f9fe)}
-.emi-card{display:grid; grid-template-columns:1.1fr 1fr; gap:22px; background:var(--card, #fff); border:1px solid var(--line, #dceaf7); border-radius:20px; padding:26px; box-shadow:0 18px 46px rgba(11,58,119,.10); max-width:840px; margin:0 auto}
+/* EMI calculator — uses the site's THEME variables so it flips in dark mode */
+.emi{background:var(--off)}
+.emi-card{display:grid; grid-template-columns:1.1fr 1fr; gap:22px; background:var(--white); border:1px solid var(--mist); border-radius:20px; padding:26px; box-shadow:var(--shadow-md); max-width:840px; margin:0 auto}
 .emi-inputs{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-.emi-inputs label{display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink, #0a2540)}
-.emi-inputs input{padding:11px 13px; border:1.5px solid var(--line, #dceaf7); border-radius:10px; font:inherit; background:var(--surface, #f6fafe); color:inherit}
+.emi-inputs label{display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink)}
+.emi-inputs input{padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:var(--off); color:var(--ink)}
 .emi-inputs input:focus{outline:none; border-color:var(--cyan)}
 .emi-out{display:flex; flex-direction:column; gap:10px; justify-content:center; background:linear-gradient(135deg,#0b3a77,#1577d6); border-radius:14px; padding:20px 22px; color:#fff}
 .emi-out__main{display:flex; flex-direction:column; gap:2px; padding-bottom:12px; margin-bottom:6px; border-bottom:1px solid rgba(255,255,255,.2)}
 .emi-out__main span{font-size:13px; color:#c3dbf6}
-.emi-out__main b{font-family:var(--font-display, "Space Grotesk"),sans-serif; font-size:30px; line-height:1}
+.emi-out__main b{font-family:var(--font-display),sans-serif; font-size:30px; line-height:1}
 .emi-out__row{display:flex; align-items:center; justify-content:space-between; font-size:14px}
 .emi-out__row span{color:#c3dbf6}
-.emi-note{text-align:center; color:var(--ink-dim, #5b7189); font-size:13px; margin-top:14px; max-width:640px; margin-left:auto; margin-right:auto}
-.emi-reqs{max-width:660px; margin:20px auto 0; background:var(--card,#fff); border:1px solid var(--line,#dceaf7); border-radius:14px; padding:18px 22px; box-shadow:0 10px 26px rgba(11,58,119,.06)}
-.emi-reqs h3{font-family:var(--font-display,"Space Grotesk"),sans-serif; font-size:15px; margin:0 0 12px; color:var(--navy,#0b3a77)}
+.emi-note{text-align:center; color:var(--ink-muted); font-size:13px; margin-top:14px; max-width:640px; margin-left:auto; margin-right:auto}
+.emi-reqs{max-width:660px; margin:20px auto 0; background:var(--white); border:1px solid var(--mist); border-radius:14px; padding:18px 22px; box-shadow:var(--shadow-md)}
+.emi-reqs h3{font-family:var(--font-display),sans-serif; font-size:15px; margin:0 0 12px; color:var(--navy)}
 .emi-reqs ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:10px 20px}
-.emi-reqs li{position:relative; padding-left:26px; font-size:14px; color:var(--ink,#0a2540)}
-.emi-reqs li::before{content:"✓"; position:absolute; left:0; top:-1px; width:18px; height:18px; border-radius:50%; background:#e2f6ea; color:#1ba94c; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center}
+.emi-reqs li{position:relative; padding-left:26px; font-size:14px; color:var(--ink)}
+.emi-reqs li::before{content:"✓"; position:absolute; left:0; top:-1px; width:18px; height:18px; border-radius:50%; background:rgba(27,169,76,.16); color:#28c25c; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center}
 @media(max-width:680px){ .emi-card{grid-template-columns:1fr} .emi-inputs{grid-template-columns:1fr 1fr} }
 @media(max-width:560px){ .emi-reqs ul{grid-template-columns:1fr} }
 
 /* compare button on cards + floating tray */
-.car-card__cmp{width:34px; height:34px; flex:0 0 auto; border:1.5px solid var(--line, #dceaf7); background:var(--card,#fff); color:var(--navy,#0b3a77); border-radius:50%; cursor:pointer; font-size:15px; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .18s, color .18s, border-color .18s}
+.car-card__cmp{width:34px; height:34px; flex:0 0 auto; border:1.5px solid var(--mist); background:var(--white); color:var(--navy); border-radius:50%; cursor:pointer; font-size:15px; line-height:1; display:inline-flex; align-items:center; justify-content:center; transition:background .18s, color .18s, border-color .18s}
 .car-card__cmp:hover{border-color:var(--cyan)}
 .car-card__cmp.is-on{background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; border-color:transparent}
-.cmpbar{position:fixed; left:50%; transform:translateX(-50%); bottom:20px; z-index:60; display:flex; align-items:center; gap:14px; background:#06182e; color:#fff; padding:10px 12px 10px 18px; border-radius:999px; box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.cmpbar{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom)); z-index:60; display:flex; align-items:center; gap:14px; background:#06182e; color:#fff; padding:10px 12px 10px 18px; border-radius:999px; box-shadow:0 14px 40px rgba(0,0,0,.45)}
 .cmpbar__n{font-size:14px; font-weight:600}
 .cmpbar__go{background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; font-weight:700; font-size:14px; text-decoration:none; padding:9px 18px; border-radius:999px}
 .cmpbar__clear{background:rgba(255,255,255,.14); color:#fff; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:14px}
 .cmpbar__clear:hover{background:rgba(255,255,255,.26)}
 
-/* /cars filter bar */
+/* /cars filter bar — theme-aware, cross-browser select with a custom arrow */
 .carfilter{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:6px 0 18px}
-.carfilter input[type=search], .carfilter select{padding:11px 14px; border:1.5px solid var(--line, #dceaf7); border-radius:999px; font:inherit; background:var(--card,#fff); color:inherit; min-width:150px}
-.carfilter input[type=search]{flex:1; min-width:200px}
+.carfilter input[type=search], .carfilter select{padding:11px 14px; border:1.5px solid var(--mist); border-radius:999px; font:inherit; background-color:var(--white); color:var(--ink); min-width:150px}
+.carfilter input[type=search]{flex:1; min-width:200px; -webkit-appearance:none; appearance:none}
+.carfilter select{-webkit-appearance:none; -moz-appearance:none; appearance:none; padding-right:38px; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237e93a8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; background-size:13px}
 .carfilter input:focus, .carfilter select:focus{outline:none; border-color:var(--cyan)}
-.carfilter__go{padding:11px 22px; border:none; border-radius:999px; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; font-weight:700; font:600 14px var(--font-display,"Space Grotesk"),sans-serif; cursor:pointer}
-.carfilter__clear{color:var(--ink-dim,#5b7189); font-size:13px; text-decoration:none}
+.carfilter__go{padding:11px 22px; border:none; border-radius:999px; background:linear-gradient(135deg,#4cc3f5,#1577d6); color:#062033; font-weight:700; font:600 14px var(--font-display),sans-serif; cursor:pointer}
+.carfilter__clear{color:var(--ink-muted); font-size:13px; text-decoration:none}
