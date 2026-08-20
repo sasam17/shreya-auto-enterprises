@@ -884,8 +884,7 @@ def admin_edit():
             data["img"], data["full"] = card_path, full_path
     db.save_car_db(data)
     # gallery: append any newly-uploaded photos, tagged by section
-    for cat, field in (("exterior", "photos_exterior"), ("interior", "photos_interior"),
-                       ("angle", "photos_angle"), ("document", "photos_document")):
+    for cat, field in (("exterior", "photos_exterior"), ("interior", "photos_interior")):
         for f in request.files.getlist(field):
             if f and f.filename:
                 _card, _full = process_upload(f, f"upload-{car_id}-{secrets.token_hex(4)}")

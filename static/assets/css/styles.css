@@ -854,10 +854,10 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
 
 /* EMI calculator — uses the site's THEME variables so it flips in dark mode */
 .emi{background:var(--off)}
-.emi-card{display:grid; grid-template-columns:1.1fr 1fr; gap:22px; background:var(--white); border:1px solid var(--mist); border-radius:20px; padding:26px; box-shadow:var(--shadow-md); max-width:840px; margin:0 auto}
-.emi-inputs{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-.emi-inputs label{display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink)}
-.emi-inputs input{padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:var(--off); color:var(--ink)}
+.emi-card{display:grid; grid-template-columns:1.1fr 1fr; gap:22px; min-width:0; background:var(--white); border:1px solid var(--mist); border-radius:20px; padding:26px; box-shadow:var(--shadow-md); max-width:840px; margin:0 auto}
+.emi-inputs{display:grid; grid-template-columns:1fr 1fr; gap:14px; min-width:0}
+.emi-inputs label{display:flex; flex-direction:column; gap:6px; font-size:13px; font-weight:600; color:var(--ink); min-width:0}
+.emi-inputs input{width:100%; min-width:0; padding:11px 13px; border:1.5px solid var(--mist); border-radius:10px; font:inherit; background:var(--off); color:var(--ink)}
 .emi-inputs input:focus{outline:none; border-color:var(--cyan)}
 .emi-out{display:flex; flex-direction:column; gap:10px; justify-content:center; background:linear-gradient(135deg,#0b3a77,#1577d6); border-radius:14px; padding:20px 22px; color:#fff}
 .emi-out__main{display:flex; flex-direction:column; gap:2px; padding-bottom:12px; margin-bottom:6px; border-bottom:1px solid rgba(255,255,255,.2)}
@@ -871,7 +871,8 @@ body.cursor-live .cur-dot, body.cursor-live .cur-ring{opacity:1}
 .emi-reqs ul{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:10px 20px}
 .emi-reqs li{position:relative; padding-left:26px; font-size:14px; color:var(--ink)}
 .emi-reqs li::before{content:"✓"; position:absolute; left:0; top:-1px; width:18px; height:18px; border-radius:50%; background:rgba(27,169,76,.16); color:#28c25c; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center}
-@media(max-width:680px){ .emi-card{grid-template-columns:1fr} .emi-inputs{grid-template-columns:1fr 1fr} }
+@media(max-width:680px){ .emi{padding-left:0; padding-right:0} .emi-card{grid-template-columns:1fr; gap:18px; padding:20px} .emi-inputs{grid-template-columns:1fr 1fr; gap:12px} }
+@media(max-width:440px){ .emi-inputs{grid-template-columns:1fr} }
 @media(max-width:560px){ .emi-reqs ul{grid-template-columns:1fr} }
 
 /* compare button on cards + floating tray */

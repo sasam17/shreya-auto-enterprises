@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
-  <link rel="stylesheet" href="/assets/css/styles.css?v=54" />
+  <link rel="stylesheet" href="/assets/css/styles.css?v=55" />
 </head>
 {% set label = car.brand ~ ' ' ~ car.name ~ (' ' ~ car.year if car.year else '') %}
 {% set inquiry = "Hello Shreya Auto, I'm interested in the " ~ label ~ (" (" ~ car.specs[0] ~ ")" if car.specs else "") ~ ". Is it still available?" %}
@@ -156,15 +156,13 @@
     {# every car shows the full set of sections; empty ones fall back to "add in admin" placeholders #}
     {{ slider(exterior, '01', 'Exterior', 'बाहिरी') }}
     {{ slider(interior, '02', 'Interior', 'भित्री') }}
-    {{ slider(angles, '03', 'Every angle', 'हरेक कोण') }}
-    {% if documents %}{{ slider(documents, '03d', 'Documents', 'कागजातहरू') }}{% endif %}
 
     <!-- ============================== VIDEO ============================== -->
     <section class="cd-video dark" id="cd-video">
       <div class="grain" aria-hidden="true"></div>
       <div class="container">
         <header class="head head--center">
-          <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(04)</span> <span data-en="On video" data-np="भिडियोमा">On video</span></p>
+          <p class="eyebrow eyebrow--light reveal-up"><span class="head__idx">(03)</span> <span data-en="On video" data-np="भिडियोमा">On video</span></p>
           <h2 class="display reveal-up" data-delay="1" data-en="See it move" data-np="चलेको हेर्नुहोस्">See it move</h2>
         </header>
         {% if car.video %}
@@ -191,7 +189,7 @@
       <div class="container">
         <div class="cd-specs__grid">
           <div class="cd-specs__intro">
-            <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="The details" data-np="विवरण">The details</span></p>
+            <p class="eyebrow reveal-up"><span class="head__idx">(04)</span> <span data-en="The details" data-np="विवरण">The details</span></p>
             <h2 class="display reveal-up" data-delay="1" data-en="Know it inside out" data-np="पूरा जानकारी">Know it inside out</h2>
             {% if car.desc %}<p class="cd-specs__desc reveal-up" data-delay="2">{{ car.desc }}</p>{% endif %}
           </div>
@@ -216,7 +214,7 @@
     <section class="section emi" id="emi">
       <div class="container">
         <header class="head head--center">
-          <p class="eyebrow reveal-up"><span class="head__idx">(06)</span> <span data-en="Finance" data-np="वित्त">Finance</span></p>
+          <p class="eyebrow reveal-up"><span class="head__idx">(05)</span> <span data-en="Finance" data-np="वित्त">Finance</span></p>
           <h2 class="display reveal-up" data-delay="1" data-en="Estimate your monthly EMI" data-np="मासिक किस्ता अनुमान गर्नुहोस्">Estimate your monthly EMI</h2>
         </header>
         <div class="emi-card reveal-up" data-delay="2" id="emiCalc">
@@ -308,6 +306,6 @@
     <video id="lightboxVideo" controls playsinline preload="none" hidden></video>
   </div>
 
-  <script src="/assets/js/main.js?v=54" defer></script>
+  <script src="/assets/js/main.js?v=55" defer></script>
 </body>
 </html>
