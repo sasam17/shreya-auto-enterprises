@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 venv/
 .venv/
+appenv/
+scratch/
 
 # Secrets — never commit these
 .secret_key
