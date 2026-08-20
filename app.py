@@ -785,6 +785,44 @@ def admin_sale_delete():
     return redirect(url_for("admin"))
 
 
+@app.route(f"/{config.ADMIN_PATH}/sale/add", methods=["POST"])
+@admin_required
+@roles_required("superadmin", "manager")
+def admin_sale_add():
+    """Directly record a sale for an available car from the Sales tab."""
+    car_id = int(request.form.get("car_id", 0))
+    car = db.get_car_db(car_id)
+    if not car:
+        flash("Please select a valid car.")
+        return redirect(url_for("admin"))
+    
+    # Mark car as sold
+    car["status"] = "sold"
+    db.save_car_db(car)
+    
+    desc = " ".join(x for x in [car.get("brand"), car.get("name"), str(car.get("year", ""))] if x).strip()
+    price = (request.form.get("sale_price", "").strip() or car.get("price", ""))[:60]
+    
+    buyer_id = int(request.form.get("buyer_id", 0))
+    db.add_sale(
+        car_id=car_id,
+        car_desc=desc[:200],
+        buyer_id=buyer_id,
+        buyer_name=request.form.get("buyer_name", "").strip()[:120],
+        buyer_phone=request.form.get("buyer_phone", "").strip()[:40],
+        price=price,
+        payment_method=request.form.get("payment_method", "").strip()[:50],
+        notes=request.form.get("sale_notes", "").strip()[:1000],
+        buyer_email=request.form.get("buyer_email", "").strip()[:120],
+        buyer_address=request.form.get("buyer_address", "").strip()[:255],
+        buyer_id_number=request.form.get("buyer_id_number", "").strip()[:60],
+    )
+    _audit("record_sale", "car", car_id, desc)
+    flash(f"Sale recorded successfully for {desc}!")
+    return redirect(url_for("admin"))
+
+
+
 @app.route(f"/{config.ADMIN_PATH}/export/<kind>")
 @admin_required
 def admin_export(kind):
@@ -842,6 +880,10 @@ def admin_add():
         "img":    card_path, "full": full_path,
         "fit":    request.form.get("fit", "cover"),
         "accent": "#37b2ea",
+        "seller_id":    int(request.form.get("seller_id", 0)),
+        "seller_name":  request.form.get("seller_name", "").strip(),
+        "seller_phone": request.form.get("seller_phone", "").strip(),
+        "bought_price": request.form.get("bought_price", "").strip(),
     })
     _audit("add_car", "car", car["id"], f'{car["brand"]} {car["name"]}')
     flash("Car added.")
@@ -876,6 +918,10 @@ def admin_edit():
         "specs":  specs,
         "desc":   request.form.get("desc", "").strip(),
         "video":  request.form.get("video", "").strip(),
+        "seller_id":    int(request.form.get("seller_id", 0)),
+        "seller_name":  request.form.get("seller_name", "").strip(),
+        "seller_phone": request.form.get("seller_phone", "").strip(),
+        "bought_price": request.form.get("bought_price", "").strip(),
     }
     photo = request.files.get("photo")
     if photo and photo.filename:
@@ -893,8 +939,9 @@ def admin_edit():
     # Buyer capture on the available→sold transition (won't duplicate on re-save).
     if new_status == "sold" and not was_sold:
         desc = " ".join(x for x in [data["brand"], data["name"], str(data["year"])] if x).strip()
+        buyer_id = int(request.form.get("buyer_id", 0))
         db.add_sale(
-            car_id=car_id, car_desc=desc[:200],
+            car_id=car_id, car_desc=desc[:200], buyer_id=buyer_id,
             buyer_name=request.form.get("buyer_name", "").strip()[:120],
             buyer_phone=request.form.get("buyer_phone", "").strip()[:40],
             price=(request.form.get("sale_price", "").strip() or data["price"])[:60],
@@ -992,6 +1039,27 @@ def admin_inquiry_status():
     db.update_inquiry_status(iid, request.form.get("status", "new"))
     _audit("inquiry_status", "inquiry", iid, request.form.get("status", ""))
     flash("Lead status updated.")
+    return redirect(url_for("admin"))
+
+
+@app.route(f"/{config.ADMIN_PATH}/buyer/add", methods=["POST"])
+@admin_required
+@roles_required("superadmin", "manager")
+def admin_buyer_add():
+    name = request.form.get("name", "").strip()
+    phone = request.form.get("phone", "").strip()
+    if not (name or phone):
+        flash("Please provide at least a name or phone number.")
+        return redirect(url_for("admin"))
+    b = db.get_or_create_buyer(
+        name=name, phone=phone,
+        email=request.form.get("email", "").strip(),
+        address=request.form.get("address", "").strip(),
+        id_number=request.form.get("id_number", "").strip(),
+        notes=request.form.get("notes", "").strip()
+    )
+    _audit("create_buyer", "buyer", b.get("id", 0), b.get("name", ""))
+    flash(f"Buyer '{b.get('name', 'New Buyer')}' registered successfully.")
     return redirect(url_for("admin"))
 
 

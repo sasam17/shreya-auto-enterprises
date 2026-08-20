@@ -154,6 +154,7 @@
   <div class="tabwrap"><div class="tabs">
     <button class="tab" data-tab="dash">📊 Dashboard</button>
     <button class="tab" data-tab="inventory">🚗 Inventory</button>
+    <button class="tab" data-tab="sales">💳 Sales</button>
     <button class="tab" data-tab="crm">💬 CRM Leads</button>
     <button class="tab" data-tab="buyers">👤 Buyers</button>
     {% if can_manage %}<button class="tab" data-tab="reviews">⭐ Reviews</button>{% endif %}
@@ -213,6 +214,21 @@
           <div><label>Image style</label>
             <select name="fit"><option value="cover">Photo (fills the card)</option><option value="contain">Poster / spec-card (shown whole)</option></select></div>
         </div>
+        <div class="hint" style="margin:14px 0 6px"><b>Acquired from Customer / Trade-In (Optional):</b></div>
+        <div class="grid2">
+          <div>
+            <label>Seller / Source Customer</label>
+            <select name="seller_id">
+              <option value="0">➕ Dealership Stock / Or Enter New Customer...</option>
+              {% for b in buyers %}
+                <option value="{{ b.id }}">{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div><label>Buying Price paid to customer (private)</label><input name="bought_price" placeholder="e.g. Rs. 18,00,000" /></div>
+          <div><label>Seller Name (if new)</label><input name="seller_name" placeholder="Name of seller" /></div>
+          <div><label>Seller Phone (if new)</label><input name="seller_phone" placeholder="Phone of seller" /></div>
+        </div>
         <label>Description (optional)</label>
         <textarea name="desc" rows="3" placeholder="A few lines about this car"></textarea>
         <label>Video link (optional)</label>
@@ -271,8 +287,32 @@
                   <option value="contain"{% if car.fit=='contain' %} selected{% endif %}>Poster (shown whole)</option>
                 </select></div>
               </div>
-              <div class="hint" style="margin:14px 0 6px">Buyer &amp; sale details — saved to <b>Buyers</b> + <b>Car sales</b> when you switch Status to <b>Sold</b> (optional):</div>
+              <div class="hint" style="margin:14px 0 6px"><b>Acquired from Customer / Trade-In (Optional):</b></div>
               <div class="grid2">
+                <div>
+                  <label>Seller / Source Customer</label>
+                  <select name="seller_id">
+                    <option value="0">➕ Dealership Stock / Or Enter New Customer...</option>
+                    {% for b in buyers %}
+                      <option value="{{ b.id }}"{% if car.seller_id == b.id %} selected{% endif %}>{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div><label>Buying Price paid to customer (private)</label><input name="bought_price" value="{{ car.bought_price or '' }}" placeholder="e.g. Rs. 18,00,000" /></div>
+                <div><label>Seller Name (if new)</label><input name="seller_name" value="{{ car.seller_name or '' }}" placeholder="Name of seller" /></div>
+                <div><label>Seller Phone (if new)</label><input name="seller_phone" value="{{ car.seller_phone or '' }}" placeholder="Phone of seller" /></div>
+              </div>
+              <div class="hint" style="margin:14px 0 6px">Buyer &amp; sale details — saved to <b>Buyers</b> + <b>Car sales</b> when you switch Status to <b>Sold</b>:</div>
+              <div class="grid2">
+                <div style="grid-column:1 / -1">
+                  <label>Select Registered Buyer (optional)</label>
+                  <select name="buyer_id">
+                    <option value="0">➕ Or enter new buyer details below...</option>
+                    {% for b in buyers %}
+                      <option value="{{ b.id }}">{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+                    {% endfor %}
+                  </select>
+                </div>
                 <div><label>Buyer name</label><input name="buyer_name" placeholder="Hari Thapa" /></div>
                 <div><label>Buyer phone</label><input name="buyer_phone" placeholder="98…" /></div>
                 <div><label>Buyer email</label><input name="buyer_email" placeholder="optional" /></div>
@@ -323,9 +363,66 @@
       </div>
       {% endfor %}
 
-      <!-- Car sales -->
+    </section>
+
+    <!-- ═══ CAR SALES ═══ -->
+    <section class="panel" id="panel-sales">
+      {% if can_manage %}
+      <div class="card" style="margin-bottom:24px">
+        <h2 style="margin-top:0;font-size:18px">➕ Record a new sale</h2>
+        <form method="POST" action="{{ url_for('admin_sale_add') }}">
+          <div class="grid2">
+            <div>
+              <label>Select Car</label>
+              <select name="car_id" required>
+                <option value="">— Select an available car —</option>
+                {% for c in cars %}
+                  {% if c.status != 'sold' %}
+                    <option value="{{ c.id }}">{{ c.brand }} {{ c.name }} ({{ c.year }}) — {{ c.price or 'Price on inquiry' }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label>Buyer Account</label>
+              <select name="buyer_id" id="sales_buyer_select" onchange="
+                var isNew = (this.value === '' || this.value === '0');
+                document.getElementById('new_buyer_fields').style.display = isNew ? 'grid' : 'none';
+                var bn = document.getElementsByName('buyer_name')[0];
+                var bp = document.getElementsByName('buyer_phone')[0];
+                if(bn) bn.required = isNew;
+                if(bp) bp.required = isNew;
+              ">
+                <option value="0">➕ Create / Enter New Buyer Details...</option>
+                {% for b in buyers %}
+                  <option value="{{ b.id }}">{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid2" id="new_buyer_fields" style="margin-top:12px">
+            <div><label>Buyer name</label><input name="buyer_name" placeholder="e.g. Hari Thapa" required /></div>
+            <div><label>Buyer phone</label><input name="buyer_phone" placeholder="e.g. 9841xxxxxx" required /></div>
+            <div><label>Buyer email</label><input name="buyer_email" placeholder="optional" /></div>
+            <div><label>Citizenship / PAN / ID</label><input name="buyer_id_number" placeholder="For vehicle transfer records" /></div>
+            <div><label>Buyer address</label><input name="buyer_address" placeholder="City / area" /></div>
+          </div>
+
+          <div class="grid2" style="margin-top:12px">
+            <div><label>Payment method</label><select name="payment_method">
+              <option value="">— Select payment —</option><option>Cash</option><option>Bank Transfer</option><option>Loan/Finance</option><option>Cheque</option>
+            </select></div>
+            <div><label>Sale price (private)</label><input name="sale_price" placeholder="Leave blank to use listed price" /></div>
+            <div style="grid-column:1 / -1"><label>Notes</label><input name="sale_notes" placeholder="e.g. paid in full, loan pending" /></div>
+          </div>
+          <button class="btn" type="submit" style="margin-top:14px">Record Sale</button>
+        </form>
+      </div>
+      {% endif %}
+
       <div class="section-head">
-        <h2>Car sales ({{ sales|length }})</h2>
+        <h2 style="margin-top:6px">Car sales history ({{ sales|length }})</h2>
         {% if sales %}<a class="exportlink" href="{{ url_for('admin_export', kind='sales') }}">⤓ Export CSV</a>{% endif %}
       </div>
       {% if sales_summary and sales_summary.count %}
@@ -385,26 +482,53 @@
 
     <!-- ═══ BUYERS ═══ -->
     <section class="panel" id="panel-buyers">
+      {% if can_manage %}
+      <div class="card" style="margin-bottom:24px">
+        <h2 style="margin-top:0;font-size:18px">➕ Register a new buyer</h2>
+        <form method="POST" action="{{ url_for('admin_buyer_add') }}">
+          <div class="grid2">
+            <div><label>Full name</label><input name="name" placeholder="e.g. Ram Prasad Sharma" required /></div>
+            <div><label>Phone number</label><input name="phone" placeholder="e.g. 9841xxxxxx" required /></div>
+            <div><label>Email address</label><input name="email" placeholder="optional" /></div>
+            <div><label>Citizenship / PAN / License No.</label><input name="id_number" placeholder="for transfer records" /></div>
+            <div><label>Address / City</label><input name="address" placeholder="e.g. Bishalnagar, Kathmandu" /></div>
+            <div><label>Notes / Preferences</label><input name="notes" placeholder="e.g. interested in SUV" /></div>
+          </div>
+          <button class="btn" type="submit" style="margin-top:14px">Register Buyer</button>
+        </form>
+      </div>
+      {% endif %}
+
       <div class="section-head">
         <h2 style="margin-top:6px">Buyer directory ({{ buyers|length }})</h2>
         {% if buyers %}<a class="exportlink" href="{{ url_for('admin_export', kind='buyers') }}">⤓ Export CSV</a>{% endif %}
       </div>
       {% if buyers %}
       <div class="scroll"><table>
-        <tr><th>Name</th><th>Phone</th><th>Email</th><th>PAN / ID</th><th>Cars</th>{% if is_super %}<th>Lifetime value</th>{% endif %}<th>History</th>{% if can_manage %}<th></th>{% endif %}</tr>
+        <tr><th>Name</th><th>Phone</th><th>Email</th><th>PAN / ID</th><th>Bought</th><th>Traded-In</th>{% if is_super %}<th>Total Spent</th>{% endif %}<th>Full History Timeline</th>{% if can_manage %}<th></th>{% endif %}</tr>
         {% for b in buyers %}
         <tr>
           <td><strong>{{ b.name or "—" }}</strong>{% if b.address %}<br><span class="hint">{{ b.address }}</span>{% endif %}</td>
           <td style="white-space:nowrap">{% if b.phone %}<a href="tel:{{ b.phone }}">{{ b.phone }}</a>{% else %}—{% endif %}</td>
           <td>{{ b.email or "—" }}</td>
           <td>{{ b.id_number or "—" }}</td>
-          <td>{{ b.purchases }}</td>
+          <td><b>{{ b.purchases }}</b></td>
+          <td><b>{{ b.trade_ins_count or 0 }}</b></td>
           {% if is_super %}<td style="white-space:nowrap"><b>{{ b.total_fmt }}</b></td>{% endif %}
           <td>
-            {% set mine = sales|selectattr('buyer_id','equalto',b.id)|list %}
-            {% if mine %}<details><summary style="cursor:pointer;color:var(--navy);font-weight:600">{{ mine|length }} purchase{{ 's' if mine|length != 1 else '' }}</summary>
-              <div class="hint" style="margin-top:6px">{% for s in mine %}{{ s.sold_on }} — {{ s.car_desc }}{% if is_super and s.price %} ({{ s.price }}){% endif %}<br>{% endfor %}</div>
-            </details>{% else %}<span class="hint">—</span>{% endif %}
+            {% if b.history %}
+            <details><summary style="cursor:pointer;color:var(--navy);font-weight:600">{{ b.history|length }} activity record{{ 's' if b.history|length != 1 else '' }}</summary>
+              <div class="hint" style="margin-top:6px;font-size:12px;line-height:1.4">
+                {% for h in b.history %}
+                  <div style="margin-bottom:4px">
+                    <span style="font-weight:700;color:{{ '#1ba94c' if h.type == 'purchase' else '#0b3a77' }}">{{ h.label }}</span>
+                    {% if h.price %} — <b>{{ h.price }}</b>{% endif %}
+                    {% if h.date %}<span class="hint">({{ h.date }})</span>{% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </details>
+            {% else %}<span class="hint">—</span>{% endif %}
           </td>
           {% if can_manage %}<td><form method="POST" action="{{ url_for('admin_buyer_delete') }}" onsubmit="return confirm('Remove this buyer?')"><input type="hidden" name="id" value="{{ b.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form></td>{% endif %}
         </tr>
