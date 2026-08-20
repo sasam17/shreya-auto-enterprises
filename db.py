@@ -13,7 +13,7 @@ import os
 from datetime import datetime, timezone
 
 from sqlalchemy import (create_engine, String, Integer, Text, Boolean, DateTime,
-                        select, delete, func)
+                        select, delete, func, text)
 from sqlalchemy.orm import (DeclarativeBase, Mapped, mapped_column,
                             sessionmaker, scoped_session)
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -109,7 +109,10 @@ class Car(Base):
     img:     Mapped[str] = mapped_column(String(255), default="")
     full:    Mapped[str] = mapped_column(String(255), default="")
     fit:     Mapped[str] = mapped_column(String(20), default="cover")
-    accent:  Mapped[str] = mapped_column(String(30), default="#37b2ea")
+    seller_id:    Mapped[int] = mapped_column(Integer, index=True, default=0)
+    seller_name:  Mapped[str] = mapped_column(String(120), default="")
+    seller_phone: Mapped[str] = mapped_column(String(40), default="")
+    bought_price: Mapped[str] = mapped_column(String(60), default="")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_now)
 
     def as_dict(self, gallery=None):
@@ -122,7 +125,12 @@ class Car(Base):
                 "fuel_type": self.fuel_type, "transmission": self.transmission,
                 "specs": specs, "km": self.km, "engine": self.engine, "colour": self.colour,
                 "desc": self.desc, "video": self.video, "img": self.img, "full": self.full,
-                "fit": self.fit, "accent": self.accent,
+                "fit": getattr(self, "fit", "cover"),
+                "accent": getattr(self, "accent", "#37b2ea"),
+                "seller_id": getattr(self, "seller_id", 0) or 0,
+                "seller_name": getattr(self, "seller_name", "") or "",
+                "seller_phone": getattr(self, "seller_phone", "") or "",
+                "bought_price": getattr(self, "bought_price", "") or "",
                 "gallery": gallery if gallery is not None else []}
 
 
@@ -228,8 +236,22 @@ class AuditLog(Base):
 
 
 def init_db():
-    """Create any missing tables. Safe to call on every startup."""
+    """Create any missing tables & columns. Safe to call on every startup."""
     Base.metadata.create_all(engine)
+    with engine.begin() as conn:
+        for col_def in [
+            ("accent", "VARCHAR(30) DEFAULT '#37b2ea'"),
+            ("seller_id", "INTEGER DEFAULT 0"),
+            ("seller_name", "VARCHAR(120) DEFAULT ''"),
+            ("seller_phone", "VARCHAR(40) DEFAULT ''"),
+            ("bought_price", "VARCHAR(60) DEFAULT ''")
+        ]:
+            try:
+                conn.execute(text(f"ALTER TABLE cars ADD COLUMN {col_def[0]} {col_def[1]}"))
+            except Exception:
+                pass
+
+
 
 
 # ── Users / auth ─────────────────────────────────────────────────────────────
@@ -360,21 +382,50 @@ def get_or_create_buyer(name, phone, email="", address="", id_number="", notes="
 
 
 def all_buyers():
-    """Every buyer with derived metrics: number of cars bought + total spent (int)."""
+    """Every buyer with derived metrics: cars bought + trade-in cars sold to dealership."""
     s = SessionLocal()
     try:
         buyers = s.execute(select(Buyer).order_by(Buyer.name.asc())).scalars().all()
         out = []
         for b in buyers:
             sales = s.execute(select(Sale).where(Sale.buyer_id == b.id)).scalars().all()
-            total = sum(_price_to_int(x.price) for x in sales)
+            trade_ins = s.execute(select(Car).where(Car.seller_id == b.id)).scalars().all()
+            total_spent = sum(_price_to_int(x.price) for x in sales)
+            total_trade_in = sum(_price_to_int(x.bought_price) for x in trade_ins)
             d = b.as_dict()
             d["purchases"] = len(sales)
-            d["total_spent"] = total
+            d["trade_ins_count"] = len(trade_ins)
+            d["total_spent"] = total_spent
+            d["total_trade_in"] = total_trade_in
+            d["total_fmt"] = f"Rs. {total_spent:,}" if total_spent else "—"
+            d["trade_in_fmt"] = f"Rs. {total_trade_in:,}" if total_trade_in else "—"
+
+            history = []
+            for sl in sales:
+                history.append({
+                    "type": "purchase",
+                    "label": f"🛒 BOUGHT FROM US: {sl.car_desc}",
+                    "date": sl.sold_on or "",
+                    "price": sl.price or "—",
+                    "details": f"Payment: {sl.payment_method or '—'}"
+                })
+            for tr in trade_ins:
+                desc = f"{tr.brand} {tr.name} ({tr.year})".strip()
+                created = tr.created_at.strftime("%Y-%m-%d") if tr.created_at else ""
+                history.append({
+                    "type": "trade_in",
+                    "label": f"🔄 TRADED IN / SOLD TO US: {desc}",
+                    "date": created,
+                    "price": tr.bought_price or "—",
+                    "details": f"Status: {tr.status.capitalize()}"
+                })
+            history.sort(key=lambda x: x["date"], reverse=True)
+            d["history"] = history
             out.append(d)
         return out
     finally:
         s.close()
+
 
 
 def get_buyer_by_id(buyer_id):
@@ -457,6 +508,21 @@ def _apply_car_fields(c, data):
         c.full = data["full"]
     c.fit = data.get("fit", c.fit or "cover")
     c.accent = data.get("accent", c.accent or "#37b2ea")
+
+    seller_id = int(data.get("seller_id", c.seller_id or 0))
+    seller_name = data.get("seller_name", c.seller_name or "").strip()
+    seller_phone = data.get("seller_phone", c.seller_phone or "").strip()
+    if not seller_id and (seller_name or seller_phone):
+        sb = get_or_create_buyer(seller_name, seller_phone)
+        if sb:
+            seller_id = sb["id"]
+            seller_name = sb["name"]
+            seller_phone = sb["phone"]
+    c.seller_id = seller_id
+    c.seller_name = seller_name
+    c.seller_phone = seller_phone
+    c.bought_price = data.get("bought_price", c.bought_price or "").strip()
+
 
 
 def save_car_db(data):

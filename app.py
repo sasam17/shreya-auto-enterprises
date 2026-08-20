@@ -880,6 +880,10 @@ def admin_add():
         "img":    card_path, "full": full_path,
         "fit":    request.form.get("fit", "cover"),
         "accent": "#37b2ea",
+        "seller_id":    int(request.form.get("seller_id", 0)),
+        "seller_name":  request.form.get("seller_name", "").strip(),
+        "seller_phone": request.form.get("seller_phone", "").strip(),
+        "bought_price": request.form.get("bought_price", "").strip(),
     })
     _audit("add_car", "car", car["id"], f'{car["brand"]} {car["name"]}')
     flash("Car added.")
@@ -914,6 +918,10 @@ def admin_edit():
         "specs":  specs,
         "desc":   request.form.get("desc", "").strip(),
         "video":  request.form.get("video", "").strip(),
+        "seller_id":    int(request.form.get("seller_id", 0)),
+        "seller_name":  request.form.get("seller_name", "").strip(),
+        "seller_phone": request.form.get("seller_phone", "").strip(),
+        "bought_price": request.form.get("bought_price", "").strip(),
     }
     photo = request.files.get("photo")
     if photo and photo.filename:

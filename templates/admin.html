@@ -214,6 +214,21 @@
           <div><label>Image style</label>
             <select name="fit"><option value="cover">Photo (fills the card)</option><option value="contain">Poster / spec-card (shown whole)</option></select></div>
         </div>
+        <div class="hint" style="margin:14px 0 6px"><b>Acquired from Customer / Trade-In (Optional):</b></div>
+        <div class="grid2">
+          <div>
+            <label>Seller / Source Customer</label>
+            <select name="seller_id">
+              <option value="0">➕ Dealership Stock / Or Enter New Customer...</option>
+              {% for b in buyers %}
+                <option value="{{ b.id }}">{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div><label>Buying Price paid to customer (private)</label><input name="bought_price" placeholder="e.g. Rs. 18,00,000" /></div>
+          <div><label>Seller Name (if new)</label><input name="seller_name" placeholder="Name of seller" /></div>
+          <div><label>Seller Phone (if new)</label><input name="seller_phone" placeholder="Phone of seller" /></div>
+        </div>
         <label>Description (optional)</label>
         <textarea name="desc" rows="3" placeholder="A few lines about this car"></textarea>
         <label>Video link (optional)</label>
@@ -271,6 +286,21 @@
                   <option value="cover"{% if car.fit!='contain' %} selected{% endif %}>Photo (fills the card)</option>
                   <option value="contain"{% if car.fit=='contain' %} selected{% endif %}>Poster (shown whole)</option>
                 </select></div>
+              </div>
+              <div class="hint" style="margin:14px 0 6px"><b>Acquired from Customer / Trade-In (Optional):</b></div>
+              <div class="grid2">
+                <div>
+                  <label>Seller / Source Customer</label>
+                  <select name="seller_id">
+                    <option value="0">➕ Dealership Stock / Or Enter New Customer...</option>
+                    {% for b in buyers %}
+                      <option value="{{ b.id }}"{% if car.seller_id == b.id %} selected{% endif %}>{{ b.name }} {% if b.phone %}({{ b.phone }}){% endif %}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div><label>Buying Price paid to customer (private)</label><input name="bought_price" value="{{ car.bought_price or '' }}" placeholder="e.g. Rs. 18,00,000" /></div>
+                <div><label>Seller Name (if new)</label><input name="seller_name" value="{{ car.seller_name or '' }}" placeholder="Name of seller" /></div>
+                <div><label>Seller Phone (if new)</label><input name="seller_phone" value="{{ car.seller_phone or '' }}" placeholder="Phone of seller" /></div>
               </div>
               <div class="hint" style="margin:14px 0 6px">Buyer &amp; sale details — saved to <b>Buyers</b> + <b>Car sales</b> when you switch Status to <b>Sold</b>:</div>
               <div class="grid2">
@@ -477,20 +507,30 @@
       </div>
       {% if buyers %}
       <div class="scroll"><table>
-        <tr><th>Name</th><th>Phone</th><th>Email</th><th>PAN / ID</th><th>Cars</th>{% if is_super %}<th>Lifetime value</th>{% endif %}<th>History</th>{% if can_manage %}<th></th>{% endif %}</tr>
+        <tr><th>Name</th><th>Phone</th><th>Email</th><th>PAN / ID</th><th>Bought</th><th>Traded-In</th>{% if is_super %}<th>Total Spent</th>{% endif %}<th>Full History Timeline</th>{% if can_manage %}<th></th>{% endif %}</tr>
         {% for b in buyers %}
         <tr>
           <td><strong>{{ b.name or "—" }}</strong>{% if b.address %}<br><span class="hint">{{ b.address }}</span>{% endif %}</td>
           <td style="white-space:nowrap">{% if b.phone %}<a href="tel:{{ b.phone }}">{{ b.phone }}</a>{% else %}—{% endif %}</td>
           <td>{{ b.email or "—" }}</td>
           <td>{{ b.id_number or "—" }}</td>
-          <td>{{ b.purchases }}</td>
+          <td><b>{{ b.purchases }}</b></td>
+          <td><b>{{ b.trade_ins_count or 0 }}</b></td>
           {% if is_super %}<td style="white-space:nowrap"><b>{{ b.total_fmt }}</b></td>{% endif %}
           <td>
-            {% set mine = sales|selectattr('buyer_id','equalto',b.id)|list %}
-            {% if mine %}<details><summary style="cursor:pointer;color:var(--navy);font-weight:600">{{ mine|length }} purchase{{ 's' if mine|length != 1 else '' }}</summary>
-              <div class="hint" style="margin-top:6px">{% for s in mine %}{{ s.sold_on }} — {{ s.car_desc }}{% if is_super and s.price %} ({{ s.price }}){% endif %}<br>{% endfor %}</div>
-            </details>{% else %}<span class="hint">—</span>{% endif %}
+            {% if b.history %}
+            <details><summary style="cursor:pointer;color:var(--navy);font-weight:600">{{ b.history|length }} activity record{{ 's' if b.history|length != 1 else '' }}</summary>
+              <div class="hint" style="margin-top:6px;font-size:12px;line-height:1.4">
+                {% for h in b.history %}
+                  <div style="margin-bottom:4px">
+                    <span style="font-weight:700;color:{{ '#1ba94c' if h.type == 'purchase' else '#0b3a77' }}">{{ h.label }}</span>
+                    {% if h.price %} — <b>{{ h.price }}</b>{% endif %}
+                    {% if h.date %}<span class="hint">({{ h.date }})</span>{% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </details>
+            {% else %}<span class="hint">—</span>{% endif %}
           </td>
           {% if can_manage %}<td><form method="POST" action="{{ url_for('admin_buyer_delete') }}" onsubmit="return confirm('Remove this buyer?')"><input type="hidden" name="id" value="{{ b.id }}" /><button class="btn btn--danger" type="submit">Remove</button></form></td>{% endif %}
         </tr>
