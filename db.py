@@ -109,6 +109,7 @@ class Car(Base):
     img:     Mapped[str] = mapped_column(String(255), default="")
     full:    Mapped[str] = mapped_column(String(255), default="")
     fit:     Mapped[str] = mapped_column(String(20), default="cover")
+    accent:  Mapped[str] = mapped_column(String(30), default="#37b2ea")
     seller_id:    Mapped[int] = mapped_column(Integer, index=True, default=0)
     seller_name:  Mapped[str] = mapped_column(String(120), default="")
     seller_phone: Mapped[str] = mapped_column(String(40), default="")
