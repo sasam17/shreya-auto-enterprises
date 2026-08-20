@@ -655,23 +655,29 @@ def delete_review(review_id):
         s.close()
 
 
-# ── Sales (+ auto-link a buyer) ──────────────────────────────────────────────
 def add_sale(car_id=0, car_desc="", buyer_name="", buyer_phone="", price="",
              payment_method="", notes="", buyer_email="", buyer_address="",
-             buyer_id_number=""):
+             buyer_id_number="", buyer_id=0):
     """Record a sale and auto-link (or create) the matching Buyer profile."""
-    buyer = get_or_create_buyer(buyer_name, buyer_phone, email=buyer_email,
-                                address=buyer_address, id_number=buyer_id_number) \
-        if (buyer_name or buyer_phone) else None
+    buyer = None
+    if buyer_id:
+        buyer = get_buyer_by_id(buyer_id)
+    if not buyer and (buyer_name or buyer_phone):
+        buyer = get_or_create_buyer(buyer_name, buyer_phone, email=buyer_email,
+                                    address=buyer_address, id_number=buyer_id_number,
+                                    notes=notes)
+    b_name = buyer_name or (buyer["name"] if buyer else "")
+    b_phone = buyer_phone or (buyer["phone"] if buyer else "")
     s = SessionLocal()
     try:
         row = Sale(car_id=car_id, buyer_id=(buyer["id"] if buyer else 0),
-                   car_desc=car_desc, buyer_name=buyer_name, buyer_phone=buyer_phone,
+                   car_desc=car_desc, buyer_name=b_name, buyer_phone=b_phone,
                    price=price, payment_method=payment_method, notes=notes)
         s.add(row); s.commit()
         return row.as_dict()
     finally:
         s.close()
+
 
 
 def all_sales():
